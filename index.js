@@ -47,11 +47,6 @@ const commands = [
                 .addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement))
         .addBooleanOption(option => 
             option.setName('dm_everyone').setDescription('Send to every member via DM? (Risky)')),
-    
-    new SlashCommandBuilder()
-        .setName('stop')
-        .setDescription('🔴 Shut down the bot (Admin Only)')
-        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
 ];
 
 const rest = new REST({ version: '10' }).setToken(TOKEN);
@@ -66,12 +61,6 @@ client.once('ready', async () => {
 
 // --- INTERACTION HANDLER ---
 client.on('interactionCreate', async interaction => {
-    // STOP COMMAND
-    if (interaction.isChatInputCommand() && interaction.commandName === 'stop') {
-        await interaction.reply('🛑 **Stopping bot...**');
-        setTimeout(() => { client.destroy(); process.exit(0); }, 1000);
-    }
-
     // ANNOUNCE COMMAND
     if (interaction.isChatInputCommand() && interaction.commandName === 'announce') {
         const targetChannel = interaction.options.getChannel('channel');
@@ -83,7 +72,8 @@ client.on('interactionCreate', async interaction => {
 
         const titleInput = new TextInputBuilder().setCustomId('ann_title').setLabel("Title").setStyle(TextInputStyle.Short).setRequired(true);
         const contentInput = new TextInputBuilder().setCustomId('ann_content').setLabel("Message").setStyle(TextInputStyle.Paragraph).setRequired(true);
-        const footerInput = new TextInputBuilder().setCustomId('ann_footer').setLabel("Footer / Mentions").setStyle(TextInputStyle.Short).setRequired(false);
+        // Treat this field mainly for Pings now
+        const footerInput = new TextInputBuilder().setCustomId('ann_footer').setLabel("Mentions (e.g. @everyone)").setStyle(TextInputStyle.Short).setRequired(false);
 
         modal.addComponents(
             new ActionRowBuilder().addComponents(titleInput),
@@ -101,18 +91,20 @@ client.on('interactionCreate', async interaction => {
 
         const title = interaction.fields.getTextInputValue('ann_title');
         const content = interaction.fields.getTextInputValue('ann_content');
-        const footerNote = interaction.fields.getTextInputValue('ann_footer') || '';
+        const mentionText = interaction.fields.getTextInputValue('ann_footer') || ''; 
 
         const embed = new EmbedBuilder()
             .setColor('#ff0000')
             .setTitle(`📢 ${title}`)
             .setDescription(content)
-            .setFooter({ text: interaction.guild.name, iconURL: interaction.guild.iconURL() })
+            .setFooter({ text: 'Management Team', iconURL: interaction.guild.iconURL() })
             .setTimestamp();
 
         try {
             const channel = await interaction.guild.channels.fetch(channelId);
-            await channel.send({ content: footerNote.includes('@') ? footerNote : null, embeds: [embed] });
+            // Send Pings outside the embed, Embed follows
+            await channel.send({ content: mentionText.includes('@') ? mentionText : null, embeds: [embed] });
+            
             let msg = `✅ Posted in ${channel}.`;
 
             if (dmEveryone) {
@@ -122,7 +114,7 @@ client.on('interactionCreate', async interaction => {
                     for (const [id, member] of members) {
                         if (member.user.bot) continue;
                         try {
-                            await member.send({ content: `📢 **Announcement**`, embeds: [embed] });
+                            await member.send({ content: `📢 **Announcement From Purrfect Universe**`, embeds: [embed] });
                             await new Promise(r => setTimeout(r, 2000));
                         } catch (e) {}
                     }
@@ -179,11 +171,11 @@ const sendLog = async (guild, embed) => {
     } catch (e) { console.error('Log channel error:', e); }
 };
 
-// --- LOGGING SECTION (REMODELED) ---
+// --- LOGGING (Logo + Name in One Line) ---
 
-// 1. VOICE LOGS (Compact & Beautiful)
+// 1. VOICE LOGS
 client.on('voiceStateUpdate', async (oldState, newState) => {
-    if (oldState.channelId === newState.channelId) return; // Ignore Mute/Deafen updates
+    if (oldState.channelId === newState.channelId) return; // Ignore Mute/Deafen
 
     const user = newState.member.user;
     const embed = new EmbedBuilder().setTimestamp();
@@ -225,7 +217,7 @@ client.on('inviteCreate', async (invite) => {
     await sendLog(invite.guild, embed);
 });
 
-// 3. SERVER UPDATES (Audit Log Fetch for Executor)
+// 3. SERVER UPDATES
 client.on('guildUpdate', async (oldGuild, newGuild) => {
     let executor = null;
     try {
@@ -235,10 +227,7 @@ client.on('guildUpdate', async (oldGuild, newGuild) => {
         if (entry && (Date.now() - entry.createdTimestamp) < 5000) executor = entry.executor;
     } catch (e) { /* Ignore audit errors */ }
 
-    const embed = new EmbedBuilder()
-        .setColor('#EB459E') // Pink
-        .setTimestamp();
-
+    const embed = new EmbedBuilder().setColor('#EB459E').setTimestamp();
     const userText = executor ? `${executor.tag}` : 'Someone';
     const userIcon = executor ? executor.displayAvatarURL() : newGuild.iconURL();
 
