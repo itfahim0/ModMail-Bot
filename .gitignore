@@ -1,0 +1,12 @@
+Ignore the dependencies folder (it's too heavy, the server will install it)
+
+node_modules/
+
+CRITICAL: Ignore the environment variables file containing your secrets
+
+.env
+
+Ignore system files
+
+.DS_Store
+Thumbs.db

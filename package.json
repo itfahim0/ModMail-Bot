@@ -1,0 +1,16 @@
+{
+  "name": "simple-modmail-bot",
+  "version": "1.0.0",
+  "description": "A bot that forwards DMs to a channel and replies back to users.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "discord.js": "^14.25.0",
+    "dotenv": "^16.6.1"
+  },
+  "engines": {
+    "node": ">=16.9.0"
+  }
+}
