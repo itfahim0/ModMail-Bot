@@ -4,119 +4,257 @@ const {
     GatewayIntentBits, 
     Partials, 
     EmbedBuilder, 
-    ChannelType 
+    ChannelType, 
+    ActivityType, 
+    REST, 
+    Routes, 
+    SlashCommandBuilder, 
+    ModalBuilder, 
+    TextInputBuilder, 
+    TextInputStyle, 
+    ActionRowBuilder, 
+    PermissionFlagsBits,
+    AuditLogEvent
 } = require('discord.js');
 
-// Initialize Client with necessary permissions (Intents)
+// --- CONFIGURATION ---
+const MOD_CHANNEL_ID = process.env.MOD_CHANNEL_ID;
+const LOG_CHANNEL_ID = process.env.LOG_CHANNEL_ID;
+const TOKEN = process.env.DISCORD_TOKEN;
+
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.MessageContent,
-        GatewayIntentBits.DirectMessages
+        GatewayIntentBits.DirectMessages,
+        GatewayIntentBits.GuildMembers,
+        GatewayIntentBits.GuildVoiceStates, 
+        GatewayIntentBits.GuildInvites,     
+        GatewayIntentBits.GuildPresences    
     ],
-    partials: [
-        Partials.Channel, // Required to receive DMs
-        Partials.Message
-    ]
+    partials: [Partials.Channel, Partials.Message, Partials.GuildMember]
 });
 
-const MOD_CHANNEL_ID = process.env.MOD_CHANNEL_ID;
+// --- COMMANDS ---
+const commands = [
+    new SlashCommandBuilder()
+        .setName('announce')
+        .setDescription('Send an announcement (Admin Only)')
+        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+        .addChannelOption(option => 
+            option.setName('channel').setDescription('Where to post').setRequired(true)
+                .addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement))
+        .addBooleanOption(option => 
+            option.setName('dm_everyone').setDescription('Send to every member via DM? (Risky)')),
+    
+    new SlashCommandBuilder()
+        .setName('stop')
+        .setDescription('🔴 Shut down the bot (Admin Only)')
+        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+];
 
-client.once('ready', () => {
-    console.log(`✅ ${client.user.tag} is online and listening for DMs!`);
-    console.log(`📨 Forwarding mail to channel ID: ${MOD_CHANNEL_ID}`);
+const rest = new REST({ version: '10' }).setToken(TOKEN);
+
+client.once('ready', async () => {
+    console.log(`✅ ${client.user.tag} is online!`);
+    try {
+        await rest.put(Routes.applicationCommands(client.user.id), { body: commands });
+        console.log('✅ Commands registered.');
+    } catch (error) { console.error('❌ Error registering commands:', error); }
 });
 
-client.on('messageCreate', async (message) => {
-    // Ignore messages from bots (including itself)
-    if (message.author.bot) return;
+// --- INTERACTION HANDLER ---
+client.on('interactionCreate', async interaction => {
+    // STOP COMMAND
+    if (interaction.isChatInputCommand() && interaction.commandName === 'stop') {
+        await interaction.reply('🛑 **Stopping bot...**');
+        setTimeout(() => { client.destroy(); process.exit(0); }, 1000);
+    }
 
-    // ---------------------------------------------------------
-    // SCENARIO 1: User DMs the Bot -> Forward to Mod Channel
-    // ---------------------------------------------------------
-    if (message.channel.type === ChannelType.DM) {
+    // ANNOUNCE COMMAND
+    if (interaction.isChatInputCommand() && interaction.commandName === 'announce') {
+        const targetChannel = interaction.options.getChannel('channel');
+        const dmEveryone = interaction.options.getBoolean('dm_everyone') || false;
+
+        const modal = new ModalBuilder()
+            .setCustomId(`announce_modal|${targetChannel.id}|${dmEveryone}`)
+            .setTitle('Create Announcement');
+
+        const titleInput = new TextInputBuilder().setCustomId('ann_title').setLabel("Title").setStyle(TextInputStyle.Short).setRequired(true);
+        const contentInput = new TextInputBuilder().setCustomId('ann_content').setLabel("Message").setStyle(TextInputStyle.Paragraph).setRequired(true);
+        const footerInput = new TextInputBuilder().setCustomId('ann_footer').setLabel("Footer / Mentions").setStyle(TextInputStyle.Short).setRequired(false);
+
+        modal.addComponents(
+            new ActionRowBuilder().addComponents(titleInput),
+            new ActionRowBuilder().addComponents(contentInput),
+            new ActionRowBuilder().addComponents(footerInput)
+        );
+        await interaction.showModal(modal);
+    }
+
+    // MODAL SUBMIT
+    if (interaction.isModalSubmit() && interaction.customId.startsWith('announce_modal')) {
+        await interaction.deferReply({ ephemeral: true });
+        const [prefix, channelId, dmEveryoneString] = interaction.customId.split('|');
+        const dmEveryone = dmEveryoneString === 'true';
+
+        const title = interaction.fields.getTextInputValue('ann_title');
+        const content = interaction.fields.getTextInputValue('ann_content');
+        const footerNote = interaction.fields.getTextInputValue('ann_footer') || '';
+
+        const embed = new EmbedBuilder()
+            .setColor('#ff0000')
+            .setTitle(`📢 ${title}`)
+            .setDescription(content)
+            .setFooter({ text: interaction.guild.name, iconURL: interaction.guild.iconURL() })
+            .setTimestamp();
+
         try {
-            const modChannel = await client.channels.fetch(MOD_CHANNEL_ID);
-            if (!modChannel) {
-                console.error('Mod channel not found. Check ID in .env');
-                return;
-            }
+            const channel = await interaction.guild.channels.fetch(channelId);
+            await channel.send({ content: footerNote.includes('@') ? footerNote : null, embeds: [embed] });
+            let msg = `✅ Posted in ${channel}.`;
 
-            // Create an Embed to make it look nice and store User Data
+            if (dmEveryone) {
+                msg += `\n🚀 Mass DM started...`;
+                (async () => {
+                    const members = await interaction.guild.members.fetch();
+                    for (const [id, member] of members) {
+                        if (member.user.bot) continue;
+                        try {
+                            await member.send({ content: `📢 **Announcement**`, embeds: [embed] });
+                            await new Promise(r => setTimeout(r, 2000));
+                        } catch (e) {}
+                    }
+                })();
+            }
+            await interaction.editReply({ content: msg });
+        } catch (err) { await interaction.editReply({ content: `❌ Error: ${err.message}` }); }
+    }
+});
+
+// --- MODMAIL ---
+client.on('messageCreate', async (message) => {
+    if (message.author.bot) return;
+    if (message.channel.type === ChannelType.DM) {
+        const modChannel = await client.channels.fetch(MOD_CHANNEL_ID).catch(() => null);
+        if (modChannel) {
             const embed = new EmbedBuilder()
                 .setColor('#0099ff')
-                .setAuthor({ 
-                    name: `${message.author.tag} (${message.author.id})`, 
-                    iconURL: message.author.displayAvatarURL() 
-                })
-                .setDescription(message.content || '*No text content (Attachment only)*')
-                .setFooter({ text: `User ID: ${message.author.id}` }) // CRITICAL: Used to reply later
-                .setTimestamp();
-
-            // Handle Attachments (Images, files)
-            const files = message.attachments.map(a => a.url);
-
-            await modChannel.send({ 
-                content: "📨 **New Modmail**", 
-                embeds: [embed], 
-                files: files 
-            });
-
-            // Add a reaction to the user's DM so they know it was sent
+                .setAuthor({ name: message.author.tag, iconURL: message.author.displayAvatarURL() })
+                .setDescription(message.content || '*Attachment*')
+                .setFooter({ text: `User ID: ${message.author.id}` }).setTimestamp();
+            await modChannel.send({ content: "📨 **New Ticket**", embeds: [embed], files: message.attachments.map(a => a.url) });
             await message.react('✅');
-
-        } catch (error) {
-            console.error('Error forwarding DM:', error);
-            message.reply('❌ An error occurred while sending your message to the moderators.');
         }
-    }
-
-    // ---------------------------------------------------------
-    // SCENARIO 2: Mod Replies in Channel -> Forward to User DM
-    // ---------------------------------------------------------
-    else if (message.channel.id === MOD_CHANNEL_ID) {
-        
-        // Logic: To reply to a user, the Mod MUST use Discord's "Reply" feature
-        // on the bot's embed. This links the messages.
-        if (message.reference && message.reference.messageId) {
-            try {
-                // Fetch the message the Mod replied to
-                const originalMessage = await message.channel.messages.fetch(message.reference.messageId);
-
-                // Validations to ensure we are replying to a ticket
-                if (originalMessage.author.id !== client.user.id) return; // Only handle replies to the bot
-                if (originalMessage.embeds.length === 0) return; // Needs an embed
-
-                // Extract User ID from the Footer of the embed we created earlier
-                const footerText = originalMessage.embeds[0].footer?.text;
-                if (!footerText || !footerText.includes('User ID:')) return;
-
-                const userId = footerText.split('User ID: ')[1];
-                
-                // Fetch the user to send DM
-                const user = await client.users.fetch(userId);
-
-                // Prepare Embed for the user
-                const replyEmbed = new EmbedBuilder()
-                    .setColor('#00ff00')
-                    .setAuthor({ name: `Response from ${message.guild.name} Staff` })
-                    .setDescription(message.content || '*Attachment only*')
-                    .setTimestamp();
-
-                const files = message.attachments.map(a => a.url);
-
-                await user.send({ embeds: [replyEmbed], files: files });
-                
-                // React to Mod's message to confirm sent
-                await message.react('📤');
-
-            } catch (error) {
-                console.error('Error replying to user:', error);
-                message.reply('❌ Could not DM user. They may have blocked DMs or the ID could not be parsed.');
+    } else if (message.channel.id === MOD_CHANNEL_ID && message.reference) {
+        try {
+            const original = await message.channel.messages.fetch(message.reference.messageId);
+            if (original.author.id === client.user.id && original.embeds.length) {
+                const match = original.embeds[0].footer?.text?.match(/User ID:\s+(\d+)/);
+                if (match) {
+                    const user = await client.users.fetch(match[1]);
+                    if (message.content === '!close') {
+                        await user.send({ embeds: [new EmbedBuilder().setColor('Red').setTitle('Ticket Closed')] });
+                        await message.reply('🔒 Ticket closed.');
+                    } else {
+                        await user.send({ 
+                            embeds: [new EmbedBuilder().setColor('Green').setAuthor({ name: 'Staff Reply' }).setDescription(message.content || '*File*')], 
+                            files: message.attachments.map(a => a.url) 
+                        });
+                        await message.react('📤');
+                    }
+                }
             }
-        }
+        } catch (e) { message.reply('❌ Failed to send.'); }
     }
 });
 
-client.login(process.env.DISCORD_TOKEN);
+// --- HELPER: LOG SENDER ---
+const sendLog = async (guild, embed) => {
+    if (!LOG_CHANNEL_ID) return;
+    try {
+        const channel = await guild.channels.fetch(LOG_CHANNEL_ID);
+        if (channel) await channel.send({ embeds: [embed] });
+    } catch (e) { console.error('Log channel error:', e); }
+};
+
+// --- LOGGING SECTION (REMODELED) ---
+
+// 1. VOICE LOGS (Compact & Beautiful)
+client.on('voiceStateUpdate', async (oldState, newState) => {
+    if (oldState.channelId === newState.channelId) return; // Ignore Mute/Deafen updates
+
+    const user = newState.member.user;
+    const embed = new EmbedBuilder().setTimestamp();
+
+    if (!oldState.channelId && newState.channelId) {
+        // Join
+        embed.setColor('#57F287') // Green
+             .setAuthor({ 
+                 name: `${user.tag} joined Voice Channel: ${newState.channel.name}`, 
+                 iconURL: user.displayAvatarURL() 
+             });
+    } else if (oldState.channelId && !newState.channelId) {
+        // Leave
+        embed.setColor('#ED4245') // Red
+             .setAuthor({ 
+                 name: `${user.tag} left Voice Channel: ${oldState.channel.name}`, 
+                 iconURL: user.displayAvatarURL() 
+             });
+    } else if (oldState.channelId && newState.channelId) {
+        // Moved
+        embed.setColor('#FEE75C') // Yellow
+             .setAuthor({ 
+                 name: `${user.tag} moved: ${oldState.channel.name} ➡ ${newState.channel.name}`, 
+                 iconURL: user.displayAvatarURL() 
+             });
+    }
+    await sendLog(newState.guild, embed);
+});
+
+// 2. INVITE LOGS
+client.on('inviteCreate', async (invite) => {
+    const embed = new EmbedBuilder()
+        .setColor('#5865F2') // Blurple
+        .setAuthor({ 
+            name: `${invite.inviter?.tag || 'Unknown'} created invite [${invite.code}] for #${invite.channel.name}`, 
+            iconURL: invite.inviter?.displayAvatarURL() || null 
+        })
+        .setTimestamp();
+    await sendLog(invite.guild, embed);
+});
+
+// 3. SERVER UPDATES (Audit Log Fetch for Executor)
+client.on('guildUpdate', async (oldGuild, newGuild) => {
+    let executor = null;
+    try {
+        // Try to find who made the change
+        const logs = await newGuild.fetchAuditLogs({ limit: 1, type: AuditLogEvent.GuildUpdate });
+        const entry = logs.entries.first();
+        if (entry && (Date.now() - entry.createdTimestamp) < 5000) executor = entry.executor;
+    } catch (e) { /* Ignore audit errors */ }
+
+    const embed = new EmbedBuilder()
+        .setColor('#EB459E') // Pink
+        .setTimestamp();
+
+    const userText = executor ? `${executor.tag}` : 'Someone';
+    const userIcon = executor ? executor.displayAvatarURL() : newGuild.iconURL();
+
+    if (oldGuild.name !== newGuild.name) {
+        embed.setAuthor({ 
+            name: `${userText} changed Server Name: ${oldGuild.name} ➡ ${newGuild.name}`, 
+            iconURL: userIcon 
+        });
+        await sendLog(newGuild, embed);
+    } else if (oldGuild.icon !== newGuild.icon) {
+        embed.setAuthor({ 
+            name: `${userText} updated Server Icon`, 
+            iconURL: userIcon 
+        });
+        await sendLog(newGuild, embed);
+    }
+});
+
+client.login(TOKEN);
