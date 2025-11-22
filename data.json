@@ -1,0 +1,12 @@
+{
+    "users": {},
+    "config": {
+        "welcome": {
+            "channel": null,
+            "message": null
+        },
+        "autorole": null,
+        "reactionRoles": {}
+    },
+    "schedules": []
+}
