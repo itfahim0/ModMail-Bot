@@ -1,220 +1,252 @@
-import { SlashCommandBuilder, EmbedBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, PermissionFlagsBits } from 'discord.js';
+import {
+    SlashCommandBuilder,
+    EmbedBuilder,
+    ModalBuilder,
+    TextInputBuilder,
+    TextInputStyle,
+    ActionRowBuilder,
+    PermissionFlagsBits,
+    StringSelectMenuBuilder,
+    StringSelectMenuOptionBuilder,
+    ChannelSelectMenuBuilder,
+    ChannelType,
+    ComponentType
+} from 'discord.js';
 import { storage } from '../../storage/jsonAdapter.js';
 
-// Cache to store mention data temporarily (key: userId, value: { channelId, mentions })
-const mentionCache = new Map();
+// Cache to store temporary data for multi-step interactions
+const interactionCache = new Map();
 
 export default {
     data: new SlashCommandBuilder()
         .setName('announce')
-        .setDescription('Announcement management system')
-        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
-        .addSubcommand(sub =>
-            sub.setName('channel')
-                .setDescription('Send announcement to a channel')
-                .addChannelOption(option =>
-                    option.setName('channel')
-                        .setDescription('Channel to send announcement')
-                        .setRequired(true))
-                .addStringOption(option =>
-                    option.setName('mention')
-                        .setDescription('Select mention type')
-                        .setRequired(false)
-                        .addChoices(
-                            { name: 'None', value: 'none' },
-                            { name: '@everyone', value: 'everyone' },
-                            { name: '@here', value: 'here' },
-                            { name: 'Custom Mentions', value: 'custom' }
-                        ))
-                .addMentionableOption(option =>
-                    option.setName('mention1')
-                        .setDescription('First role/user to mention (if Custom Mentions selected)')
-                        .setRequired(false))
-                .addMentionableOption(option =>
-                    option.setName('mention2')
-                        .setDescription('Second role/user to mention (optional)')
-                        .setRequired(false))
-                .addMentionableOption(option =>
-                    option.setName('mention3')
-                        .setDescription('Third role/user to mention (optional)')
-                        .setRequired(false))
-                .addMentionableOption(option =>
-                    option.setName('mention4')
-                        .setDescription('Fourth role/user to mention (optional)')
-                        .setRequired(false))
-                .addMentionableOption(option =>
-                    option.setName('mention5')
-                        .setDescription('Fifth role/user to mention (optional)')
-                        .setRequired(false)))
-        .addSubcommand(sub =>
-            sub.setName('dm-create')
-                .setDescription('Create a mass DM announcement')
-                .addStringOption(o => o.setName('content').setDescription('Message content').setRequired(true))
-                .addChannelOption(o => o.setName('channel').setDescription('Channel to post in (optional)')))
-        .addSubcommand(sub =>
-            sub.setName('dm-preview')
-                .setDescription('Preview a DM announcement')
-                .addStringOption(o => o.setName('id').setDescription('Announcement ID').setRequired(true)))
-        .addSubcommand(sub =>
-            sub.setName('dm-approve')
-                .setDescription('Approve DM announcement for sending')
-                .addStringOption(o => o.setName('id').setDescription('Announcement ID').setRequired(true)))
-        .addSubcommand(sub =>
-            sub.setName('dm-stats')
-                .setDescription('View DM announcement stats')
-                .addStringOption(o => o.setName('id').setDescription('Announcement ID').setRequired(true))),
+        .setDescription('Open the announcement management menu')
+        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
 
     async execute(interaction) {
-        const subcommand = interaction.options.getSubcommand();
+        const select = new StringSelectMenuBuilder()
+            .setCustomId('announce_action')
+            .setPlaceholder('Select an action')
+            .addOptions(
+                new StringSelectMenuOptionBuilder()
+                    .setLabel('Channel Announcement')
+                    .setDescription('Send an announcement to a specific channel')
+                    .setValue('channel')
+                    .setEmoji('📢'),
+                new StringSelectMenuOptionBuilder()
+                    .setLabel('Create DM Announcement')
+                    .setDescription('Draft a new mass DM announcement')
+                    .setValue('dm-create')
+                    .setEmoji('📝'),
+                new StringSelectMenuOptionBuilder()
+                    .setLabel('Preview DM Announcement')
+                    .setDescription('Preview a draft before sending')
+                    .setValue('dm-preview')
+                    .setEmoji('👀'),
+                new StringSelectMenuOptionBuilder()
+                    .setLabel('Approve DM Announcement')
+                    .setDescription('Approve and queue a draft for sending')
+                    .setValue('dm-approve')
+                    .setEmoji('✅'),
+                new StringSelectMenuOptionBuilder()
+                    .setLabel('View DM Stats')
+                    .setDescription('Check status of sent announcements')
+                    .setValue('dm-stats')
+                    .setEmoji('📊'),
+            );
 
-        // Channel Announcement
-        if (subcommand === 'channel') {
-            const channel = interaction.options.getChannel('channel');
-            const mentionType = interaction.options.getString('mention') || 'none';
+        const row = new ActionRowBuilder().addComponents(select);
 
-            // Collect all custom mentions
-            const mentions = [];
-            if (mentionType === 'custom') {
-                for (let i = 1; i <= 5; i++) {
-                    const mentionable = interaction.options.getMentionable(`mention${i}`);
-                    if (mentionable) {
-                        mentions.push(mentionable);
-                    }
-                }
+        await interaction.reply({
+            content: '👋 **Announcement Manager**\nPlease select an action from the menu below:',
+            components: [row],
+            ephemeral: true
+        });
+    },
+
+    async handleInteraction(interaction) {
+        // Handle Action Selection
+        if (interaction.isStringSelectMenu() && interaction.customId === 'announce_action') {
+            const action = interaction.values[0];
+
+            if (action === 'channel') {
+                const channelSelect = new ChannelSelectMenuBuilder()
+                    .setCustomId('announce_channel_select')
+                    .setPlaceholder('Select a channel')
+                    .addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement);
+
+                const row = new ActionRowBuilder().addComponents(channelSelect);
+
+                await interaction.update({
+                    content: '📢 **Channel Announcement**\nSelect the channel where you want to post:',
+                    components: [row]
+                });
             }
+            else if (action === 'dm-create') {
+                const modal = new ModalBuilder()
+                    .setCustomId('announce_dm_create_modal')
+                    .setTitle('Create DM Announcement');
 
-            // Store mention data in cache
-            const cacheKey = `${interaction.user.id}_${channel.id}`;
-            mentionCache.set(cacheKey, {
-                channelId: channel.id,
-                mentionType,
-                mentions: mentions.map(m => m.id)
-            });
+                const contentInput = new TextInputBuilder()
+                    .setCustomId('content')
+                    .setLabel('Message Content')
+                    .setStyle(TextInputStyle.Paragraph)
+                    .setRequired(true)
+                    .setMaxLength(2000);
 
-            // Clean up old cache entries after 10 minutes
-            setTimeout(() => {
-                mentionCache.delete(cacheKey);
-            }, 10 * 60 * 1000);
+                modal.addComponents(new ActionRowBuilder().addComponents(contentInput));
+                await interaction.showModal(modal);
+            }
+            else if (['dm-preview', 'dm-approve', 'dm-stats'].includes(action)) {
+                const modal = new ModalBuilder()
+                    .setCustomId(`announce_${action.replace('-', '_')}_modal`)
+                    .setTitle(action.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '));
 
-            // Show modal for announcement content
+                const idInput = new TextInputBuilder()
+                    .setCustomId('id')
+                    .setLabel('Announcement ID')
+                    .setStyle(TextInputStyle.Short)
+                    .setRequired(true);
+
+                modal.addComponents(new ActionRowBuilder().addComponents(idInput));
+                await interaction.showModal(modal);
+            }
+        }
+
+        // Handle Channel Selection -> Show Modal
+        else if (interaction.isChannelSelectMenu() && interaction.customId === 'announce_channel_select') {
+            const channelId = interaction.values[0];
+
+            // Store channel ID in cache linked to user ID (since Modals don't pass state)
+            // We use user ID because the modal submission comes from the same user
+            interactionCache.set(`channel_${interaction.user.id}`, channelId);
+
             const modal = new ModalBuilder()
-                .setCustomId(`announce_modal_${cacheKey}`)
-                .setTitle('Create Channel Announcement');
+                .setCustomId('announce_channel_modal')
+                .setTitle('Channel Announcement Details');
 
             const titleInput = new TextInputBuilder()
-                .setCustomId('announce_title')
-                .setLabel('Announcement Title')
+                .setCustomId('title')
+                .setLabel('Title')
                 .setStyle(TextInputStyle.Short)
-                .setRequired(true)
-                .setMaxLength(256);
+                .setRequired(true);
 
             const messageInput = new TextInputBuilder()
-                .setCustomId('announce_message')
-                .setLabel('Announcement Message')
+                .setCustomId('message')
+                .setLabel('Message')
                 .setStyle(TextInputStyle.Paragraph)
-                .setRequired(true)
-                .setMaxLength(4000);
+                .setRequired(true);
 
             const colorInput = new TextInputBuilder()
-                .setCustomId('announce_color')
-                .setLabel('Embed Color (hex code, e.g., #FF0000)')
+                .setCustomId('color')
+                .setLabel('Color (Hex)')
                 .setStyle(TextInputStyle.Short)
-                .setRequired(false)
                 .setValue('#FF0000')
-                .setMaxLength(7);
+                .setRequired(false);
 
-            const firstRow = new ActionRowBuilder().addComponents(titleInput);
-            const secondRow = new ActionRowBuilder().addComponents(messageInput);
-            const thirdRow = new ActionRowBuilder().addComponents(colorInput);
-
-            modal.addComponents(firstRow, secondRow, thirdRow);
+            modal.addComponents(
+                new ActionRowBuilder().addComponents(titleInput),
+                new ActionRowBuilder().addComponents(messageInput),
+                new ActionRowBuilder().addComponents(colorInput)
+            );
 
             await interaction.showModal(modal);
         }
 
-        // DM Create
-        else if (subcommand === 'dm-create') {
+        // Handle Modal Submissions
+        else if (interaction.isModalSubmit()) {
             await storage.init();
-            const content = interaction.options.getString('content');
-            const channel = interaction.options.getChannel('channel');
 
-            const announcement = await storage.createAnnouncement({
-                guildId: interaction.guildId,
-                creatorId: interaction.user.id,
-                content,
-                channelId: channel?.id,
-                stats: { sent: 0, failed: 0 }
-            });
+            // Channel Announcement
+            if (interaction.customId === 'announce_channel_modal') {
+                const channelId = interactionCache.get(`channel_${interaction.user.id}`);
+                if (!channelId) {
+                    return interaction.reply({ content: '❌ Session expired. Please try again.', ephemeral: true });
+                }
 
-            return interaction.reply({
-                content: `📝 **Announcement Created (Draft)**\nID: \`${announcement.id}\`\n\nUse \`/announce dm-preview id:${announcement.id}\` to check it.`,
-                ephemeral: true
-            });
-        }
+                const title = interaction.fields.getTextInputValue('title');
+                const message = interaction.fields.getTextInputValue('message');
+                const color = interaction.fields.getTextInputValue('color') || '#FF0000';
 
-        // DM Preview
-        else if (subcommand === 'dm-preview') {
-            await storage.init();
-            const id = interaction.options.getString('id');
-            const ann = await storage.getAnnouncement(id);
-            if (!ann) return interaction.reply({ content: '❌ Not found.', ephemeral: true });
+                try {
+                    const channel = await interaction.guild.channels.fetch(channelId);
+                    const embed = new EmbedBuilder()
+                        .setTitle(title)
+                        .setDescription(message)
+                        .setColor(color)
+                        .setTimestamp();
 
-            const embed = new EmbedBuilder()
-                .setTitle('📢 Announcement Preview')
-                .setDescription(ann.content)
-                .setFooter({ text: `ID: ${ann.id} | Status: ${ann.status}` });
-
-            // Send a test DM to the admin
-            try {
-                await interaction.user.send({
-                    content: `**[PREVIEW]**\n${ann.content}\n\n*To unsubscribe, use /subscribe opt-out*`
-                });
-                embed.addFields({ name: 'Test DM', value: '✅ Sent to you' });
-            } catch (e) {
-                embed.addFields({ name: 'Test DM', value: '❌ Failed (Check your DMs)' });
+                    await channel.send({ embeds: [embed] });
+                    await interaction.reply({ content: `✅ Announcement sent to ${channel}!`, ephemeral: true });
+                    interactionCache.delete(`channel_${interaction.user.id}`);
+                } catch (error) {
+                    await interaction.reply({ content: `❌ Failed: ${error.message}`, ephemeral: true });
+                }
             }
 
-            return interaction.reply({ embeds: [embed], ephemeral: true });
-        }
+            // DM Create
+            else if (interaction.customId === 'announce_dm_create_modal') {
+                const content = interaction.fields.getTextInputValue('content');
+                const announcement = await storage.createAnnouncement({
+                    guildId: interaction.guildId,
+                    creatorId: interaction.user.id,
+                    content,
+                    stats: { sent: 0, failed: 0 }
+                });
 
-        // DM Approve
-        else if (subcommand === 'dm-approve') {
-            await storage.init();
-            const id = interaction.options.getString('id');
-            const ann = await storage.getAnnouncement(id);
-            if (!ann) return interaction.reply({ content: '❌ Not found.', ephemeral: true });
+                await interaction.reply({
+                    content: `📝 **Draft Created!**\nID: \`${announcement.id}\`\nUse **Preview** or **Approve** action with this ID.`,
+                    ephemeral: true
+                });
+            }
 
-            if (ann.status !== 'DRAFT') return interaction.reply({ content: `❌ Status is ${ann.status}, cannot approve.`, ephemeral: true });
+            // DM Preview
+            else if (interaction.customId === 'announce_dm_preview_modal') {
+                const id = interaction.fields.getTextInputValue('id');
+                const ann = await storage.getAnnouncement(id);
+                if (!ann) return interaction.reply({ content: '❌ Not found.', ephemeral: true });
 
-            // Count recipients
-            const recipients = await storage.listOptIns(interaction.guildId);
+                try {
+                    await interaction.user.send({
+                        content: `**[PREVIEW]**\n${ann.content}\n\n*To unsubscribe, use /subscribe opt-out*`
+                    });
+                    await interaction.reply({ content: '✅ Preview sent to your DMs.', ephemeral: true });
+                } catch (e) {
+                    await interaction.reply({ content: '❌ Could not send DM. Check your privacy settings.', ephemeral: true });
+                }
+            }
 
-            await storage.updateAnnouncement(id, { status: 'APPROVED' });
+            // DM Approve
+            else if (interaction.customId === 'announce_dm_approve_modal') {
+                const id = interaction.fields.getTextInputValue('id');
+                const ann = await storage.getAnnouncement(id);
+                if (!ann) return interaction.reply({ content: '❌ Not found.', ephemeral: true });
+                if (ann.status !== 'DRAFT') return interaction.reply({ content: `❌ Status is ${ann.status}`, ephemeral: true });
 
-            return interaction.reply({
-                content: `✅ **Announcement Approved!**\nQueued for **${recipients.length}** subscribers.\nThe worker process will start sending shortly.`,
-                ephemeral: true
-            });
-        }
+                const recipients = await storage.listOptIns(interaction.guildId);
+                await storage.updateAnnouncement(id, { status: 'APPROVED' });
 
-        // DM Stats
-        else if (subcommand === 'dm-stats') {
-            await storage.init();
-            const id = interaction.options.getString('id');
-            const ann = await storage.getAnnouncement(id);
-            if (!ann) return interaction.reply({ content: '❌ Not found.', ephemeral: true });
+                await interaction.reply({
+                    content: `✅ **Approved!**\nQueued for **${recipients.length}** subscribers.`,
+                    ephemeral: true
+                });
+            }
 
-            const embed = new EmbedBuilder()
-                .setTitle('📊 Announcement Stats')
-                .addFields(
-                    { name: 'Status', value: ann.status, inline: true },
-                    { name: 'Sent', value: String(ann.stats.sent), inline: true },
-                    { name: 'Failed', value: String(ann.stats.failed), inline: true }
-                );
-            return interaction.reply({ embeds: [embed], ephemeral: true });
+            // DM Stats
+            else if (interaction.customId === 'announce_dm_stats_modal') {
+                const id = interaction.fields.getTextInputValue('id');
+                const ann = await storage.getAnnouncement(id);
+                if (!ann) return interaction.reply({ content: '❌ Not found.', ephemeral: true });
+
+                const embed = new EmbedBuilder()
+                    .setTitle('📊 Announcement Stats')
+                    .addFields(
+                        { name: 'Status', value: ann.status, inline: true },
+                        { name: 'Sent', value: String(ann.stats.sent), inline: true },
+                        { name: 'Failed', value: String(ann.stats.failed), inline: true }
+                    );
+                await interaction.reply({ embeds: [embed], ephemeral: true });
+            }
         }
     }
 };
-
-// Export the cache so it can be accessed by the interaction handler
-export { mentionCache };

@@ -11,5 +11,18 @@
     "id": "1763869250727",
     "status": "DRAFT",
     "createdAt": 1763869250727
+  },
+  {
+    "guildId": "1421553423886581936",
+    "creatorId": "212629796323065856",
+    "content": "ggg",
+    "channelId": "1441951328682246275",
+    "stats": {
+      "sent": 0,
+      "failed": 0
+    },
+    "id": "1763873372208",
+    "status": "DRAFT",
+    "createdAt": 1763873372208
   }
 ]
