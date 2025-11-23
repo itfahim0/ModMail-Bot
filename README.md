@@ -184,7 +184,7 @@ All messages get forwarded to the staff ticket channel.
 - `/case [id]` - View a specific case
 
 ### 👑 Admin Commands
-- `/announce` - Make an announcement
+- `/announce` - Open the interactive announcement manager (Menu System)
 - `/giveaway` - Start a giveaway
 - `/autorole` - Set auto-role for new members
 - `/config` - Bot configuration
@@ -200,6 +200,25 @@ All messages get forwarded to the staff ticket channel.
 - `/stats` - Show bot statistics
 
 **Total: 23 slash commands**
+
+## 📢 Announcement System
+
+The bot features a powerful interactive announcement system accessible via `/announce`.
+
+### How to use:
+1. Run **/announce** (no arguments needed).
+2. A menu will appear with the following options:
+   - **📢 Channel Announcement**: Send a formatted embed message to a specific channel.
+   - **📝 Create DM Announcement**: Draft a mass DM to send to all subscribed users.
+   - **👀 Preview DM Announcement**: Send a test copy of a draft to yourself.
+   - **✅ Approve DM Announcement**: Approve a draft to start sending it to users.
+   - **📊 View DM Stats**: Check how many DMs were sent/failed.
+
+### DM Subscription
+Users can manage their DM subscription using:
+- `/subscribe opt-in` - Receive announcements via DM.
+- `/subscribe opt-out` - Stop receiving announcements.
+
 
 > **Note:** Most commands are currently stubs and require implementation. The core structure is in place in `src/commands/`.
 
