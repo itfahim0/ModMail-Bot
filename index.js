@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits, Collection, Partials } from 'discord.js';
+import { Client, GatewayIntentBits, Collection, Partials, Events } from 'discord.js';
 import dotenv from 'dotenv';
 import { connectDB } from './src/database/index.js';
 import { loadCommands } from './src/commands/index.js';
@@ -51,7 +51,7 @@ const loadEvents = async () => {
     const { DmWorker } = await import('./src/workers/dmSender.js');
     const worker = new DmWorker(client);
 
-    client.once('ready', () => {
+    client.once(Events.ClientReady, () => {
         worker.start();
     });
 

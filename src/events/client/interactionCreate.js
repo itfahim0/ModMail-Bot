@@ -1,4 +1,4 @@
-import { Events, EmbedBuilder } from 'discord.js';
+import { Events, EmbedBuilder, MessageFlags } from 'discord.js';
 
 export default {
     name: Events.InteractionCreate,
@@ -12,7 +12,7 @@ export default {
             }
             catch (error) {
                 console.error(error);
-                const errorMsg = { content: 'Error executing command', ephemeral: true };
+                const errorMsg = { content: 'Error executing command', flags: MessageFlags.Ephemeral };
                 if (interaction.replied || interaction.deferred) {
                     await interaction.followUp(errorMsg).catch(() => { });
                 } else {
