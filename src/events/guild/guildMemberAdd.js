@@ -54,41 +54,24 @@ Work Hard. Play Hard. Purr Loudest.`;
 
                     await channel.send(messageToSend);
                     console.log(`✅ Sent welcome message to ${member.user.tag} in #${channel.name}`);
+                    const logChannel = await member.guild.channels.fetch(logChannelId);
+                    if (logChannel) {
+                        const { EmbedBuilder } = await import('discord.js');
+                        const embed = new EmbedBuilder()
+                            .setColor('#57F287')
+                            .setAuthor({
+                                name: `${member.user.tag} joined the server`,
+                                iconURL: member.user.displayAvatarURL()
+                            })
+                            .setDescription(`Account created: <t:${Math.floor(member.user.createdTimestamp / 1000)}:R>`)
+                            .setFooter({ text: `User ID: ${member.id}` })
+                            .setTimestamp();
+
+                        await logChannel.send({ embeds: [embed] });
+                    }
+                } catch (error) {
+                    console.error('Error logging member join:', error);
                 }
-            } catch (error) {
-                console.error(`❌ Error sending welcome message:`, error);
             }
-        }
-
-        // --- STEP 3: Send DM to User ---
-        try {
-            await member.send(`Welcome to **${member.guild.name}**! 🎉\n\nWe are thrilled to have you here. Please make sure to check out ${RULES_CHANNEL_ID ? `<#${RULES_CHANNEL_ID}>` : 'our rules'} and say hello in ${GENERAL_CHANNEL_ID ? `<#${GENERAL_CHANNEL_ID}>` : 'general chat'}!\n\nEnjoy your stay!`);
-        } catch (err) {
-            console.log(`❌ Could not DM ${member.user.tag} (DMs likely closed).`);
-        }
-
-        // --- STEP 4: Log to Log Channel ---
-        const logChannelId = process.env.LOG_CHANNEL_ID;
-        if (logChannelId) {
-            try {
-                const logChannel = await member.guild.channels.fetch(logChannelId);
-                if (logChannel) {
-                    const { EmbedBuilder } = await import('discord.js');
-                    const embed = new EmbedBuilder()
-                        .setColor('#57F287')
-                        .setAuthor({
-                            name: `${member.user.tag} joined the server`,
-                            iconURL: member.user.displayAvatarURL()
-                        })
-                        .setDescription(`Account created: <t:${Math.floor(member.user.createdTimestamp / 1000)}:R>`)
-                        .setFooter({ text: `User ID: ${member.id}` })
-                        .setTimestamp();
-
-                    await logChannel.send({ embeds: [embed] });
-                }
-            } catch (error) {
-                console.error('Error logging member join:', error);
-            }
-        }
     }
-};
+    };
