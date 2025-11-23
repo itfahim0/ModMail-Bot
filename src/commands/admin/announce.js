@@ -123,6 +123,10 @@ export default {
         else if (interaction.isChannelSelectMenu() && interaction.customId === 'announce_channel_select') {
             const channelId = interaction.values[0];
 
+            // Pre-fetch members to ensure User Select Menu works
+            // This helps populate the cache so the select menu isn't empty
+            await interaction.guild.members.fetch().catch(() => { });
+
             // Initialize cache
             interactionCache.set(userId, {
                 channelId,
