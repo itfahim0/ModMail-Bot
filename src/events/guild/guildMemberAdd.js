@@ -30,48 +30,76 @@ export default {
             try {
                 const channel = await member.guild.channels.fetch(WELCOME_CHANNEL_ID);
                 if (channel && channel.isTextBased()) {
-                    const messageToSend = `Hello ${member.user}
+                    const serverName = member.guild.name;
 
-                         🎉 WELCOME TO 🎉
-                         Purrfect Universe              
+                    const messageToSend = `Hello ${member.user} 👋
 
+                         **🎉 WELCOME TO 🎉**
 
-We're thrilled to have you join our UNIVERSE! You've been granted the ${AUTO_ROLE_ID ? `<@&${AUTO_ROLE_ID}>` : 'Member'} role.
+ \`\`\`
+                             ${serverName}
+\`\`\`
+
+We're thrilled to have you join our UNIVERSE !${AUTO_ROLE_ID ? ` You've been granted the <@&${AUTO_ROLE_ID}> role.` : ''}
 
 To get started, please check out these channels:
 
-| **${RULES_CHANNEL_ID ? `<#${RULES_CHANNEL_ID}>` : '#rules'}** : Read this first! It covers our Universe guidelines.,
+| 🌍 **Purrfect Universe** - ${RULES_CHANNEL_ID ? `<#${RULES_CHANNEL_ID}>` : '#rules'} **📖** | **RULES** : Read this first! It covers our Universe guidelines.,
 
-| **${GENERAL_CHANNEL_ID ? `<#${GENERAL_CHANNEL_ID}>` : '#general'}** : Say hello to Universe member!
+| 🌍 **Purrfect Universe** - ${GENERAL_CHANNEL_ID ? `<#${GENERAL_CHANNEL_ID}>` : '#general'} **💬** | **GENERAL** : Say hello to Universe member !
 
 Enjoy your stay!
+
 https://discord.gg/xYZHkQYt5H
-      Arafat_Zahan
+
+**Arafat_Zahan**
 Founder & Universe Architect -
-Purrfect Universe 
-📧 arafat@purrfecthq.com  🌐 www.purrfecthq.com
-Work Hard. Play Hard. Purr Loudest.`;
+**Purrfect Universe**
+📧 arafat@purrfecthq.com
+🌐 www.purrfecthq.com
+✨ **Work Hard. Play Hard. Purr Loudest.** ✨`;
 
                     await channel.send(messageToSend);
                     console.log(`✅ Sent welcome message to ${member.user.tag} in #${channel.name}`);
-                    const logChannel = await member.guild.channels.fetch(logChannelId);
-                    if (logChannel) {
-                        const { EmbedBuilder } = await import('discord.js');
-                        const embed = new EmbedBuilder()
-                            .setColor('#57F287')
-                            .setAuthor({
-                                name: `${member.user.tag} joined the server`,
-                                iconURL: member.user.displayAvatarURL()
-                            })
-                            .setDescription(`Account created: <t:${Math.floor(member.user.createdTimestamp / 1000)}:R>`)
-                            .setFooter({ text: `User ID: ${member.id}` })
-                            .setTimestamp();
-
-                        await logChannel.send({ embeds: [embed] });
-                    }
-                } catch (error) {
-                    console.error('Error logging member join:', error);
                 }
+            } catch (error) {
+                console.error(`❌ Error sending welcome message:`, error);
             }
+        }
+
+        // --- STEP 3: Send DM to the new member ---
+        try {
+            const dmMessage = `Hello ${member.user} 👋
+
+                                **🎉 WELCOME TO 🎉**
+
+\`\`\`
+                                 ${member.guild.name}
+\`\`\`
+
+We're thrilled to have you join our UNIVERSE !${AUTO_ROLE_ID ? ` You've been granted the <@&${AUTO_ROLE_ID}> role.` : ''}
+
+To get started, please check out these channels:
+
+| 🌍 **Purrfect Universe** - ${RULES_CHANNEL_ID ? `<#${RULES_CHANNEL_ID}>` : '#rules'} **📖** | **RULES** : Read this first! It covers our Universe guidelines.,
+
+| 🌍 **Purrfect Universe** - ${GENERAL_CHANNEL_ID ? `<#${GENERAL_CHANNEL_ID}>` : '#general'} **💬** | **GENERAL** : Say hello to Universe member !
+
+Enjoy your stay!
+
+https://discord.gg/xYZHkQYt5H
+
+**Arafat_Zahan**
+Founder & Universe Architect -
+**Purrfect Universe**
+📧 arafat@purrfecthq.com
+🌐 www.purrfecthq.com
+✨ **Work Hard. Play Hard. Purr Loudest.** ✨`;
+
+            await member.send(dmMessage);
+            console.log(`✅ Sent welcome DM to ${member.user.tag}`);
+        } catch (error) {
+            console.error(`❌ Could not send DM to ${member.user.tag}:`, error.message);
+        }
     }
-    };
+};
