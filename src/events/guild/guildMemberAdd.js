@@ -37,16 +37,16 @@ export default {
                          **🎉 WELCOME TO 🎉**
 
  \`\`\`
-                             ${serverName}
+     ${serverName}
 \`\`\`
 
 We're thrilled to have you join our UNIVERSE !${AUTO_ROLE_ID ? ` You've been granted the <@&${AUTO_ROLE_ID}> role.` : ''}
 
 To get started, please check out these channels:
 
-| 🌍 **Purrfect Universe** - ${RULES_CHANNEL_ID ? `<#${RULES_CHANNEL_ID}>` : '#rules'} **📖** | **RULES** : Read this first! It covers our Universe guidelines.,
+| 🌍 **Purrfect Universe** - ${RULES_CHANNEL_ID ? `<#${RULES_CHANNEL_ID}>` : '#rules'} : Read this first! It covers our Universe guidelines.,
 
-| 🌍 **Purrfect Universe** - ${GENERAL_CHANNEL_ID ? `<#${GENERAL_CHANNEL_ID}>` : '#general'} **💬** | **GENERAL** : Say hello to Universe member !
+| 🌍 **Purrfect Universe** - ${GENERAL_CHANNEL_ID ? `<#${GENERAL_CHANNEL_ID}>` : '#general'} : Say hello to Universe member !
 
 Enjoy your stay!
 
@@ -74,16 +74,16 @@ Founder & Universe Architect -
                                 **🎉 WELCOME TO 🎉**
 
 \`\`\`
-                                 ${member.guild.name}
+     ${member.guild.name}
 \`\`\`
 
 We're thrilled to have you join our UNIVERSE !${AUTO_ROLE_ID ? ` You've been granted the <@&${AUTO_ROLE_ID}> role.` : ''}
 
 To get started, please check out these channels:
 
-| 🌍 **Purrfect Universe** - ${RULES_CHANNEL_ID ? `<#${RULES_CHANNEL_ID}>` : '#rules'} **📖** | **RULES** : Read this first! It covers our Universe guidelines.,
+| 🌍 **Purrfect Universe** - ${RULES_CHANNEL_ID ? `<#${RULES_CHANNEL_ID}>` : '#rules'} : Read this first! It covers our Universe guidelines.,
 
-| 🌍 **Purrfect Universe** - ${GENERAL_CHANNEL_ID ? `<#${GENERAL_CHANNEL_ID}>` : '#general'} **💬** | **GENERAL** : Say hello to Universe member !
+| 🌍 **Purrfect Universe** - ${GENERAL_CHANNEL_ID ? `<#${GENERAL_CHANNEL_ID}>` : '#general'} : Say hello to Universe member !
 
 Enjoy your stay!
 
