@@ -1,7 +1,22 @@
-import { SlashCommandBuilder } from 'discord.js';
+import { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
+
 export default {
-    data: new SlashCommandBuilder().setName('claim').setDescription('Claim a ticket'),
+    data: new SlashCommandBuilder()
+        .setName('claim')
+        .setDescription('Claim a ticket')
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages),
+
     async execute(interaction) {
-        await interaction.reply('Ticket claimed (stub).');
+        if (!interaction.channel.name.startsWith('ticket-')) {
+            return interaction.reply({ content: '❌ This command can only be used in ticket channels.', ephemeral: true });
+        }
+
+        const embed = new EmbedBuilder()
+            .setColor('#FEE75C')
+            .setDescription(`📌 Ticket claimed by ${interaction.user}`)
+            .setTimestamp();
+
+        await interaction.reply({ embeds: [embed] });
+        await interaction.channel.setTopic(`${interaction.channel.topic} | Claimed by ${interaction.user.tag}`);
     }
 };

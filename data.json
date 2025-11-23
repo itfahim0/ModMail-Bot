@@ -1,12 +1,27 @@
 {
-    "users": {},
-    "config": {
-        "welcome": {
-            "channel": null,
-            "message": null
-        },
-        "autorole": null,
-        "reactionRoles": {}
+  "tickets": [],
+  "cases": [],
+  "warnings": [],
+  "users": {
+    "342649576785838080": {
+      "warnings": [],
+      "history": [],
+      "notes": []
     },
-    "schedules": []
+    "870713382163079249": {
+      "warnings": [],
+      "history": [],
+      "notes": []
+    }
+  },
+  "config": {
+    "welcome": {
+      "channel": null,
+      "message": null
+    },
+    "autorole": null,
+    "reactionRoles": {},
+    "null": null
+  },
+  "schedules": []
 }

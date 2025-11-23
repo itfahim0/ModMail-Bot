@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits, Collection } from 'discord.js';
+import { Client, GatewayIntentBits, Collection, Partials } from 'discord.js';
 import dotenv from 'dotenv';
 import { connectDB } from './src/database/index.js';
 import { loadCommands } from './src/commands/index.js';
@@ -16,8 +16,10 @@ const client = new Client({
         GatewayIntentBits.GuildMembers,
         GatewayIntentBits.DirectMessages,
         GatewayIntentBits.GuildVoiceStates,
-        GatewayIntentBits.GuildMessageReactions
-    ]
+        GatewayIntentBits.GuildMessageReactions,
+        GatewayIntentBits.GuildBans
+    ],
+    partials: [Partials.Channel, Partials.Message]
 });
 
 client.commands = new Collection();
@@ -40,6 +42,17 @@ const loadEvents = async () => {
     await connectDB(); // Loads data.json
     await loadCommands(client);
     await loadEvents();
+
+    // Initialize Storage & Worker
+    const { storage } = await import('./src/storage/jsonAdapter.js');
+    await storage.init();
+
+    const { DmWorker } = await import('./src/workers/dmSender.js');
+    const worker = new DmWorker(client);
+
+    client.once('ready', () => {
+        worker.start();
+    });
 
     if (process.env.DISCORD_TOKEN) {
         client.login(process.env.DISCORD_TOKEN);

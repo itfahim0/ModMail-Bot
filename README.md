@@ -164,7 +164,46 @@ Bot will automatically create a ticket.
 
 All messages get forwarded to the staff ticket channel.
 
-## 🛠️ Staff Commands
+## � Complete Command List
+
+### 📨 ModMail Commands
+- `/reply [message]` - Reply to a ticket
+- `/close` - Close a ticket
+- `/claim` - Claim a ticket
+- `/transcript` - Generate a transcript
+- `/modmail-setup` - Setup ModMail category
+
+### 🛡️ Moderation Commands
+- `/warn [user] [reason]` - Warn a user
+- `/mute [user]` - Mute/timeout a user
+- `/unmute [user]` - Unmute a user
+- `/kick [user]` - Kick a user
+- `/ban [user]` - Ban a user
+- `/unban [userid]` - Unban a user by ID
+- `/history [user]` - View user moderation history
+- `/case [id]` - View a specific case
+
+### 👑 Admin Commands
+- `/announce` - Make an announcement
+- `/giveaway` - Start a giveaway
+- `/autorole` - Set auto-role for new members
+- `/config` - Bot configuration
+- `/panel` - Admin panel
+
+### 🎉 Fun Commands
+- `/ping` - Check bot latency
+- `/meme` - Get a random meme
+- `/avatar [user]` - Get user's avatar
+
+### 🔧 Utility Commands
+- `/help` - Display help menu
+- `/stats` - Show bot statistics
+
+**Total: 23 slash commands**
+
+> **Note:** Most commands are currently stubs and require implementation. The core structure is in place in `src/commands/`.
+
+## �🛠️ Staff Commands (Legacy)
 
 ### 📨 Reply to User
 ```

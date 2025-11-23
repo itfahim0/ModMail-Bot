@@ -9,6 +9,7 @@
     "deploy": "node deploy.js"
   },
   "dependencies": {
+    "canvacord": "^6.0.4",
     "chalk": "^5.3.0",
     "discord.js": "^14.14.0",
     "dotenv": "^16.3.1"
