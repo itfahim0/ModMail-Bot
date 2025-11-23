@@ -1,6 +1,9 @@
 import { SlashCommandBuilder, EmbedBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, PermissionFlagsBits } from 'discord.js';
 import { storage } from '../../storage/jsonAdapter.js';
 
+// Cache to store mention data temporarily (key: userId, value: { channelId, mentions })
+const mentionCache = new Map();
+
 export default {
     data: new SlashCommandBuilder()
         .setName('announce')
@@ -21,11 +24,27 @@ export default {
                             { name: 'None', value: 'none' },
                             { name: '@everyone', value: 'everyone' },
                             { name: '@here', value: 'here' },
-                            { name: 'Custom Role ID', value: 'role' }
+                            { name: 'Custom Mentions', value: 'custom' }
                         ))
-                .addStringOption(option =>
-                    option.setName('role_id')
-                        .setDescription('Role ID (if Custom Role ID selected)')
+                .addMentionableOption(option =>
+                    option.setName('mention1')
+                        .setDescription('First role/user to mention (if Custom Mentions selected)')
+                        .setRequired(false))
+                .addMentionableOption(option =>
+                    option.setName('mention2')
+                        .setDescription('Second role/user to mention (optional)')
+                        .setRequired(false))
+                .addMentionableOption(option =>
+                    option.setName('mention3')
+                        .setDescription('Third role/user to mention (optional)')
+                        .setRequired(false))
+                .addMentionableOption(option =>
+                    option.setName('mention4')
+                        .setDescription('Fourth role/user to mention (optional)')
+                        .setRequired(false))
+                .addMentionableOption(option =>
+                    option.setName('mention5')
+                        .setDescription('Fifth role/user to mention (optional)')
                         .setRequired(false)))
         .addSubcommand(sub =>
             sub.setName('dm-create')
@@ -52,16 +71,34 @@ export default {
         if (subcommand === 'channel') {
             const channel = interaction.options.getChannel('channel');
             const mentionType = interaction.options.getString('mention') || 'none';
-            const roleId = interaction.options.getString('role_id') || '';
 
-            let mentionString = '';
-            if (mentionType === 'everyone') mentionString = '@everyone';
-            else if (mentionType === 'here') mentionString = '@here';
-            else if (mentionType === 'role' && roleId) mentionString = `<@&${roleId}>`;
+            // Collect all custom mentions
+            const mentions = [];
+            if (mentionType === 'custom') {
+                for (let i = 1; i <= 5; i++) {
+                    const mentionable = interaction.options.getMentionable(`mention${i}`);
+                    if (mentionable) {
+                        mentions.push(mentionable);
+                    }
+                }
+            }
+
+            // Store mention data in cache
+            const cacheKey = `${interaction.user.id}_${channel.id}`;
+            mentionCache.set(cacheKey, {
+                channelId: channel.id,
+                mentionType,
+                mentions: mentions.map(m => m.id)
+            });
+
+            // Clean up old cache entries after 10 minutes
+            setTimeout(() => {
+                mentionCache.delete(cacheKey);
+            }, 10 * 60 * 1000);
 
             // Show modal for announcement content
             const modal = new ModalBuilder()
-                .setCustomId(`announce_modal_${channel.id}_${mentionString}`)
+                .setCustomId(`announce_modal_${cacheKey}`)
                 .setTitle('Create Channel Announcement');
 
             const titleInput = new TextInputBuilder()
@@ -178,3 +215,6 @@ export default {
         }
     }
 };
+
+// Export the cache so it can be accessed by the interaction handler
+export { mentionCache };
