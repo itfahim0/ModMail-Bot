@@ -9,6 +9,10 @@ import {
     StringSelectMenuBuilder,
     StringSelectMenuOptionBuilder,
     ChannelSelectMenuBuilder,
+    RoleSelectMenuBuilder,
+    UserSelectMenuBuilder,
+    ButtonBuilder,
+    ButtonStyle,
     ChannelType,
     ComponentType
 } from 'discord.js';
@@ -65,6 +69,8 @@ export default {
     },
 
     async handleInteraction(interaction) {
+        const userId = interaction.user.id;
+
         // Handle Action Selection
         if (interaction.isStringSelectMenu() && interaction.customId === 'announce_action') {
             const action = interaction.values[0];
@@ -113,14 +119,78 @@ export default {
             }
         }
 
-        // Handle Channel Selection -> Show Modal
+        // Handle Channel Selection -> Show Mention Config
         else if (interaction.isChannelSelectMenu() && interaction.customId === 'announce_channel_select') {
             const channelId = interaction.values[0];
 
-            // Store channel ID in cache linked to user ID (since Modals don't pass state)
-            // We use user ID because the modal submission comes from the same user
-            interactionCache.set(`channel_${interaction.user.id}`, channelId);
+            // Initialize cache
+            interactionCache.set(userId, {
+                channelId,
+                mentionType: 'none',
+                mentionRoles: [],
+                mentionUsers: []
+            });
 
+            // Components for Mention Config
+            const typeSelect = new StringSelectMenuBuilder()
+                .setCustomId('announce_mention_type')
+                .setPlaceholder('Select Mention Type (Optional)')
+                .addOptions(
+                    { label: 'None', value: 'none' },
+                    { label: '@everyone', value: 'everyone' },
+                    { label: '@here', value: 'here' }
+                );
+
+            const roleSelect = new RoleSelectMenuBuilder()
+                .setCustomId('announce_mention_roles')
+                .setPlaceholder('Select Roles to Mention (Optional)')
+                .setMinValues(0)
+                .setMaxValues(5);
+
+            const userSelect = new UserSelectMenuBuilder()
+                .setCustomId('announce_mention_users')
+                .setPlaceholder('Select Users to Mention (Optional)')
+                .setMinValues(0)
+                .setMaxValues(5);
+
+            const confirmBtn = new ButtonBuilder()
+                .setCustomId('announce_mention_confirm')
+                .setLabel('Continue to Message')
+                .setStyle(ButtonStyle.Primary);
+
+            await interaction.update({
+                content: `📢 **Configure Mentions**\nSelected Channel: <#${channelId}>\n\nChoose who to mention (optional), then click **Continue**.`,
+                components: [
+                    new ActionRowBuilder().addComponents(typeSelect),
+                    new ActionRowBuilder().addComponents(roleSelect),
+                    new ActionRowBuilder().addComponents(userSelect),
+                    new ActionRowBuilder().addComponents(confirmBtn)
+                ]
+            });
+        }
+
+        // Handle Mention Updates (Update Cache)
+        else if (interaction.customId === 'announce_mention_type') {
+            const data = interactionCache.get(userId) || {};
+            data.mentionType = interaction.values[0];
+            interactionCache.set(userId, data);
+            await interaction.deferUpdate();
+        }
+        else if (interaction.customId === 'announce_mention_roles') {
+            const data = interactionCache.get(userId) || {};
+            data.mentionRoles = interaction.values;
+            interactionCache.set(userId, data);
+            await interaction.deferUpdate();
+        }
+        else if (interaction.customId === 'announce_mention_users') {
+            const data = interactionCache.get(userId) || {};
+            data.mentionUsers = interaction.values;
+            interactionCache.set(userId, data);
+            await interaction.deferUpdate();
+        }
+
+        // Handle Confirm -> Show Modal
+        else if (interaction.isButton() && interaction.customId === 'announce_mention_confirm') {
             const modal = new ModalBuilder()
                 .setCustomId('announce_channel_modal')
                 .setTitle('Channel Announcement Details');
@@ -159,8 +229,8 @@ export default {
 
             // Channel Announcement
             if (interaction.customId === 'announce_channel_modal') {
-                const channelId = interactionCache.get(`channel_${interaction.user.id}`);
-                if (!channelId) {
+                const data = interactionCache.get(userId);
+                if (!data || !data.channelId) {
                     return interaction.reply({ content: '❌ Session expired. Please try again.', ephemeral: true });
                 }
 
@@ -169,16 +239,30 @@ export default {
                 const color = interaction.fields.getTextInputValue('color') || '#FF0000';
 
                 try {
-                    const channel = await interaction.guild.channels.fetch(channelId);
+                    const channel = await interaction.guild.channels.fetch(data.channelId);
+
+                    // Construct Mention String
+                    let mentions = [];
+                    if (data.mentionType === 'everyone') mentions.push('@everyone');
+                    if (data.mentionType === 'here') mentions.push('@here');
+                    if (data.mentionRoles) mentions.push(...data.mentionRoles.map(id => `<@&${id}>`));
+                    if (data.mentionUsers) mentions.push(...data.mentionUsers.map(id => `<@${id}>`));
+
+                    const mentionString = mentions.join(' ');
+
                     const embed = new EmbedBuilder()
                         .setTitle(title)
                         .setDescription(message)
                         .setColor(color)
                         .setTimestamp();
 
-                    await channel.send({ embeds: [embed] });
+                    await channel.send({
+                        content: mentionString.length > 0 ? mentionString : null,
+                        embeds: [embed]
+                    });
+
                     await interaction.reply({ content: `✅ Announcement sent to ${channel}!`, ephemeral: true });
-                    interactionCache.delete(`channel_${interaction.user.id}`);
+                    interactionCache.delete(userId);
                 } catch (error) {
                     await interaction.reply({ content: `❌ Failed: ${error.message}`, ephemeral: true });
                 }

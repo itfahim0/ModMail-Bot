@@ -32,8 +32,8 @@ export default {
             }
         }
 
-        // Handle Select Menus (String & Channel)
-        if (interaction.isStringSelectMenu() || interaction.isChannelSelectMenu()) {
+        // Handle All Components (Select Menus & Buttons)
+        if (interaction.isMessageComponent()) {
             if (interaction.customId.startsWith('announce_')) {
                 const command = interaction.client.commands.get('announce');
                 if (command && command.handleInteraction) {
