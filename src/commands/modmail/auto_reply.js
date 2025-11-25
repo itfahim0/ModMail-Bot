@@ -1,6 +1,6 @@
+```javascript
 // src/commands/modmail/auto_reply.js
 import { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
-import { t } from '../../utils/i18n.js';
 
 export default {
     data: new SlashCommandBuilder()
@@ -19,13 +19,14 @@ export default {
     async execute(interaction) {
         const key = interaction.options.getString('key');
         const responses = {
-            help: t('auto_reply_help'),
-            info: t('auto_reply_info'),
+            help: "Here is how you can use the bot...",
+            info: "This bot is designed to help you with...",
         };
-        const reply = responses[key] || t('auto_reply_default');
+        const reply = responses[key] || "I'm not sure what you mean.";
         const embed = new EmbedBuilder()
             .setColor('#00AAFF')
             .setDescription(reply);
         await interaction.reply({ embeds: [embed] });
     },
 };
+```
