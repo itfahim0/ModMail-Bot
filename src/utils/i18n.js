@@ -1,9 +1,8 @@
-// Simple i18n helper
-// Loads locale files from ./locales/<lang>.json (defaults to en)
-// Usage: const t = require('../utils/i18n').t; t('welcome', {user: 'John'});
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-const fs = require('fs');
-const path = require('path');
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 let cache = {};
 
@@ -20,7 +19,7 @@ function loadLocale(lang = 'en') {
     }
 }
 
-function t(key, vars = {}, lang = 'en') {
+export function t(key, vars = {}, lang = 'en') {
     const locale = loadLocale(lang);
     let str = locale[key] || key;
     // simple variable interpolation: {var}
@@ -29,5 +28,3 @@ function t(key, vars = {}, lang = 'en') {
     });
     return str;
 }
-
-module.exports = { t };
