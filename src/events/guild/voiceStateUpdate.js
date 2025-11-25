@@ -38,19 +38,25 @@ export default {
 
             // Attempt to find who moved them via Audit Logs
             try {
-                // Wait a moment for audit log to populate
-                await new Promise(r => setTimeout(r, 1000));
+                // Wait a moment for audit log to populate (Discord can be slow to update logs)
+                await new Promise(r => setTimeout(r, 2000));
+
                 const auditLogs = await guild.fetchAuditLogs({
                     type: AuditLogEvent.MemberMove,
-                    limit: 1,
+                    limit: 5, // Check last 5 entries in case of spam
                 });
 
-                const logEntry = auditLogs.entries.first();
-                if (logEntry && logEntry.target.id === member.id && logEntry.createdTimestamp > (Date.now() - 5000)) {
-                    movedBy = `${logEntry.executor.tag} (<@${logEntry.executor.id}>)`;
+                // Find the log entry for this specific user created in the last 10 seconds
+                const logEntry = auditLogs.entries.find(entry =>
+                    entry.target.id === member.id &&
+                    entry.createdTimestamp > (Date.now() - 10000)
+                );
+
+                if (logEntry) {
+                    movedBy = `${logEntry.executor} (<@${logEntry.executor.id}>)`;
                     color = '#FFA500'; // Orange if moved by someone else
                 } else {
-                    movedBy = "Self";
+                    movedBy = "Self"; // If no audit log exists, it was likely a self-move
                 }
             } catch (e) {
                 console.error("Audit log fetch failed", e);
