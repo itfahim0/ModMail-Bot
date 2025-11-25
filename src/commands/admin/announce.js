@@ -38,20 +38,10 @@ export default {
                     .setValue('channel')
                     .setEmoji('📢'),
                 new StringSelectMenuOptionBuilder()
-                    .setLabel('Create DM Announcement')
-                    .setDescription('Draft a new mass DM announcement')
-                    .setValue('dm-create')
-                    .setEmoji('📝'),
-                new StringSelectMenuOptionBuilder()
-                    .setLabel('Preview DM Announcement')
-                    .setDescription('Preview a draft before sending')
-                    .setValue('dm-preview')
-                    .setEmoji('👀'),
-                new StringSelectMenuOptionBuilder()
-                    .setLabel('Approve DM Announcement')
-                    .setDescription('Approve and queue a draft for sending')
-                    .setValue('dm-approve')
-                    .setEmoji('✅'),
+                    .setLabel('Mass DM Announcement')
+                    .setDescription('Send a DM to all subscribed members immediately')
+                    .setValue('dm-mass')
+                    .setEmoji('📨'),
                 new StringSelectMenuOptionBuilder()
                     .setLabel('View DM Stats')
                     .setDescription('Check status of sent announcements')
@@ -88,10 +78,10 @@ export default {
                     components: [row]
                 });
             }
-            else if (action === 'dm-create') {
+            else if (action === 'dm-mass') {
                 const modal = new ModalBuilder()
-                    .setCustomId('announce_dm_create_modal')
-                    .setTitle('Create DM Announcement');
+                    .setCustomId('announce_dm_mass_modal')
+                    .setTitle('Send Mass DM');
 
                 const contentInput = new TextInputBuilder()
                     .setCustomId('content')
@@ -103,10 +93,10 @@ export default {
                 modal.addComponents(new ActionRowBuilder().addComponents(contentInput));
                 await interaction.showModal(modal);
             }
-            else if (['dm-preview', 'dm-approve', 'dm-stats'].includes(action)) {
+            else if (action === 'dm-stats') {
                 const modal = new ModalBuilder()
-                    .setCustomId(`announce_${action.replace('-', '_')}_modal`)
-                    .setTitle(action.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '));
+                    .setCustomId('announce_dm_stats_modal')
+                    .setTitle('View DM Stats');
 
                 const idInput = new TextInputBuilder()
                     .setCustomId('id')
@@ -124,7 +114,6 @@ export default {
             const channelId = interaction.values[0];
 
             // Pre-fetch members to ensure User Select Menu works
-            // This helps populate the cache so the select menu isn't empty
             await interaction.guild.members.fetch().catch(() => { });
 
             // Initialize cache
@@ -149,13 +138,13 @@ export default {
                 .setCustomId('announce_mention_roles')
                 .setPlaceholder('Select Roles to Mention (Optional)')
                 .setMinValues(0)
-                .setMaxValues(5);
+                .setMaxValues(25);
 
             const userSelect = new UserSelectMenuBuilder()
                 .setCustomId('announce_mention_users')
                 .setPlaceholder('Select Users to Mention (Optional)')
                 .setMinValues(0)
-                .setMaxValues(5);
+                .setMaxValues(25); // Increased to 25
 
             const confirmBtn = new ButtonBuilder()
                 .setCustomId('announce_mention_confirm')
@@ -211,17 +200,16 @@ export default {
                 .setStyle(TextInputStyle.Paragraph)
                 .setRequired(true);
 
-            const colorInput = new TextInputBuilder()
-                .setCustomId('color')
-                .setLabel('Color (Hex)')
+            const footerInput = new TextInputBuilder()
+                .setCustomId('footer')
+                .setLabel('Footer Text (Optional)')
                 .setStyle(TextInputStyle.Short)
-                .setValue('#FF0000')
                 .setRequired(false);
 
             modal.addComponents(
                 new ActionRowBuilder().addComponents(titleInput),
                 new ActionRowBuilder().addComponents(messageInput),
-                new ActionRowBuilder().addComponents(colorInput)
+                new ActionRowBuilder().addComponents(footerInput)
             );
 
             await interaction.showModal(modal);
@@ -240,7 +228,7 @@ export default {
 
                 const title = interaction.fields.getTextInputValue('title');
                 const message = interaction.fields.getTextInputValue('message');
-                const color = interaction.fields.getTextInputValue('color') || '#FF0000';
+                const footer = interaction.fields.getTextInputValue('footer');
 
                 try {
                     const channel = await interaction.guild.channels.fetch(data.channelId);
@@ -257,8 +245,12 @@ export default {
                     const embed = new EmbedBuilder()
                         .setTitle(title)
                         .setDescription(message)
-                        .setColor(color)
+                        .setColor('#FF0000') // Default color since input was removed
                         .setTimestamp();
+
+                    if (footer) {
+                        embed.setFooter({ text: footer });
+                    }
 
                     await channel.send({
                         content: mentionString.length > 0 ? mentionString : null,
@@ -272,8 +264,8 @@ export default {
                 }
             }
 
-            // DM Create
-            else if (interaction.customId === 'announce_dm_create_modal') {
+            // DM Mass Send (Immediate)
+            else if (interaction.customId === 'announce_dm_mass_modal') {
                 const content = interaction.fields.getTextInputValue('content');
                 const announcement = await storage.createAnnouncement({
                     guildId: interaction.guildId,
@@ -282,40 +274,11 @@ export default {
                     stats: { sent: 0, failed: 0 }
                 });
 
-                await interaction.reply({
-                    content: `📝 **Draft Created!**\nID: \`${announcement.id}\`\nUse **Preview** or **Approve** action with this ID.`,
-                    ephemeral: true
-                });
-            }
-
-            // DM Preview
-            else if (interaction.customId === 'announce_dm_preview_modal') {
-                const id = interaction.fields.getTextInputValue('id');
-                const ann = await storage.getAnnouncement(id);
-                if (!ann) return interaction.reply({ content: '❌ Not found.', ephemeral: true });
-
-                try {
-                    await interaction.user.send({
-                        content: `**[PREVIEW]**\n${ann.content}\n\n*To unsubscribe, use /subscribe opt-out*`
-                    });
-                    await interaction.reply({ content: '✅ Preview sent to your DMs.', ephemeral: true });
-                } catch (e) {
-                    await interaction.reply({ content: '❌ Could not send DM. Check your privacy settings.', ephemeral: true });
-                }
-            }
-
-            // DM Approve
-            else if (interaction.customId === 'announce_dm_approve_modal') {
-                const id = interaction.fields.getTextInputValue('id');
-                const ann = await storage.getAnnouncement(id);
-                if (!ann) return interaction.reply({ content: '❌ Not found.', ephemeral: true });
-                if (ann.status !== 'DRAFT') return interaction.reply({ content: `❌ Status is ${ann.status}`, ephemeral: true });
-
-                const recipients = await storage.listOptIns(interaction.guildId);
-                await storage.updateAnnouncement(id, { status: 'APPROVED' });
+                // Immediately approve to trigger worker
+                await storage.updateAnnouncement(announcement.id, { status: 'APPROVED' });
 
                 await interaction.reply({
-                    content: `✅ **Approved!**\nQueued for **${recipients.length}** subscribers.`,
+                    content: `✅ **Mass DM Started!**\nID: \`${announcement.id}\`\nThe bot is now sending DMs to all subscribed members in the background.\nYou can check progress with **View DM Stats**.`,
                     ephemeral: true
                 });
             }

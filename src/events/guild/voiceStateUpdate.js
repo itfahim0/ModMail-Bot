@@ -1,34 +1,46 @@
-import { Events, EmbedBuilder } from 'discord.js';
+import { AuditLogEvent, Events } from 'discord.js';
+import { logAction } from '../../services/logService.js';
 
 export default {
     name: Events.VoiceStateUpdate,
     async execute(oldState, newState) {
-        if (oldState.channelId === newState.channelId) return;
+        // Check if user moved channels (both channels exist and are different)
+        if (oldState.channelId && newState.channelId && oldState.channelId !== newState.channelId) {
+            const member = newState.member;
+            const guild = newState.guild;
 
-        const logChannelId = process.env.LOG_CHANNEL_ID;
-        if (!logChannelId) return;
+            // Fetch Audit Logs to find who moved them
+            // We look for MemberMove event in the last few seconds
+            try {
+                // Wait a short bit to ensure audit log is populated
+                await new Promise(r => setTimeout(r, 1000));
 
-        try {
-            const logChannel = await newState.guild.channels.fetch(logChannelId);
-            if (!logChannel) return;
+                const auditLogs = await guild.fetchAuditLogs({
+                    type: AuditLogEvent.MemberMove,
+                    limit: 1,
+                });
 
-            const user = newState.member.user;
-            const embed = new EmbedBuilder().setTimestamp();
+                const logEntry = auditLogs.entries.first();
+                let executor = null;
 
-            if (!oldState.channelId && newState.channelId) {
-                embed.setColor('#57F287')
-                    .setAuthor({ name: `${user.tag} joined Voice Channel: ${newState.channel.name}`, iconURL: user.displayAvatarURL() });
-            } else if (oldState.channelId && !newState.channelId) {
-                embed.setColor('#ED4245')
-                    .setAuthor({ name: `${user.tag} left Voice Channel: ${oldState.channel.name}`, iconURL: user.displayAvatarURL() });
-            } else if (oldState.channelId && newState.channelId) {
-                embed.setColor('#FEE75C')
-                    .setAuthor({ name: `${user.tag} moved: ${oldState.channel.name} ➡ ${newState.channel.name}`, iconURL: user.displayAvatarURL() });
+                // Check if the log entry is recent (within 5 seconds) and targets the moved user
+                if (logEntry && logEntry.target.id === member.id && logEntry.createdTimestamp > (Date.now() - 5000)) {
+                    executor = logEntry.executor;
+                }
+
+                // Only log if moved by someone else
+                if (executor && executor.id !== member.id) {
+                    await logAction(
+                        guild,
+                        '🔊 Voice Member Moved',
+                        `**User:** ${member.user.tag} (<@${member.id}>)\n**From:** <#${oldState.channelId}>\n**To:** <#${newState.channelId}>\n**Moved By:** ${executor.tag} (<@${executor.id}>)`,
+                        '#FFA500'
+                    );
+                }
+
+            } catch (error) {
+                console.error('Error fetching audit logs for voice move:', error);
             }
-
-            await logChannel.send({ embeds: [embed] });
-        } catch (error) {
-            console.error('Error logging voice state:', error);
         }
-    }
+    },
 };
