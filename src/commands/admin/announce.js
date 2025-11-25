@@ -81,7 +81,13 @@ export default {
             else if (action === 'dm-mass') {
                 const modal = new ModalBuilder()
                     .setCustomId('announce_dm_mass_modal')
-                    .setTitle('Send Mass DM');
+                    .setTitle('Mass DM Details');
+
+                const titleInput = new TextInputBuilder()
+                    .setCustomId('title')
+                    .setLabel('Title')
+                    .setStyle(TextInputStyle.Short)
+                    .setRequired(true);
 
                 const contentInput = new TextInputBuilder()
                     .setCustomId('content')
@@ -90,7 +96,17 @@ export default {
                     .setRequired(true)
                     .setMaxLength(2000);
 
-                modal.addComponents(new ActionRowBuilder().addComponents(contentInput));
+                const footerInput = new TextInputBuilder()
+                    .setCustomId('footer')
+                    .setLabel('Footer Text (Optional)')
+                    .setStyle(TextInputStyle.Short)
+                    .setRequired(false);
+
+                modal.addComponents(
+                    new ActionRowBuilder().addComponents(titleInput),
+                    new ActionRowBuilder().addComponents(contentInput),
+                    new ActionRowBuilder().addComponents(footerInput)
+                );
                 await interaction.showModal(modal);
             }
             else if (action === 'dm-stats') {
@@ -267,11 +283,20 @@ export default {
 
             // DM Mass Send (Immediate)
             else if (interaction.customId === 'announce_dm_mass_modal') {
+                const title = interaction.fields.getTextInputValue('title');
                 const content = interaction.fields.getTextInputValue('content');
+                const footer = interaction.fields.getTextInputValue('footer');
+
+                // Format content to include Title and Footer for the DM
+                let finalContent = `**${title}**\n\n${content}`;
+                if (footer) {
+                    finalContent += `\n\n*${footer}*`;
+                }
+
                 const announcement = await storage.createAnnouncement({
                     guildId: interaction.guildId,
                     creatorId: interaction.user.id,
-                    content,
+                    content: finalContent,
                     stats: { sent: 0, failed: 0 }
                 });
 
