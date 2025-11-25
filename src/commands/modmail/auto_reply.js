@@ -1,4 +1,4 @@
-// src/commands/modmail/auto_reply.js
+// src/commands/modmail/auto_reply.js - v1.1 fixed
 import { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 
 export default {
