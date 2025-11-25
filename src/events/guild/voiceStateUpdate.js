@@ -14,8 +14,9 @@ export default {
             await logAction(
                 guild,
                 '🔊 Member Joined Voice',
-                `**User:** ${member.user.tag} (<@${member.id}>)\n**Channel:** <#${newState.channelId}>`,
-                '#00FF00' // Green
+                `**User:** ${member.user} (<@${member.id}>)\n**Channel:** <#${newState.channelId}>`,
+                '#00FF00', // Green
+                member.user
             );
         }
 
@@ -24,8 +25,9 @@ export default {
             await logAction(
                 guild,
                 '🔇 Member Left Voice',
-                `**User:** ${member.user.tag} (<@${member.id}>)\n**Channel:** <#${oldState.channelId}>`,
-                '#FF0000' // Red
+                `**User:** ${member.user} (<@${member.id}>)\n**Channel:** <#${oldState.channelId}>`,
+                '#FF0000', // Red
+                member.user
             );
         }
 
@@ -57,8 +59,9 @@ export default {
             await logAction(
                 guild,
                 '↔️ Member Moved Voice',
-                `**User:** ${member.user.tag} (<@${member.id}>)\n**From:** <#${oldState.channelId}>\n**To:** <#${newState.channelId}>\n**Moved By:** ${movedBy}`,
-                color
+                `**User:** ${member.user} (<@${member.id}>)\n**From:** <#${oldState.channelId}>\n**To:** <#${newState.channelId}>\n**Moved By:** ${movedBy}`,
+                color,
+                member.user
             );
         }
     },
