@@ -1,4 +1,3 @@
-```javascript
 // src/commands/modmail/auto_reply.js
 import { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 
@@ -29,4 +28,3 @@ export default {
         await interaction.reply({ embeds: [embed] });
     },
 };
-```
