@@ -43,6 +43,11 @@ export default {
                     .setValue('dm-mass')
                     .setEmoji('📨'),
                 new StringSelectMenuOptionBuilder()
+                    .setLabel('Channel & Mass DM')
+                    .setDescription('Send to both channel and DMs')
+                    .setValue('both')
+                    .setEmoji('🚀'),
+                new StringSelectMenuOptionBuilder()
                     .setLabel('View DM Stats')
                     .setDescription('Check status of sent announcements')
                     .setValue('dm-stats')
@@ -65,7 +70,7 @@ export default {
         if (interaction.isStringSelectMenu() && interaction.customId === 'announce_action') {
             const action = interaction.values[0];
 
-            if (action === 'channel') {
+            if (action === 'channel' || action === 'both') {
                 const channelSelect = new ChannelSelectMenuBuilder()
                     .setCustomId('announce_channel_select')
                     .setPlaceholder('Select a channel')
@@ -74,9 +79,12 @@ export default {
                 const row = new ActionRowBuilder().addComponents(channelSelect);
 
                 await interaction.update({
-                    content: '📢 **Channel Announcement**\nSelect the channel where you want to post:',
+                    content: `📢 **${action === 'both' ? 'Channel & Mass DM' : 'Channel Announcement'}**\nSelect the channel where you want to post:`,
                     components: [row]
                 });
+
+                // Store the action type so we know if it's 'channel' or 'both' later
+                interactionCache.set(userId, { actionType: action });
             }
             else if (action === 'dm-mass') {
                 const modal = new ModalBuilder()
@@ -133,8 +141,10 @@ export default {
             // Note: This might be slow on very large servers, but is necessary for the select menu to populate correctly if not cached.
             await interaction.guild.members.fetch({ force: true }).catch(err => console.error("Failed to fetch members:", err));
 
-            // Initialize cache
+            // Initialize cache (preserve actionType if set)
+            const existingData = interactionCache.get(userId) || {};
             interactionCache.set(userId, {
+                ...existingData,
                 channelId,
                 mentionType: 'none',
                 mentionRoles: [],
@@ -274,7 +284,28 @@ export default {
                         embeds: [embed]
                     });
 
-                    await interaction.reply({ content: `✅ Announcement sent to ${channel}!`, ephemeral: true });
+                    let replyMessage = `✅ Announcement sent to ${channel}!`;
+
+                    // If action was 'both', also trigger Mass DM
+                    if (data.actionType === 'both') {
+                        // Format content for DM
+                        let finalContent = `**${title}**\n\n${message}`;
+                        if (footer) {
+                            finalContent += `\n\n*${footer}*`;
+                        }
+
+                        const announcement = await storage.createAnnouncement({
+                            guildId: interaction.guildId,
+                            creatorId: interaction.user.id,
+                            content: finalContent,
+                            stats: { sent: 0, failed: 0 }
+                        });
+
+                        await storage.updateAnnouncement(announcement.id, { status: 'APPROVED' });
+                        replyMessage += `\n✅ **Mass DM Started!** (ID: \`${announcement.id}\`)`;
+                    }
+
+                    await interaction.reply({ content: replyMessage, ephemeral: true });
                     interactionCache.delete(userId);
                 } catch (error) {
                     await interaction.reply({ content: `❌ Failed: ${error.message}`, ephemeral: true });
