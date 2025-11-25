@@ -35,7 +35,32 @@ export default {
                     const embed = new EmbedBuilder()
                         .setColor('#0099ff')
                         .setTitle(`🎉 WELCOME TO ${serverName} 🎉`)
-                        .setDescription(`Hello ${member.user} 👋\n\nWe're thrilled to have you join our UNIVERSE!${AUTO_ROLE_ID ? ` You've been granted the <@&${AUTO_ROLE_ID}> role.` : ''}\n\n**To get started, please check out these channels:**\n\n🌍 **Purrfect Universe** - ${RULES_CHANNEL_ID ? `<#${RULES_CHANNEL_ID}>` : '#rules'} : Read this first! It covers our Universe guidelines.\n\n🌍 **Purrfect Universe** - ${GENERAL_CHANNEL_ID ? `<#${GENERAL_CHANNEL_ID}>` : '#general'} : Say hello to Universe member!\n\nEnjoy your stay!\n\nhttps://discord.gg/xYZHkQYt5H\n\n**Arafat_Zahan**\nFounder & Universe Architect -\n**Purrfect Universe**\n📧 arafat@purrfecthq.com\n� www.purrfecthq.com\n✨ **Work Hard. Play Hard. Purr Loudest.** ✨`)
+                        .setDescription(`Hello ${member.user} 👋
+
+                         **🎉 WELCOME TO 🎉**
+
+ \`\`\`
+     ${serverName}
+\`\`\`
+
+We're thrilled to have you join our UNIVERSE !${AUTO_ROLE_ID ? ` You've been granted the <@&${AUTO_ROLE_ID}> role.` : ''}
+
+To get started, please check out these channels:
+
+| 🌍 **Purrfect Universe** - ${RULES_CHANNEL_ID ? `<#${RULES_CHANNEL_ID}>` : '#rules'} : Read this first! It covers our Universe guidelines.,
+
+| 🌍 **Purrfect Universe** - ${GENERAL_CHANNEL_ID ? `<#${GENERAL_CHANNEL_ID}>` : '#general'} : Say hello to Universe member !
+
+Enjoy your stay!
+
+https://discord.gg/xYZHkQYt5H
+
+**Arafat_Zahan**
+Founder & Universe Architect -
+**Purrfect Universe**
+📧 arafat@purrfecthq.com
+🌐 www.purrfecthq.com
+✨ **Work Hard. Play Hard. Purr Loudest.** ✨`)
                         .setImage(member.user.displayAvatarURL({ dynamic: true, size: 512 }));
 
                     await channel.send({ content: `Welcome ${member.user}!`, embeds: [embed] });
@@ -52,7 +77,32 @@ export default {
             const embed = new EmbedBuilder()
                 .setColor('#0099ff')
                 .setTitle(`🎉 WELCOME TO ${serverName} 🎉`)
-                .setDescription(`Hello ${member.user} 👋\n\nWe're thrilled to have you join our UNIVERSE!${AUTO_ROLE_ID ? ` You've been granted the <@&${AUTO_ROLE_ID}> role.` : ''}\n\n**To get started, please check out these channels:**\n\n🌍 **Purrfect Universe** - ${RULES_CHANNEL_ID ? `<#${RULES_CHANNEL_ID}>` : '#rules'} : Read this first! It covers our Universe guidelines.\n\n🌍 **Purrfect Universe** - ${GENERAL_CHANNEL_ID ? `<#${GENERAL_CHANNEL_ID}>` : '#general'} : Say hello to Universe member!\n\nEnjoy your stay!\n\nhttps://discord.gg/xYZHkQYt5H\n\n**Arafat_Zahan**\nFounder & Universe Architect -\n**Purrfect Universe**\n📧 arafat@purrfecthq.com\n🌐 www.purrfecthq.com\n✨ **Work Hard. Play Hard. Purr Loudest.** ✨`)
+                .setDescription(`Hello ${member.user} 👋
+
+                         **🎉 WELCOME TO 🎉**
+
+ \`\`\`
+     ${serverName}
+\`\`\`
+
+We're thrilled to have you join our UNIVERSE !${AUTO_ROLE_ID ? ` You've been granted the <@&${AUTO_ROLE_ID}> role.` : ''}
+
+To get started, please check out these channels:
+
+| 🌍 **Purrfect Universe** - ${RULES_CHANNEL_ID ? `<#${RULES_CHANNEL_ID}>` : '#rules'} : Read this first! It covers our Universe guidelines.,
+
+| 🌍 **Purrfect Universe** - ${GENERAL_CHANNEL_ID ? `<#${GENERAL_CHANNEL_ID}>` : '#general'} : Say hello to Universe member !
+
+Enjoy your stay!
+
+https://discord.gg/xYZHkQYt5H
+
+**Arafat_Zahan**
+Founder & Universe Architect -
+**Purrfect Universe**
+📧 arafat@purrfecthq.com
+🌐 www.purrfecthq.com
+✨ **Work Hard. Play Hard. Purr Loudest.** ✨`)
                 .setImage(member.user.displayAvatarURL({ dynamic: true, size: 512 }));
 
             await member.send({ embeds: [embed] });
