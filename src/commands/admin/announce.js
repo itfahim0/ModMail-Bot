@@ -114,7 +114,8 @@ export default {
             const channelId = interaction.values[0];
 
             // Pre-fetch members to ensure User Select Menu works
-            await interaction.guild.members.fetch().catch(() => { });
+            // Note: This might be slow on very large servers, but is necessary for the select menu to populate correctly if not cached.
+            await interaction.guild.members.fetch({ force: true }).catch(err => console.error("Failed to fetch members:", err));
 
             // Initialize cache
             interactionCache.set(userId, {
