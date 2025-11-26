@@ -45,17 +45,6 @@ const loadEvents = async () => {
     await loadCommands(client);
     await loadEvents();
 
-    // Initialize Storage & Worker
-    const { storage } = await import('./src/storage/jsonAdapter.js');
-    await storage.init();
-
-    const { DmWorker } = await import('./src/workers/dmSender.js');
-    const worker = new DmWorker(client);
-
-    client.once(Events.ClientReady, () => {
-        worker.start();
-    });
-
     if (process.env.DISCORD_TOKEN) {
         client.login(process.env.DISCORD_TOKEN);
     } else {

@@ -46,17 +46,20 @@ export default {
 
             // Handle Unban Request Button
             if (interaction.customId.startsWith('request_unban_')) {
+                // Defer reply immediately to prevent timeout
+                await interaction.deferReply({ ephemeral: true });
+
                 const guildId = interaction.customId.split('_')[2];
                 const guild = await interaction.client.guilds.fetch(guildId).catch(() => null);
 
                 if (!guild) {
-                    return interaction.reply({ content: '❌ Server not found or bot is no longer in the server.', ephemeral: true });
+                    return interaction.editReply({ content: '❌ Server not found or bot is no longer in the server.' });
                 }
 
                 // Check if ModMail is set up
                 const categoryId = process.env.MODMAIL_CATEGORY_ID;
                 if (!categoryId) {
-                    return interaction.reply({ content: '❌ Unban requests are not currently accepted via this method.', ephemeral: true });
+                    return interaction.editReply({ content: '❌ Unban requests are not currently accepted via this method.' });
                 }
 
                 // Check for existing ticket
@@ -66,7 +69,7 @@ export default {
                 );
 
                 if (ticketChannel) {
-                    return interaction.reply({ content: '✅ You already have an open ticket. Please check your DMs.', ephemeral: true });
+                    return interaction.editReply({ content: '✅ You already have an open ticket. Please check your DMs.' });
                 }
 
                 try {
@@ -97,11 +100,11 @@ export default {
 
                     await ticketChannel.send({ embeds: [welcomeEmbed] });
 
-                    await interaction.reply({ content: '✅ Unban request submitted! A staff member will review it shortly. You can reply here to provide more details.', ephemeral: true });
+                    await interaction.editReply({ content: '✅ Unban request submitted! A staff member will review it shortly. You can reply here to provide more details.' });
 
                 } catch (error) {
                     console.error('Error creating unban ticket:', error);
-                    await interaction.reply({ content: '❌ Failed to create unban request.', ephemeral: true });
+                    await interaction.editReply({ content: '❌ Failed to create unban request.' });
                 }
                 return;
             }

@@ -1,4 +1,3 @@
-```javascript
 import {
     SlashCommandBuilder,
     EmbedBuilder,
@@ -17,7 +16,6 @@ import {
     ChannelType,
     ComponentType
 } from 'discord.js';
-import { storage } from '../../storage/jsonAdapter.js';
 
 // Cache to store temporary data for multi-step interactions
 const interactionCache = new Map();
@@ -173,150 +171,147 @@ export default {
                 .setStyle(ButtonStyle.Primary);
 
             await interaction.update({
-                content: `📢 ** Configure Mentions **\nSelected Channel: <#${channelId}>\n\nChoose who to mention (optional), then click **Continue**.`,
-    components: [
-    new ActionRowBuilder().addComponents(typeSelect),
-    new ActionRowBuilder().addComponents(roleSelect),
-    new ActionRowBuilder().addComponents(userSelect),
-    new ActionRowBuilder().addComponents(confirmBtn)
-    ]
+                content: `📢 **Configure Mentions**\nSelected Channel: <#${channelId}>\n\nChoose who to mention (optional), then click **Continue**.`,
+                components: [
+                    new ActionRowBuilder().addComponents(typeSelect),
+                    new ActionRowBuilder().addComponents(roleSelect),
+                    new ActionRowBuilder().addComponents(userSelect),
+                    new ActionRowBuilder().addComponents(confirmBtn)
+                ]
             });
         }
 
-    // Handle Mention Updates (Update Cache)
-    else if (interaction.customId === 'announce_mention_type') {
-            const data = interactionCache.get(userId) || { };
-    data.mentionType = interaction.values[0];
-    interactionCache.set(userId, data);
-    await interaction.deferUpdate();
+        // Handle Mention Updates (Update Cache)
+        else if (interaction.customId === 'announce_mention_type') {
+            const data = interactionCache.get(userId) || {};
+            data.mentionType = interaction.values[0];
+            interactionCache.set(userId, data);
+            await interaction.deferUpdate();
         }
-    else if (interaction.customId === 'announce_mention_roles') {
-            const data = interactionCache.get(userId) || { };
-    data.mentionRoles = interaction.values;
-    interactionCache.set(userId, data);
-    await interaction.deferUpdate();
+        else if (interaction.customId === 'announce_mention_roles') {
+            const data = interactionCache.get(userId) || {};
+            data.mentionRoles = interaction.values;
+            interactionCache.set(userId, data);
+            await interaction.deferUpdate();
         }
-    else if (interaction.customId === 'announce_mention_users') {
-            const data = interactionCache.get(userId) || { };
-    data.mentionUsers = interaction.values;
-    interactionCache.set(userId, data);
-    await interaction.deferUpdate();
+        else if (interaction.customId === 'announce_mention_users') {
+            const data = interactionCache.get(userId) || {};
+            data.mentionUsers = interaction.values;
+            interactionCache.set(userId, data);
+            await interaction.deferUpdate();
         }
 
-    // Handle Confirm -> Show Modal
-    else if (interaction.isButton() && interaction.customId === 'announce_mention_confirm') {
+        // Handle Confirm -> Show Modal
+        else if (interaction.isButton() && interaction.customId === 'announce_mention_confirm') {
             const modal = new ModalBuilder()
-    .setCustomId('announce_channel_modal')
-    .setTitle('Channel Announcement Details');
+                .setCustomId('announce_channel_modal')
+                .setTitle('Channel Announcement Details');
 
-    const titleInput = new TextInputBuilder()
-    .setCustomId('title')
-    .setLabel('Title')
-    .setStyle(TextInputStyle.Short)
-    .setRequired(true);
+            const titleInput = new TextInputBuilder()
+                .setCustomId('title')
+                .setLabel('Title')
+                .setStyle(TextInputStyle.Short)
+                .setRequired(true);
 
-    const messageInput = new TextInputBuilder()
-    .setCustomId('message')
-    .setLabel('Message')
-    .setStyle(TextInputStyle.Paragraph)
-    .setRequired(true);
+            const messageInput = new TextInputBuilder()
+                .setCustomId('message')
+                .setLabel('Message')
+                .setStyle(TextInputStyle.Paragraph)
+                .setRequired(true);
 
-    const footerInput = new TextInputBuilder()
-    .setCustomId('footer')
-    .setLabel('Footer Text (Optional)')
-    .setStyle(TextInputStyle.Short)
-    .setRequired(false);
+            const footerInput = new TextInputBuilder()
+                .setCustomId('footer')
+                .setLabel('Footer Text (Optional)')
+                .setStyle(TextInputStyle.Short)
+                .setRequired(false);
 
-    modal.addComponents(
-    new ActionRowBuilder().addComponents(titleInput),
-    new ActionRowBuilder().addComponents(messageInput),
-    new ActionRowBuilder().addComponents(footerInput)
-    );
+            modal.addComponents(
+                new ActionRowBuilder().addComponents(titleInput),
+                new ActionRowBuilder().addComponents(messageInput),
+                new ActionRowBuilder().addComponents(footerInput)
+            );
 
-    await interaction.showModal(modal);
+            await interaction.showModal(modal);
         }
 
-    // Handle Modal Submissions
-    else if (interaction.isModalSubmit()) {
-        await storage.init();
-
-    // Channel Announcement
-    if (interaction.customId === 'announce_channel_modal') {
+        // Handle Modal Submissions
+        else if (interaction.isModalSubmit()) {
+            // Channel Announcement
+            if (interaction.customId === 'announce_channel_modal') {
                 const data = interactionCache.get(userId);
-    if (!data || !data.channelId) {
-                    return interaction.reply({content: '❌ Session expired. Please try again.', ephemeral: true });
+                if (!data || !data.channelId) {
+                    return interaction.reply({ content: '❌ Session expired. Please try again.', ephemeral: true });
                 }
 
-    const title = interaction.fields.getTextInputValue('title');
-    const message = interaction.fields.getTextInputValue('message');
-    const footer = interaction.fields.getTextInputValue('footer');
+                const title = interaction.fields.getTextInputValue('title');
+                const message = interaction.fields.getTextInputValue('message');
+                const footer = interaction.fields.getTextInputValue('footer');
 
-    try {
+                try {
                     const channel = await interaction.guild.channels.fetch(data.channelId);
 
-    // Construct Mention String
-    let mentions = [];
-    if (data.mentionType === 'everyone') mentions.push('@everyone');
-    if (data.mentionType === 'here') mentions.push('@here');
+                    // Construct Mention String
+                    let mentions = [];
+                    if (data.mentionType === 'everyone') mentions.push('@everyone');
+                    if (data.mentionType === 'here') mentions.push('@here');
                     if (data.mentionRoles) mentions.push(...data.mentionRoles.map(id => `<@&${id}>`));
                     if (data.mentionUsers) mentions.push(...data.mentionUsers.map(id => `<@${id}>`));
 
-    const mentionString = mentions.join(' ');
+                    const mentionString = mentions.join(' ');
 
-    const embed = new EmbedBuilder()
-    .setTitle(title)
-    .setDescription(message)
-    .setColor('#FF0000') // Default color since input was removed
-    .setTimestamp();
+                    const embed = new EmbedBuilder()
+                        .setTitle(title)
+                        .setDescription(message)
+                        .setColor('#FF0000') // Default color since input was removed
+                        .setTimestamp();
 
-    if (footer) {
-        embed.setFooter({ text: footer });
+                    if (footer) {
+                        embed.setFooter({ text: footer });
                     }
 
-    await channel.send({
-        content: mentionString.length > 0 ? mentionString : null,
-    embeds: [embed]
+                    await channel.send({
+                        content: mentionString.length > 0 ? mentionString : null,
+                        embeds: [embed]
                     });
 
-    await interaction.reply({content: `✅ Announcement sent to ${channel}!`, ephemeral: true });
-    interactionCache.delete(userId);
+                    await interaction.reply({ content: `✅ Announcement sent to ${channel}!`, ephemeral: true });
+                    interactionCache.delete(userId);
                 } catch (error) {
-        await interaction.reply({ content: `❌ Failed: ${error.message}`, ephemeral: true });
+                    await interaction.reply({ content: `❌ Failed: ${error.message}`, ephemeral: true });
                 }
             }
 
-    // DM Single Send
-    else if (interaction.customId === 'announce_dm_single_modal') {
+            // DM Single Send
+            else if (interaction.customId === 'announce_dm_single_modal') {
                 const data = interactionCache.get(userId);
-    if (!data || !data.targetUserId) {
-                    return interaction.reply({content: '❌ Session expired. Please try again.', ephemeral: true });
+                if (!data || !data.targetUserId) {
+                    return interaction.reply({ content: '❌ Session expired. Please try again.', ephemeral: true });
                 }
 
-    const title = interaction.fields.getTextInputValue('title');
-    const content = interaction.fields.getTextInputValue('content');
-    const footer = interaction.fields.getTextInputValue('footer');
-    const targetUserId = data.targetUserId;
+                const title = interaction.fields.getTextInputValue('title');
+                const content = interaction.fields.getTextInputValue('content');
+                const footer = interaction.fields.getTextInputValue('footer');
+                const targetUserId = data.targetUserId;
 
-    try {
+                try {
                     const targetUser = await interaction.client.users.fetch(targetUserId);
 
-    let finalContent = `**${title}**\n\n${content}`;
-    if (footer) {
-        finalContent += `\n\n*${footer}*`;
+                    let finalContent = `**${title}**\n\n${content}`;
+                    if (footer) {
+                        finalContent += `\n\n*${footer}*`;
                     }
 
-    await targetUser.send(finalContent);
+                    await targetUser.send(finalContent);
 
-    await interaction.reply({
-        content: `✅ DM sent to ${targetUser.tag}!`,
-    ephemeral: true
+                    await interaction.reply({
+                        content: `✅ DM sent to ${targetUser.tag}!`,
+                        ephemeral: true
                     });
-    interactionCache.delete(userId);
+                    interactionCache.delete(userId);
                 } catch (error) {
-        await interaction.reply({ content: `❌ Failed to send DM: ${error.message}`, ephemeral: true });
+                    await interaction.reply({ content: `❌ Failed to send DM: ${error.message}`, ephemeral: true });
                 }
             }
         }
     }
 };
-    ```
