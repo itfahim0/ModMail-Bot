@@ -27,8 +27,13 @@ export default {
             // Create new ticket if doesn't exist
             if (!ticketChannel) {
                 try {
+                    // Check if user is banned
+                    const ban = await guild.bans.fetch(message.author.id).catch(() => null);
+                    const isBanned = !!ban;
+                    const channelName = isBanned ? `unban-${cleanUsername}` : `ticket-${cleanUsername}`;
+
                     ticketChannel = await guild.channels.create({
-                        name: `ticket-${cleanUsername}`,
+                        name: channelName,
                         type: ChannelType.GuildText,
                         parent: categoryId,
                         topic: `ModMail ticket for ${message.author.tag} (${message.author.id})`,
@@ -45,11 +50,15 @@ export default {
                     });
 
                     const welcomeEmbed = new EmbedBuilder()
-                        .setColor('#00FF00')
-                        .setTitle('📨 New ModMail Ticket')
+                        .setColor(isBanned ? '#FF0000' : '#00FF00')
+                        .setTitle(isBanned ? '🔓 Unban Request' : '📨 New ModMail Ticket')
                         .setDescription(`**User:** ${message.author.tag} (${message.author.id})\n**Account Created:** <t:${Math.floor(message.author.createdTimestamp / 1000)}:R>`)
                         .setThumbnail(message.author.displayAvatarURL())
                         .setTimestamp();
+
+                    if (isBanned) {
+                        welcomeEmbed.addFields({ name: '⚠️ Status', value: 'User is currently BANNED from the server.' });
+                    }
 
                     await ticketChannel.send({ embeds: [welcomeEmbed] });
                     await message.react('✅');

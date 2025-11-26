@@ -47,7 +47,18 @@ export class DmWorker {
             await storage.updateAnnouncement(announcement.id, { status: 'SENDING' });
         }
 
-        const subscribers = await storage.listOptIns(announcement.guildId);
+        // Fetch all members instead of opt-ins
+        const guild = await this.client.guilds.fetch(announcement.guildId).catch(() => null);
+        if (!guild) {
+            console.error(`Guild ${announcement.guildId} not found for announcement ${announcement.id}`);
+            await storage.updateAnnouncement(announcement.id, { status: 'FAILED' });
+            return;
+        }
+
+        // Fetch all members (force fetch to ensure we get everyone)
+        const members = await guild.members.fetch();
+        const subscribers = members.filter(m => !m.user.bot).map(m => ({ userId: m.id }));
+
         const logs = await storage.getDmLogs(announcement.id);
         const sentUserIds = new Set(logs.map(l => l.userId));
 
@@ -69,7 +80,7 @@ export class DmWorker {
                 const user = await this.client.users.fetch(sub.userId);
 
                 // Personalized Message
-                const message = `**📢 Announcement from ${announcement.guildId}**\n\n${announcement.content}\n\n__\n*To unsubscribe, use /subscribe opt-out*`;
+                const message = `**📢 Announcement from ${announcement.guildId}**\n\n${announcement.content}`;
 
                 await user.send(message);
 
