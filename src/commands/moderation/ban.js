@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
+import { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits, ButtonBuilder, ActionRowBuilder, ButtonStyle } from 'discord.js';
 
 export default {
     data: new SlashCommandBuilder()
@@ -32,7 +32,20 @@ export default {
         }
 
         try {
-            await member.send(`🔨 You have been banned from **${interaction.guild.name}**\nReason: ${reason}`).catch(() => { });
+            // Create Unban Request Button
+            const unbanBtn = new ButtonBuilder()
+                .setCustomId(`request_unban_${interaction.guild.id}`)
+                .setLabel('Request Unban')
+                .setStyle(ButtonStyle.Secondary)
+                .setEmoji('🔓');
+
+            const row = new ActionRowBuilder().addComponents(unbanBtn);
+
+            await member.send({
+                content: `🔨 You have been banned from **${interaction.guild.name}**\nReason: ${reason}`,
+                components: [row]
+            }).catch(() => { });
+
             await member.ban({ reason: `${reason} | Banned by ${interaction.user.tag}` });
 
             const embed = new EmbedBuilder()

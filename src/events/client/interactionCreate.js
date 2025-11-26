@@ -1,4 +1,4 @@
-import { Events, EmbedBuilder, MessageFlags, ButtonBuilder, ActionRowBuilder, ButtonStyle } from 'discord.js';
+import { Events, EmbedBuilder, MessageFlags, ButtonBuilder, ActionRowBuilder, ButtonStyle, ChannelType, PermissionFlagsBits } from 'discord.js';
 import { checkRateLimit } from '../../middleware/rateLimit.js';
 
 export default {
@@ -43,6 +43,69 @@ export default {
                     return;
                 }
             }
+
+            // Handle Unban Request Button
+            if (interaction.customId.startsWith('request_unban_')) {
+                const guildId = interaction.customId.split('_')[2];
+                const guild = await interaction.client.guilds.fetch(guildId).catch(() => null);
+
+                if (!guild) {
+                    return interaction.reply({ content: '❌ Server not found or bot is no longer in the server.', ephemeral: true });
+                }
+
+                // Check if ModMail is set up
+                const categoryId = process.env.MODMAIL_CATEGORY_ID;
+                if (!categoryId) {
+                    return interaction.reply({ content: '❌ Unban requests are not currently accepted via this method.', ephemeral: true });
+                }
+
+                // Check for existing ticket
+                const cleanUsername = interaction.user.username.toLowerCase().replace(/[^a-z0-9]/g, '-');
+                let ticketChannel = guild.channels.cache.find(
+                    ch => ch.topic && ch.topic.includes(interaction.user.id) && ch.parentId === categoryId
+                );
+
+                if (ticketChannel) {
+                    return interaction.reply({ content: '✅ You already have an open ticket. Please check your DMs.', ephemeral: true });
+                }
+
+                try {
+                    // Create Ticket
+                    ticketChannel = await guild.channels.create({
+                        name: `unban-${cleanUsername}`,
+                        type: ChannelType.GuildText,
+                        parent: categoryId,
+                        topic: `Unban Request for ${interaction.user.tag} (${interaction.user.id})`,
+                        permissionOverwrites: [
+                            {
+                                id: guild.id,
+                                deny: [PermissionFlagsBits.ViewChannel],
+                            },
+                            {
+                                id: interaction.client.user.id,
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages],
+                            },
+                        ],
+                    });
+
+                    const welcomeEmbed = new EmbedBuilder()
+                        .setColor('#FF0000')
+                        .setTitle('🔓 New Unban Request')
+                        .setDescription(`**User:** ${interaction.user.tag} (${interaction.user.id})\n**Account Created:** <t:${Math.floor(interaction.user.createdTimestamp / 1000)}:R>\n\nUser clicked "Request Unban" button.`)
+                        .setThumbnail(interaction.user.displayAvatarURL())
+                        .setTimestamp();
+
+                    await ticketChannel.send({ embeds: [welcomeEmbed] });
+
+                    await interaction.reply({ content: '✅ Unban request submitted! A staff member will review it shortly. You can reply here to provide more details.', ephemeral: true });
+
+                } catch (error) {
+                    console.error('Error creating unban ticket:', error);
+                    await interaction.reply({ content: '❌ Failed to create unban request.', ephemeral: true });
+                }
+                return;
+            }
+
             // New close confirmation button handling
             if (interaction.customId === 'confirm_close') {
                 // Extract reason from the original message content
