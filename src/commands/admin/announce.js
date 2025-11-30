@@ -38,6 +38,14 @@ export default {
         const link = interaction.options.getString('link');
         const userId = interaction.user.id;
 
+        // Check attachment size (limit to 8MB to be safe for non-boosted servers)
+        if (attachment && attachment.size > 8 * 1024 * 1024) {
+            return interaction.reply({
+                content: '❌ **File too large!**\nPlease upload a file smaller than 8MB.',
+                ephemeral: true
+            });
+        }
+
         // Initialize cache
         interactionCache.set(userId, {
             attachment: attachment, // Store full object
@@ -244,6 +252,14 @@ export default {
                 let finalContent = data.message;
                 if (mentionString.length > 0) {
                     finalContent += `\n\n${mentionString}`;
+                }
+
+                // Check message length
+                if (finalContent.length > 2000) {
+                    return interaction.editReply({
+                        content: `❌ **Message too long!**\nYour message + mentions is ${finalContent.length} characters. The limit is 2000.\nPlease shorten your message or reduce mentions.`,
+                        ephemeral: true
+                    });
                 }
 
                 // Handle Attachment
