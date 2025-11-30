@@ -1,9 +1,6 @@
 import {
     SlashCommandBuilder,
     EmbedBuilder,
-    ModalBuilder,
-    TextInputBuilder,
-    TextInputStyle,
     ActionRowBuilder,
     PermissionFlagsBits,
     StringSelectMenuBuilder,
@@ -24,293 +21,258 @@ export default {
     data: new SlashCommandBuilder()
         .setName('announce')
         .setDescription('Open the announcement management menu')
+        .addAttachmentOption(option =>
+            option.setName('attachment')
+                .setDescription('Upload a file (Image, Video, PDF, etc.)')
+                .setRequired(false)
+        )
+        .addStringOption(option =>
+            option.setName('link')
+                .setDescription('Add an external link (e.g. YouTube, Article)')
+                .setRequired(false)
+        )
         .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
 
     async execute(interaction) {
-        const select = new StringSelectMenuBuilder()
-            .setCustomId('announce_action')
-            .setPlaceholder('Select an action')
-            .addOptions(
-                new StringSelectMenuOptionBuilder()
-                    .setLabel('Channel Announcement')
-                    .setDescription('Send an announcement to a specific channel')
-                    .setValue('channel')
-                    .setEmoji('📢'),
-                new StringSelectMenuOptionBuilder()
-                    .setLabel('Single DM')
-                    .setDescription('Send a DM to a specific user')
-                    .setValue('dm-single')
-                    .setEmoji('👤')
-            );
+        const attachment = interaction.options.getAttachment('attachment');
+        const link = interaction.options.getString('link');
+        const userId = interaction.user.id;
 
-        const row = new ActionRowBuilder().addComponents(select);
-
-        await interaction.reply({
-            content: '👋 **Announcement Manager**\nPlease select an action from the menu below:',
-            components: [row],
-            ephemeral: true
+        // Initialize cache
+        interactionCache.set(userId, {
+            attachment: attachment, // Store full object
+            link: link,
+            channelId: null,
+            mentionRoles: [],
+            mentionUsers: [],
+            message: '', // Will be set via interactive chat
+            footer: '', // Optional, can be added via chat parsing if needed, but keeping simple for now
+            color: '#2B2D31'
         });
+
+        await this.renderDashboard(interaction);
+    },
+
+    async renderDashboard(interaction, isUpdate = false) {
+        const userId = interaction.user.id;
+        const data = interactionCache.get(userId);
+
+        if (!data) {
+            return interaction.reply({ content: '❌ Session expired. Please run /announce again.', ephemeral: true });
+        }
+
+        // --- Build Dashboard Embed (Admin View Only) ---
+        const dashboardEmbed = new EmbedBuilder()
+            .setTitle('📢 Announcement Dashboard')
+            .setDescription('Configure your announcement below.\n\n**Preview of Message Content:**')
+            .setColor(data.color)
+            .setTimestamp();
+
+        if (data.message) {
+            dashboardEmbed.addFields({ name: 'Content', value: data.message.length > 1024 ? data.message.substring(0, 1021) + '...' : data.message });
+        } else {
+            dashboardEmbed.addFields({ name: 'Content', value: '*No message set. Click "Set Message" to type it.*' });
+        }
+
+        // Preview Image if attachment is an image
+        if (data.attachment && data.attachment.contentType && data.attachment.contentType.startsWith('image/')) {
+            dashboardEmbed.setImage(data.attachment.url);
+        }
+
+        // --- Build Status Fields ---
+        let status = `**Target Channel:** ${data.channelId ? `<#${data.channelId}>` : '❌ Not Selected'}`;
+
+        const mentions = [];
+        if (data.mentionRoles.length > 0) mentions.push(`${data.mentionRoles.length} Roles`);
+        if (data.mentionUsers.length > 0) mentions.push(`${data.mentionUsers.length} Users`);
+        status += `\n**Mentions:** ${mentions.length > 0 ? mentions.join(', ') : 'None'}`;
+
+        if (data.attachment) {
+            status += `\n**Attachment:** ${data.attachment.name}`;
+        }
+        if (data.link) {
+            status += `\n**Link:** ${data.link}`;
+        }
+
+        dashboardEmbed.addFields({ name: 'Settings', value: status });
+
+        // --- Build Components ---
+
+        // Row 1: Target Channel
+        const channelSelect = new ChannelSelectMenuBuilder()
+            .setCustomId('announce_target_channel')
+            .setPlaceholder('Select Target Channel (Where to post)')
+            .addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)
+            .setMaxValues(1);
+
+        // Row 2: Mention Roles
+        const roleSelect = new RoleSelectMenuBuilder()
+            .setCustomId('announce_mention_roles')
+            .setPlaceholder('Select Roles to Mention')
+            .setMinValues(0)
+            .setMaxValues(25);
+
+        // Row 3: Mention Users
+        const userSelect = new UserSelectMenuBuilder()
+            .setCustomId('announce_mention_users')
+            .setPlaceholder('Select Users to Mention')
+            .setMinValues(0)
+            .setMaxValues(25);
+
+        // Row 4: Buttons
+        const setMessageBtn = new ButtonBuilder()
+            .setCustomId('announce_set_message')
+            .setLabel('Set Message')
+            .setEmoji('✏️')
+            .setStyle(ButtonStyle.Primary);
+
+        const sendBtn = new ButtonBuilder()
+            .setCustomId('announce_send')
+            .setLabel('Send Announcement')
+            .setEmoji('🚀')
+            .setStyle(ButtonStyle.Success)
+            .setDisabled(!data.channelId || !data.message);
+
+        const cancelBtn = new ButtonBuilder()
+            .setCustomId('announce_cancel')
+            .setLabel('Cancel')
+            .setStyle(ButtonStyle.Danger);
+
+        const rows = [
+            new ActionRowBuilder().addComponents(channelSelect),
+            new ActionRowBuilder().addComponents(roleSelect),
+            new ActionRowBuilder().addComponents(userSelect),
+            new ActionRowBuilder().addComponents(setMessageBtn, sendBtn, cancelBtn)
+        ];
+
+        const payload = {
+            embeds: [dashboardEmbed],
+            components: rows,
+            ephemeral: true
+        };
+
+        if (isUpdate) {
+            await interaction.update(payload);
+        } else {
+            await interaction.reply(payload);
+        }
     },
 
     async handleInteraction(interaction) {
         const userId = interaction.user.id;
+        const data = interactionCache.get(userId);
 
-        // Handle Action Selection
-        if (interaction.isStringSelectMenu() && interaction.customId === 'announce_action') {
-            const action = interaction.values[0];
-
-            if (action === 'channel') {
-                const channelSelect = new ChannelSelectMenuBuilder()
-                    .setCustomId('announce_channel_select')
-                    .setPlaceholder('Select a channel')
-                    .addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement);
-
-                const row = new ActionRowBuilder().addComponents(channelSelect);
-
-                await interaction.update({
-                    content: '📢 **Channel Announcement**\nSelect the channel where you want to post:',
-                    components: [row]
-                });
-
-                // Store the action type
-                interactionCache.set(userId, { actionType: action });
+        if (!data) {
+            if (interaction.isButton() || interaction.isAnySelectMenu()) {
+                return interaction.reply({ content: '❌ Session expired. Please run /announce again.', ephemeral: true });
             }
-            else if (action === 'dm-single') {
-                const userSelect = new UserSelectMenuBuilder()
-                    .setCustomId('announce_dm_single_user')
-                    .setPlaceholder('Select a user to DM')
-                    .setMaxValues(1);
-
-                const row = new ActionRowBuilder().addComponents(userSelect);
-
-                await interaction.update({
-                    content: '👤 **Single DM**\nSelect the user you want to send a message to:',
-                    components: [row]
-                });
-            }
+            return;
         }
 
-        // Handle Single DM User Selection
-        else if (interaction.isUserSelectMenu() && interaction.customId === 'announce_dm_single_user') {
-            const targetUserId = interaction.values[0];
-            interactionCache.set(userId, { targetUserId });
-
-            const modal = new ModalBuilder()
-                .setCustomId('announce_dm_single_modal')
-                .setTitle('Single DM Details');
-
-            const titleInput = new TextInputBuilder()
-                .setCustomId('title')
-                .setLabel('Title')
-                .setStyle(TextInputStyle.Short)
-                .setRequired(true);
-
-            const contentInput = new TextInputBuilder()
-                .setCustomId('content')
-                .setLabel('Message Content')
-                .setStyle(TextInputStyle.Paragraph)
-                .setRequired(true)
-                .setMaxLength(2000);
-
-            const footerInput = new TextInputBuilder()
-                .setCustomId('footer')
-                .setLabel('Footer Text (Optional)')
-                .setStyle(TextInputStyle.Short)
-                .setRequired(false);
-
-            modal.addComponents(
-                new ActionRowBuilder().addComponents(titleInput),
-                new ActionRowBuilder().addComponents(contentInput),
-                new ActionRowBuilder().addComponents(footerInput)
-            );
-            await interaction.showModal(modal);
-        }
-
-        // Handle Channel Selection -> Show Mention Config
-        else if (interaction.isChannelSelectMenu() && interaction.customId === 'announce_channel_select') {
-            const channelId = interaction.values[0];
-
-            // Pre-fetch members to ensure User Select Menu works
-            await interaction.guild.members.fetch({ force: true }).catch(err => console.error("Failed to fetch members:", err));
-
-            // Initialize cache (preserve actionType if set)
-            const existingData = interactionCache.get(userId) || {};
-            interactionCache.set(userId, {
-                ...existingData,
-                channelId,
-                mentionType: 'none',
-                mentionRoles: [],
-                mentionUsers: []
-            });
-
-            // Components for Mention Config
-            const typeSelect = new StringSelectMenuBuilder()
-                .setCustomId('announce_mention_type')
-                .setPlaceholder('Select Mention Type (Optional)')
-                .addOptions(
-                    { label: 'None', value: 'none' },
-                    { label: '@everyone', value: 'everyone' },
-                    { label: '@here', value: 'here' }
-                );
-
-            const roleSelect = new RoleSelectMenuBuilder()
-                .setCustomId('announce_mention_roles')
-                .setPlaceholder('Select Roles to Mention (Optional)')
-                .setMinValues(0)
-                .setMaxValues(25);
-
-            const userSelect = new UserSelectMenuBuilder()
-                .setCustomId('announce_mention_users')
-                .setPlaceholder('Select Users to Mention (Optional)')
-                .setMinValues(0)
-                .setMaxValues(25);
-
-            const confirmBtn = new ButtonBuilder()
-                .setCustomId('announce_mention_confirm')
-                .setLabel('Continue to Message')
-                .setStyle(ButtonStyle.Primary);
-
-            await interaction.update({
-                content: `📢 **Configure Mentions**\nSelected Channel: <#${channelId}>\n\nChoose who to mention (optional), then click **Continue**.`,
-                components: [
-                    new ActionRowBuilder().addComponents(typeSelect),
-                    new ActionRowBuilder().addComponents(roleSelect),
-                    new ActionRowBuilder().addComponents(userSelect),
-                    new ActionRowBuilder().addComponents(confirmBtn)
-                ]
-            });
-        }
-
-        // Handle Mention Updates (Update Cache)
-        else if (interaction.customId === 'announce_mention_type') {
-            const data = interactionCache.get(userId) || {};
-            data.mentionType = interaction.values[0];
+        // --- Handle Select Menus ---
+        if (interaction.customId === 'announce_target_channel') {
+            data.channelId = interaction.values[0];
             interactionCache.set(userId, data);
-            await interaction.deferUpdate();
+            await this.renderDashboard(interaction, true);
         }
         else if (interaction.customId === 'announce_mention_roles') {
-            const data = interactionCache.get(userId) || {};
             data.mentionRoles = interaction.values;
             interactionCache.set(userId, data);
-            await interaction.deferUpdate();
+            await this.renderDashboard(interaction, true);
         }
         else if (interaction.customId === 'announce_mention_users') {
-            const data = interactionCache.get(userId) || {};
             data.mentionUsers = interaction.values;
             interactionCache.set(userId, data);
+            await this.renderDashboard(interaction, true);
+        }
+
+        // --- Handle Buttons ---
+        else if (interaction.customId === 'announce_set_message') {
             await interaction.deferUpdate();
+            const msg = await interaction.followUp({
+                content: '✍️ **Please type your announcement message in this channel now.**\n\n- You can use multiple lines, emojis, and formatting.\n- Max 2000 characters.\n- Type `cancel` to abort.',
+                ephemeral: true
+            });
+
+            const filter = m => m.author.id === userId;
+            const collector = interaction.channel.createMessageCollector({ filter, max: 1, time: 120000 });
+
+            collector.on('collect', async m => {
+                if (m.content.toLowerCase() === 'cancel') {
+                    await interaction.followUp({ content: '❌ Message setup cancelled.', ephemeral: true });
+                } else {
+                    data.message = m.content;
+                    interactionCache.set(userId, data);
+                    await interaction.followUp({ content: '✅ Message captured!', ephemeral: true });
+
+                    // Try to delete the user's message to keep chat clean
+                    try { await m.delete(); } catch (e) { /* Ignore if missing permissions */ }
+                }
+
+                // Refresh dashboard
+                // Since we deferred update earlier, we need to edit the original reply or send a new one?
+                // Actually, we can't easily "update" the original ephemeral message from here if we lost the reference.
+                // But we can just send a new dashboard or tell user to check the old one? 
+                // Wait, `renderDashboard` uses `interaction.update` which works on the component interaction.
+                // Since we used `deferUpdate` on the button, the original message is still there.
+                // We can use `interaction.editReply` to update the dashboard!
+
+                await this.renderDashboard(interaction, true);
+            });
         }
 
-        // Handle Confirm -> Show Modal
-        else if (interaction.isButton() && interaction.customId === 'announce_mention_confirm') {
-            const modal = new ModalBuilder()
-                .setCustomId('announce_channel_modal')
-                .setTitle('Channel Announcement Details');
-
-            const titleInput = new TextInputBuilder()
-                .setCustomId('title')
-                .setLabel('Title')
-                .setStyle(TextInputStyle.Short)
-                .setRequired(true);
-
-            const messageInput = new TextInputBuilder()
-                .setCustomId('message')
-                .setLabel('Message')
-                .setStyle(TextInputStyle.Paragraph)
-                .setRequired(true);
-
-            const footerInput = new TextInputBuilder()
-                .setCustomId('footer')
-                .setLabel('Footer Text (Optional)')
-                .setStyle(TextInputStyle.Short)
-                .setRequired(false);
-
-            modal.addComponents(
-                new ActionRowBuilder().addComponents(titleInput),
-                new ActionRowBuilder().addComponents(messageInput),
-                new ActionRowBuilder().addComponents(footerInput)
-            );
-
-            await interaction.showModal(modal);
+        else if (interaction.customId === 'announce_cancel') {
+            interactionCache.delete(userId);
+            await interaction.update({ content: '❌ Announcement cancelled.', embeds: [], components: [] });
         }
 
-        // Handle Modal Submissions
-        else if (interaction.isModalSubmit()) {
-            // Channel Announcement
-            if (interaction.customId === 'announce_channel_modal') {
-                const data = interactionCache.get(userId);
-                if (!data || !data.channelId) {
-                    return interaction.reply({ content: '❌ Session expired. Please try again.', ephemeral: true });
+        else if (interaction.customId === 'announce_send') {
+            try {
+                const channel = await interaction.guild.channels.fetch(data.channelId);
+
+                // Construct Mentions
+                const mentions = [
+                    ...data.mentionRoles.map(id => `<@&${id}>`),
+                    ...data.mentionUsers.map(id => `<@${id}>`)
+                ];
+                const mentionString = mentions.join(' ');
+
+                // Construct Final Message Content
+                // Combine Message + Mentions
+                let finalContent = data.message;
+                if (mentionString.length > 0) {
+                    finalContent += `\n\n${mentionString}`;
                 }
 
-                const title = interaction.fields.getTextInputValue('title');
-                const message = interaction.fields.getTextInputValue('message');
-                const footer = interaction.fields.getTextInputValue('footer');
-
-                try {
-                    const channel = await interaction.guild.channels.fetch(data.channelId);
-
-                    // Construct Mention String
-                    let mentions = [];
-                    if (data.mentionType === 'everyone') mentions.push('@everyone');
-                    if (data.mentionType === 'here') mentions.push('@here');
-                    if (data.mentionRoles) mentions.push(...data.mentionRoles.map(id => `<@&${id}>`));
-                    if (data.mentionUsers) mentions.push(...data.mentionUsers.map(id => `<@${id}>`));
-
-                    const mentionString = mentions.join(' ');
-
-                    const embed = new EmbedBuilder()
-                        .setTitle(title)
-                        .setDescription(message)
-                        .setColor('#FF0000') // Default color since input was removed
-                        .setTimestamp();
-
-                    if (footer) {
-                        embed.setFooter({ text: footer });
-                    }
-
-                    await channel.send({
-                        content: mentionString.length > 0 ? mentionString : null,
-                        embeds: [embed]
-                    });
-
-                    await interaction.reply({ content: `✅ Announcement sent to ${channel}!`, ephemeral: true });
-                    interactionCache.delete(userId);
-                } catch (error) {
-                    await interaction.reply({ content: `❌ Failed: ${error.message}`, ephemeral: true });
-                }
-            }
-
-            // DM Single Send
-            else if (interaction.customId === 'announce_dm_single_modal') {
-                const data = interactionCache.get(userId);
-                if (!data || !data.targetUserId) {
-                    return interaction.reply({ content: '❌ Session expired. Please try again.', ephemeral: true });
+                // Handle Attachment
+                const files = [];
+                if (data.attachment) {
+                    files.push(data.attachment.url);
                 }
 
-                const title = interaction.fields.getTextInputValue('title');
-                const content = interaction.fields.getTextInputValue('content');
-                const footer = interaction.fields.getTextInputValue('footer');
-                const targetUserId = data.targetUserId;
+                // Handle Link (Add Button)
+                const components = [];
+                if (data.link) {
+                    const linkBtn = new ButtonBuilder()
+                        .setLabel('🔗 Open Link')
+                        .setStyle(ButtonStyle.Link)
+                        .setURL(data.link);
 
-                try {
-                    const targetUser = await interaction.client.users.fetch(targetUserId);
-
-                    let finalContent = `**${title}**\n\n${content}`;
-                    if (footer) {
-                        finalContent += `\n\n*${footer}*`;
-                    }
-
-                    await targetUser.send(finalContent);
-
-                    await interaction.reply({
-                        content: `✅ DM sent to ${targetUser.tag}!`,
-                        ephemeral: true
-                    });
-                    interactionCache.delete(userId);
-                } catch (error) {
-                    await interaction.reply({ content: `❌ Failed to send DM: ${error.message}`, ephemeral: true });
+                    components.push(new ActionRowBuilder().addComponents(linkBtn));
                 }
+
+                await channel.send({
+                    content: finalContent,
+                    files: files,
+                    components: components
+                });
+
+                await interaction.update({ content: `✅ Announcement sent to ${channel}!`, embeds: [], components: [] });
+                interactionCache.delete(userId);
+
+            } catch (error) {
+                console.error(error);
+                await interaction.reply({ content: `❌ Failed to send: ${error.message}`, ephemeral: true });
             }
         }
     }

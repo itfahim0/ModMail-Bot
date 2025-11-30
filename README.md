@@ -1,327 +1,229 @@
 # 📮 ModMail Bot
 
-A clean, modern ModMail system for Discord that lets users open support tickets by simply DMing the bot. Staff can reply, manage, and close tickets from inside your server.
+![Discord.js](https://img.shields.io/badge/discord.js-v14-blue?style=for-the-badge&logo=discord)
+![Node.js](https://img.shields.io/badge/node.js-v18+-green?style=for-the-badge&logo=node.js)
+![Status](https://img.shields.io/badge/status-active-success?style=for-the-badge)
 
-This README includes:
+A professional, feature-rich ModMail system for Discord. This bot facilitates private communication between server members and staff through a dedicated ticket system, ensuring privacy and organization.
 
-- Setup guide
-- Environment variables
-- How to run locally
-- Deployment (PM2, Docker, Railway)
-- Full command usage
-- Ticket workflow
-- Troubleshooting
-- Customization tips
+---
 
 ## 📑 Table of Contents
 
-- [Features](#-features)
-- [Prerequisites](#-prerequisites)
-- [Installation](#-installation)
-- [Environment Variables](#-environment-variables)
-- [Running the Bot](#-running-the-bot)
-- [Deployment](#-deployment)
-- [How ModMail Works](#-how-modmail-works)
-- [User Guide](#-user-guide)
-- [Staff Commands](#-staff-commands)
-- [Admin Commands](#-admin-commands)
-- [Ticket Flow Summary](#-ticket-flow-summary)
-- [Customization Tips](#-customization-tips)
-- [Troubleshooting](#-troubleshooting)
-- [License](#-license)
+- [✨ Features](#-features)
+- [📂 Project Structure](#-project-structure)
+- [🛠️ Prerequisites](#-prerequisites)
+- [📥 Installation](#-installation)
+- [⚙️ Configuration](#-configuration)
+- [🚀 Running the Bot](#-running-the-bot)
+- [☁️ Deployment (PM2)](#-deployment-pm2)
+- [📖 User Manual](#-user-manual)
+- [🤖 Command Reference](#-command-reference)
+- [❓ Troubleshooting](#-troubleshooting)
+
+---
 
 ## ✨ Features
 
-- Easy DM → Ticket creation
-- Staff reply relayed to user DMs
-- Ticket claiming
-- Ticket closing with optional reasons
-- Message logging & transcripts
-- Category-based ticket organization
-- Permission-managed staff access
-- Customizable responses & embeds
-- Works with Node.js (discord.js)
+- **Seamless Ticket Creation**: Users simply DM the bot to open a ticket.
+- **Interactive Dashboard**: Staff manage tickets via buttons and slash commands.
+- **Advanced Announcements**: Send plain text announcements with attachments and links via an interactive dashboard.
+- **Moderation Suite**: Kick, Ban, Mute, Warn, and History tracking.
+- **Transcripts**: Auto-generated transcripts for closed tickets.
+- **Customizable**: Easy configuration for roles, categories, and messages.
 
-## 🧰 Prerequisites
+---
 
-Before installing, make sure you have:
+## 📂 Project Structure
 
-- Node.js v18 or later
-- npm or yarn
-- A Discord Bot Token
-- A Discord server where the bot will operate
+```text
+ModMail-Bot/
+├── data/                  # JSON data storage (announcements, etc.)
+├── deploy/                # Deployment scripts
+├── src/
+│   ├── commands/          # Slash commands organized by category
+│   │   ├── admin/         # Admin-only commands (announce, config, etc.)
+│   │   ├── fun/           # Fun commands (meme, avatar)
+│   │   ├── moderation/    # Moderation tools (ban, kick, mute)
+│   │   ├── modmail/       # ModMail specific commands (reply, close)
+│   │   └── utils/         # Utility commands (help, stats)
+│   ├── database/          # Database connection logic
+│   ├── events/            # Event handlers (messageCreate, interactionCreate)
+│   ├── middleware/        # Rate limiting and other middleware
+│   └── services/          # Business logic services
+├── .env                   # Environment variables (Secrets)
+├── index.js               # Main entry point
+├── pm2.config.js          # PM2 configuration
+└── package.json           # Dependencies and scripts
+```
+
+---
+
+## 🛠️ Prerequisites
+
+Before you begin, ensure you have the following installed:
+
+- **[Node.js](https://nodejs.org/)** (v18 or higher)
+- **[npm](https://www.npmjs.com/)** (usually comes with Node.js)
+- A **Discord Bot Token** from the [Discord Developer Portal](https://discord.com/developers/applications).
+- **PM2** (for production deployment).
+
+---
 
 ## 📥 Installation
 
-### Clone the repository
-```bash
-git clone https://github.com/itfahim0/ModMail-Bot.git
-cd ModMail-Bot
-```
+1.  **Clone the Repository**
+    ```bash
+    git clone https://github.com/itfahim0/ModMail-Bot.git
+    cd ModMail-Bot
+    ```
 
-### Install dependencies
-```bash
-npm install
-```
+2.  **Install Dependencies**
+    ```bash
+    npm install
+    ```
 
-### Create Config
+3.  **Setup Configuration**
+    Copy the `.env.example` (if available) or create a new `.env` file.
 
-You must create a `.env` file (details below).
+---
 
-## 🔐 Environment Variables
+## ⚙️ Configuration
 
-Create a file named `.env` in the project root:
+Create a file named `.env` in the root directory and fill in the following details:
 
 ```env
-# Discord Bot
-DISCORD_TOKEN=your-token-here
-CLIENT_ID=your-client-id
-GUILD_ID=your-guild-id
+# --- Bot Credentials ---
+DISCORD_TOKEN=your_bot_token_here
+CLIENT_ID=your_application_id_here
+GUILD_ID=your_server_id_here
 
-# IDs used by the bot
-MODMAIL_CATEGORY_ID=123456789012345678
-LOG_CHANNEL_ID=123456789012345678
+# --- ModMail Settings ---
+MODMAIL_CATEGORY_ID=category_id_for_tickets
+LOG_CHANNEL_ID=channel_id_for_logs
+GUILD_ID=your_main_server_id
+
+# --- Roles (Optional/Auto-configured) ---
+STAFF_ROLE_ID=role_id_for_staff
+ADMIN_ROLE_ID=role_id_for_admins
 ```
 
-⚠️ **Never upload your .env to GitHub.**
+> **⚠️ IMPORTANT**: Never share your `.env` file or commit it to GitHub. It contains your secret token.
 
-## ▶️ Running the Bot
+---
 
-### Development mode
+## 🚀 Running the Bot
+
+### Development Mode
+Use this for testing and making changes. It uses `nodemon` to restart on file changes.
 ```bash
 npm run dev
 ```
 
-### Production mode
+### Production Mode
+Use this for running the bot normally.
 ```bash
 npm start
 ```
 
-If your entry file is different (src/index.js, bot.js, etc.), update your package.json scripts.
+---
 
-## 🚀 Deployment
+## ☁️ Deployment (PM2)
 
-### PM2 (VPS Deployment)
+For a professional 24/7 hosting setup, we recommend using **PM2** (Process Manager 2).
+
+### 1. Install PM2 Globally
 ```bash
-npm install -g pm2
-pm2 start index.js --name modmail
+npm install pm2 -g
+```
+
+### 2. Start the Bot
+You can start the bot using the ecosystem file (if present) or directly:
+```bash
+pm2 start index.js --name "ModMail"
+```
+
+### 3. Save & Startup
+Ensure the bot restarts automatically if the server reboots.
+```bash
 pm2 save
 pm2 startup
 ```
+Follow the instructions output by `pm2 startup` to finalize the setup.
 
-### Docker
+### Useful PM2 Commands
+- `pm2 status`: Check bot status.
+- `pm2 logs ModMail`: View live logs.
+- `pm2 restart ModMail`: Restart the bot.
+- `pm2 stop ModMail`: Stop the bot.
 
-Example Dockerfile:
+---
 
-```dockerfile
-FROM node:18-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci
-COPY . .
-CMD ["node", "index.js"]
-```
+## 📖 User Manual
 
-Build & run:
+### For Users (Members)
+- **Opening a Ticket**: Simply send a Direct Message (DM) to the bot. A private channel will be created for you on the server.
+- **Replying**: Continue sending messages in the DM. The bot forwards them to the staff.
 
-```bash
-docker build -t modmail .
-docker run -d --env-file .env modmail
-```
+### For Staff
+- **Replying to Tickets**: Go to the ticket channel created in the server and type your message. The bot relays it to the user.
+- **Closing Tickets**: Use the `/close` command or click the "Close" button (if available) to archive the ticket.
+- **Commands**: Use slash commands (`/`) for all interactions.
 
-### Railway / Replit
+### For Admins
+- **Setup**: Run `/modmail-setup` to automatically create the necessary categories and channels.
+- **Announcements**: Use `/announce` to send broadcast messages to channels with attachments and mentions.
 
-1. Connect GitHub repo
-2. Add environment variables
-3. Set start command → `node index.js`
+---
 
-## 📘 How ModMail Works
+## 🤖 Command Reference
 
-1. A user sends the bot a DM.
-2. The bot creates a ticket channel in your server.
-3. Staff reply inside the channel using commands.
-4. The bot forwards staff messages back to the user via DM.
-5. Staff close the ticket when finished.
+### 📨 ModMail
+| Command | Description |
+| :--- | :--- |
+| `/reply [message]` | Send a reply to the ticket user (or just type in the channel). |
+| `/close [reason]` | Close the current ticket. |
+| `/claim` | Claim a ticket so only you can handle it. |
+| `/transcript` | Generate and save a transcript of the ticket. |
 
-Everything stays organized and private.
+### 🛡️ Moderation
+| Command | Description |
+| :--- | :--- |
+| `/ban [user] [reason]` | Ban a member from the server. |
+| `/kick [user] [reason]` | Kick a member from the server. |
+| `/mute [user] [duration]` | Timeout/Mute a member. |
+| `/warn [user] [reason]` | Issue a warning to a user. |
+| `/history [user]` | View a user's moderation history. |
 
-## 👤 User Guide
+### 👑 Admin
+| Command | Description |
+| :--- | :--- |
+| `/announce` | Open the Interactive Announcement Dashboard. |
+| `/config` | View or edit bot configuration. |
+| `/autorole` | Configure auto-roles for new members. |
+| `/modmail-setup` | Initialize ModMail categories and permissions. |
 
-Users do not need commands.
+### 🎉 Utility & Fun
+| Command | Description |
+| :--- | :--- |
+| `/help` | Show the help menu. |
+| `/ping` | Check bot latency. |
+| `/stats` | View bot uptime and usage stats. |
+| `/avatar [user]` | Display a user's avatar. |
 
-They just:
+---
 
-**1️⃣ Send a DM to the bot**
+## ❓ Troubleshooting
 
-Example:
-```
-"Hello, I need help."
-```
+**Q: The bot isn't responding to DMs.**
+A: Ensure `Direct Message Intents` are enabled in the Discord Developer Portal under the "Bot" tab.
 
-Bot will automatically create a ticket.
+**Q: "Application not responding" error.**
+A: Check the console logs for errors. Ensure the bot is running and the token is correct.
 
-**2️⃣ Continue conversation**
+**Q: Mentions aren't working in announcements.**
+A: The `/announce` command sends plain text messages now. Ensure you are selecting the correct roles/users in the dashboard or typing them correctly in the interactive chat setup.
 
-All messages get forwarded to the staff ticket channel.
+---
 
-## � Complete Command List
-
-### 📨 ModMail Commands
-- `/reply [message]` - Reply to a ticket
-- `/close` - Close a ticket
-- `/claim` - Claim a ticket
-- `/transcript` - Generate a transcript
-- `/modmail-setup` - Setup ModMail category
-
-### 🛡️ Moderation Commands
-- `/warn [user] [reason]` - Warn a user
-- `/mute [user]` - Mute/timeout a user
-- `/unmute [user]` - Unmute a user
-- `/kick [user]` - Kick a user
-- `/ban [user]` - Ban a user
-- `/unban [userid]` - Unban a user by ID
-- `/history [user]` - View user moderation history
-- `/case [id]` - View a specific case
-
-### 👑 Admin Commands
-- `/announce` - Open the interactive announcement manager (Menu System)
-- `/giveaway` - Start a giveaway
-- `/autorole` - Set auto-role for new members
-- `/config` - Bot configuration
-- `/panel` - Admin panel
-
-### 🎉 Fun Commands
-- `/ping` - Check bot latency
-- `/meme` - Get a random meme
-- `/avatar [user]` - Get user's avatar
-
-### 🔧 Utility Commands
-- `/help` - Display help menu
-- `/stats` - Show bot statistics
-
-**Total: 23 slash commands**
-
-## 📢 Announcement System
-
-The bot features a powerful interactive announcement system accessible via `/announce`.
-
-### How to use:
-1. Run **/announce** (no arguments needed).
-2. A menu will appear with the following options:
-   - **📢 Channel Announcement**: Send a formatted embed message to a specific channel.
-   - **📝 Create DM Announcement**: Draft a mass DM to send to all subscribed users.
-   - **👀 Preview DM Announcement**: Send a test copy of a draft to yourself.
-   - **✅ Approve DM Announcement**: Approve a draft to start sending it to users.
-   - **📊 View DM Stats**: Check how many DMs were sent/failed.
-
-### DM Subscription
-Users can manage their DM subscription using:
-- `/subscribe opt-in` - Receive announcements via DM.
-- `/subscribe opt-out` - Stop receiving announcements.
-
-
-> **Note:** Most commands are currently stubs and require implementation. The core structure is in place in `src/commands/`.
-
-## �🛠️ Staff Commands (Legacy)
-
-### 📨 Reply to User
-```
-!reply <message>
-```
-
-Example:
-```
-!reply Hello! How can I assist you?
-```
-
-### 👀 Ticket Info
-```
-!ticket
-```
-
-### 🧹 Close Ticket
-```
-!close
-```
-
-or with a reason:
-```
-!close User issue resolved
-```
-
-### 📌 Claim Ticket
-```
-!claim
-```
-
-### 📝 Add Staff Note (if enabled)
-```
-!note <text>
-```
-
-### 📄 Transcript
-```
-!transcript
-```
-
-## 🔧 Admin Commands
-
-### 🛠️ Setup ModMail System
-```
-!setup
-```
-
-### 👥 Set Staff Role
-```
-!setstaff <@role>
-```
-
-### 🗂️ Set Ticket Category
-```
-!setcategory <categoryID>
-```
-
-### 📨 Set Log Channel
-```
-!setlog <channelID>
-```
-
-## 🧭 Ticket Flow Summary
-
-**User DMs Bot → Bot creates ticket → Staff reply → Bot forwards DM → Staff close ticket.**
-
-A simple workflow for server support.
-
-## 🛠 Customization Tips
-
-- Add slash commands
-- Add embeds for ticket creation
-- Add HTML/PDF transcripts
-- Add auto-welcome message on ticket open
-- Add multi-language support (Bangla + English)
-- Add blacklisted words for ticket filtering
-- Add cooldowns to prevent spam
-
-## ❗ Troubleshooting
-
-### Bot not online
-- Check token in .env
-- Check Node.js version
-- Ensure the bot is invited with required permissions
-
-### Bot cannot create channels
-- Missing Manage Channels permission
-- Category ID invalid
-
-### Bot cannot DM users
-- User disabled DMs
-- Bot blocked
-- User privacy settings
-
-### Messages not forwarding
-- Check messageCreate event logic
-- Ensure bot distinguishes DM vs Guild messages
-
-## 📄 License
-
-Add a LICENSE file if you want (MIT recommended).
+*Built with ❤️ by [Your Name/Team]*
