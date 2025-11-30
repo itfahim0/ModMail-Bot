@@ -48,6 +48,7 @@ export default {
 
                 // Find the log entry for this specific user created in the last 10 seconds
                 const logEntry = auditLogs.entries.find(entry =>
+                    entry.target && // Check if target exists
                     entry.target.id === member.id &&
                     entry.createdTimestamp > (Date.now() - 10000)
                 );
