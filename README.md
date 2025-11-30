@@ -226,4 +226,4 @@ A: The `/announce` command sends plain text messages now. Ensure you are selecti
 
 ---
 
-*Built with ❤️ by [Your Name/Team]*
+*Built with ❤️ by [itfahim/purrfectuniverse]*
