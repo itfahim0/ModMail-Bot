@@ -152,9 +152,17 @@ export default {
         };
 
         if (isUpdate) {
-            await interaction.update(payload);
+            if (interaction.deferred || interaction.replied) {
+                await interaction.editReply(payload);
+            } else {
+                await interaction.update(payload);
+            }
         } else {
-            await interaction.reply(payload);
+            if (interaction.deferred || interaction.replied) {
+                await interaction.followUp(payload);
+            } else {
+                await interaction.reply(payload);
+            }
         }
     },
 
@@ -210,13 +218,6 @@ export default {
                 }
 
                 // Refresh dashboard
-                // Since we deferred update earlier, we need to edit the original reply or send a new one?
-                // Actually, we can't easily "update" the original ephemeral message from here if we lost the reference.
-                // But we can just send a new dashboard or tell user to check the old one? 
-                // Wait, `renderDashboard` uses `interaction.update` which works on the component interaction.
-                // Since we used `deferUpdate` on the button, the original message is still there.
-                // We can use `interaction.editReply` to update the dashboard!
-
                 await this.renderDashboard(interaction, true);
             });
         }
