@@ -27,8 +27,9 @@ A professional, feature-rich ModMail system for Discord. This bot facilitates pr
 
 - **Seamless Ticket Creation**: Users simply DM the bot to open a ticket.
 - **Interactive Dashboard**: Staff manage tickets via buttons and slash commands.
-- **Advanced Announcements**: Send plain text announcements with attachments and links via an interactive dashboard.
-- **Moderation Suite**: Kick, Ban, Mute, Warn, and History tracking.
+- **Advanced Announcements**: Send announcements with attachments and links via an interactive dashboard.
+- **Advanced DM System**: Send direct messages to users with attachments and links using a dashboard interface.
+- **Moderation Suite**: Kick, Ban, Mute, Lock/Unlock Channels, Warn, and History tracking.
 - **Transcripts**: Auto-generated transcripts for closed tickets.
 - **Customizable**: Easy configuration for roles, categories, and messages.
 
@@ -42,9 +43,9 @@ ModMail-Bot/
 ├── deploy/                # Deployment scripts
 ├── src/
 │   ├── commands/          # Slash commands organized by category
-│   │   ├── admin/         # Admin-only commands (announce, config, etc.)
+│   │   ├── admin/         # Admin-only commands (announce, dm, etc.)
 │   │   ├── fun/           # Fun commands (meme, avatar)
-│   │   ├── moderation/    # Moderation tools (ban, kick, mute)
+│   │   ├── moderation/    # Moderation tools (ban, mute, lock)
 │   │   ├── modmail/       # ModMail specific commands (reply, close)
 │   │   └── utils/         # Utility commands (help, stats)
 │   ├── database/          # Database connection logic
@@ -173,6 +174,8 @@ Follow the instructions output by `pm2 startup` to finalize the setup.
 ### For Admins
 - **Setup**: Run `/modmail-setup` to automatically create the necessary categories and channels.
 - **Announcements**: Use `/announce` to send broadcast messages to channels with attachments and mentions.
+- **Direct Messages**: Use `/dm` to send advanced official messages to users.
+- **Lockdown**: Use `/lock` and `/unlock` to manage channel access.
 
 ---
 
@@ -194,11 +197,14 @@ Follow the instructions output by `pm2 startup` to finalize the setup.
 | `/mute [user] [duration]` | Timeout/Mute a member. |
 | `/warn [user] [reason]` | Issue a warning to a user. |
 | `/history [user]` | View a user's moderation history. |
+| `/lock` | Lock the current channel (prevent @everyone from talking). |
+| `/unlock` | Unlock the current channel. |
 
 ### 👑 Admin
 | Command | Description |
 | :--- | :--- |
 | `/announce` | Open the Interactive Announcement Dashboard. |
+| `/dm [user]` | Open the Interactive DM Dashboard. |
 | `/config` | View or edit bot configuration. |
 | `/autorole` | Configure auto-roles for new members. |
 | `/modmail-setup` | Initialize ModMail categories and permissions. |
@@ -226,4 +232,16 @@ A: The `/announce` command sends plain text messages now. Ensure you are selecti
 
 ---
 
-*Built with ❤️ by [itfahim/purrfectuniverse]*
+## 📄 License
+
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+
+*Copyright © 2026 [itfahim](https://github.com/itfahim0)*
+
+---
+
+## 📅 Changelog
+
+### v1.0.1 (2026-01-08)
+- **Fix**: Resolved a critical `TypeError` in `messageCreate.js` that caused the bot to crash when handling messages in channels with null topics.
+- **Improvement**: Enhanced error handling for ModMail ticket creation and message forwarding.

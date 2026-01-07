@@ -102,7 +102,7 @@ export default {
             if (message.content.startsWith('!')) {
                 // Handle commands
                 if (message.content === '!close') {
-                    const userId = message.channel.topic.match(/\((\d+)\)/)?.[1];
+                    const userId = message.channel.topic?.match(/\((\d+)\)/)?.[1];
                     try {
                         const user = await message.client.users.fetch(userId);
                         await user.send({
@@ -124,7 +124,7 @@ export default {
             }
 
             // Forward staff reply to user
-            const userId = message.channel.topic.match(/\((\d+)\)/)?.[1];
+            const userId = message.channel.topic?.match(/\((\d+)\)/)?.[1];
             try {
                 const user = await message.client.users.fetch(userId);
                 const embed = new EmbedBuilder()
