@@ -237,3 +237,11 @@ A: The `/announce` command sends plain text messages now. Ensure you are selecti
 This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 
 *Copyright © 2026 [itfahim](https://github.com/itfahim0)*
+
+---
+
+## 📅 Changelog
+
+### v1.0.1 (2026-01-08)
+- **Fix**: Resolved a critical `TypeError` in `messageCreate.js` that caused the bot to crash when handling messages in channels with null topics.
+- **Improvement**: Enhanced error handling for ModMail ticket creation and message forwarding.
