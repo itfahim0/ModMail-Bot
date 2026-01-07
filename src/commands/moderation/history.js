@@ -5,7 +5,7 @@ export default {
     data: new SlashCommandBuilder()
         .setName('history')
         .setDescription('View moderation history of a user')
-        .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers)
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
         .addUserOption(option =>
             option.setName('user')
                 .setDescription('User to view history')

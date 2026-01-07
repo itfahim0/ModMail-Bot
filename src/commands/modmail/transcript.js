@@ -4,7 +4,7 @@ export default {
     data: new SlashCommandBuilder()
         .setName('transcript')
         .setDescription('Generate a transcript of this ticket')
-        .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages),
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),
 
     async execute(interaction) {
         if (!interaction.channel.name.startsWith('ticket-')) {

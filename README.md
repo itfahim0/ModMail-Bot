@@ -242,6 +242,10 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 ## 📅 Changelog
 
+### v1.1.0 (2026-01-08)
+- **Feature**: Added `/unlock` command to unlock channels.
+- **Update**: Updated command permissions. All Admin and Moderation commands now require **Manage Server** permission, allowing Moderators to use them.
+
 ### v1.0.1 (2026-01-08)
 - **Fix**: Resolved a critical `TypeError` in `messageCreate.js` that caused the bot to crash when handling messages in channels with null topics.
 - **Improvement**: Enhanced error handling for ModMail ticket creation and message forwarding.

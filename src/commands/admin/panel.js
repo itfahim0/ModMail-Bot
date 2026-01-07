@@ -5,7 +5,7 @@ export default {
     data: new SlashCommandBuilder()
         .setName('panel')
         .setDescription('Show admin panel')
-        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),
 
     async execute(interaction) {
         const embed = new EmbedBuilder()

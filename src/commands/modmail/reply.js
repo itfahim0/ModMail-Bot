@@ -4,7 +4,7 @@ export default {
     data: new SlashCommandBuilder()
         .setName('reply')
         .setDescription('Reply to a ticket user')
-        .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
         .addStringOption(option =>
             option.setName('message')
                 .setDescription('Message to send')

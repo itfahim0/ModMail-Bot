@@ -4,7 +4,7 @@ export default {
     data: new SlashCommandBuilder()
         .setName('mute')
         .setDescription('Timeout/mute a user')
-        .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers)
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
         .addUserOption(option =>
             option.setName('user')
                 .setDescription('User to mute')

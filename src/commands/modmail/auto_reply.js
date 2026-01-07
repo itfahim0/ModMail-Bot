@@ -4,7 +4,7 @@ export default {
     data: new SlashCommandBuilder()
         .setName('auto-reply')
         .setDescription('Send a canned response')
-        .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
         .addStringOption(opt =>
             opt.setName('key')
                 .setDescription('Response key')

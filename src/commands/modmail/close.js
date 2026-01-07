@@ -4,7 +4,7 @@ export default {
     data: new SlashCommandBuilder()
         .setName('close')
         .setDescription('Close a ticket')
-        .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
         .addStringOption(option =>
             option.setName('reason')
                 .setDescription('Reason for closing')
