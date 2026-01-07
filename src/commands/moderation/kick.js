@@ -4,7 +4,7 @@ export default {
     data: new SlashCommandBuilder()
         .setName('kick')
         .setDescription('Kick a user from the server')
-        .setDefaultMemberPermissions(PermissionFlagsBits.KickMembers)
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
         .addUserOption(option =>
             option.setName('user')
                 .setDescription('User to kick')

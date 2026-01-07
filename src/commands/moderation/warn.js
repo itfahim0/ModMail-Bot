@@ -5,7 +5,7 @@ export default {
     data: new SlashCommandBuilder()
         .setName('warn')
         .setDescription('Warn a user')
-        .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers)
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
         .addUserOption(option =>
             option.setName('user')
                 .setDescription('User to warn')

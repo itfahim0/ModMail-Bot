@@ -4,7 +4,7 @@ export default {
     data: new SlashCommandBuilder()
         .setName('lock')
         .setDescription('Lock the current channel')
-        .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels),
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),
 
     async execute(interaction) {
         await interaction.channel.permissionOverwrites.edit(interaction.guild.roles.everyone, {

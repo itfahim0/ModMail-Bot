@@ -5,7 +5,7 @@ export default {
     data: new SlashCommandBuilder()
         .setName('case')
         .setDescription('View details of a specific case/warning')
-        .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers)
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
         .addStringOption(option =>
             option.setName('id')
                 .setDescription('Case ID (User ID)')

@@ -4,7 +4,7 @@ export default {
     data: new SlashCommandBuilder()
         .setName('giveaway')
         .setDescription('Start a giveaway')
-        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
         .addStringOption(option =>
             option.setName('prize')
                 .setDescription('Prize to win')

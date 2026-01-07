@@ -5,7 +5,7 @@ export default {
     data: new SlashCommandBuilder()
         .setName('config')
         .setDescription('Configure bot settings')
-        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
         .addStringOption(option =>
             option.setName('setting')
                 .setDescription('Setting to change')

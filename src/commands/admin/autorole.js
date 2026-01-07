@@ -5,7 +5,7 @@ export default {
     data: new SlashCommandBuilder()
         .setName('autorole')
         .setDescription('Set the role given to new members')
-        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
         .addRoleOption(option =>
             option.setName('role')
                 .setDescription('Role to assign')

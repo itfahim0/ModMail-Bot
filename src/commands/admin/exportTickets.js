@@ -5,7 +5,7 @@ export default {
     data: new SlashCommandBuilder()
         .setName('export-tickets')
         .setDescription('Export all tickets to a CSV file')
-        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),
 
     async execute(interaction) {
         // Placeholder implementation – real DB export logic would go here

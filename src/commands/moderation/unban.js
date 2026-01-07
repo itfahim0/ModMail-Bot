@@ -4,7 +4,7 @@ export default {
     data: new SlashCommandBuilder()
         .setName('unban')
         .setDescription('Unban a user from the server')
-        .setDefaultMemberPermissions(PermissionFlagsBits.BanMembers)
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
         .addStringOption(option =>
             option.setName('userid')
                 .setDescription('User ID to unban')

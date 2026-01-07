@@ -5,7 +5,7 @@ export default {
     data: new SlashCommandBuilder()
         .setName('unwarn')
         .setDescription('Remove a warning from a user')
-        .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers)
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
         .addUserOption(option =>
             option.setName('user')
                 .setDescription('User to unwarn')

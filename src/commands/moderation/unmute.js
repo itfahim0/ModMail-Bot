@@ -4,7 +4,7 @@ export default {
     data: new SlashCommandBuilder()
         .setName('unmute')
         .setDescription('Remove timeout from a user')
-        .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers)
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
         .addUserOption(option =>
             option.setName('user')
                 .setDescription('User to unmute')

@@ -4,7 +4,7 @@ export default {
     data: new SlashCommandBuilder()
         .setName('modmail-setup')
         .setDescription('Setup ModMail category')
-        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),
 
     async execute(interaction) {
         try {
