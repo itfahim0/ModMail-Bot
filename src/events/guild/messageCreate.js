@@ -76,10 +76,21 @@ export default {
                 .setFooter({ text: `User ID: ${message.author.id}` })
                 .setTimestamp();
 
+            // Handle Image Attachment inside Embed
+            const imageAttachment = message.attachments.find(a => a.contentType && a.contentType.startsWith('image/'));
+            if (imageAttachment) {
+                embed.setImage(imageAttachment.url);
+            }
+
+            // Other attachments (files)
+            const otherAttachments = message.attachments.filter(a => !a.contentType || !a.contentType.startsWith('image/')).map(a => a.url);
+
             try {
+                // Send main message
                 await ticketChannel.send({
+                    content: message.content, // Sending content outside embed triggers link previews
                     embeds: [embed],
-                    files: message.attachments.map(a => a.url)
+                    files: otherAttachments
                 });
             } catch (error) {
                 console.error('Error forwarding message:', error);
@@ -122,9 +133,19 @@ export default {
                     .setDescription(message.content || '*[No text content]*')
                     .setTimestamp();
 
+                // Handle Image Attachment inside Embed
+                const imageAttachment = message.attachments.find(a => a.contentType && a.contentType.startsWith('image/'));
+                if (imageAttachment) {
+                    embed.setImage(imageAttachment.url);
+                }
+
+                // Other attachments (files)
+                const otherAttachments = message.attachments.filter(a => !a.contentType || !a.contentType.startsWith('image/')).map(a => a.url);
+
                 await user.send({
+                    content: message.content, // Triggers link preview for user
                     embeds: [embed],
-                    files: message.attachments.map(a => a.url)
+                    files: otherAttachments
                 });
                 await message.react('✅');
             } catch (error) {
