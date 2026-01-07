@@ -31,7 +31,7 @@ export default {
                 .setDescription('Add an external link (e.g. YouTube, Article)')
                 .setRequired(false)
         )
-        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),
 
     async execute(interaction) {
         const attachment = interaction.options.getAttachment('attachment');
