@@ -1,5 +1,5 @@
 {
-    "name": "modmail-bot",
+    "name": "@purrfecthq/modmail-bot",
     "version": "0.0.1",
     "description": "ModMail Bot migrated from legacy codebase",
     "main": "dist/index.js",
@@ -11,6 +11,7 @@
         "lint": "eslint .",
         "lint:fix": "eslint . --fix",
         "format": "prettier --write .",
+        "test": "echo \"No tests specified\" && exit 0",
         "prepare": "husky"
     },
     "dependencies": {

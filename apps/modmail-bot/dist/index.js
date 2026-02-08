@@ -1,37 +1,10 @@
-// src/config.ts
-import dotenv from "dotenv";
-import path from "path";
-import { z } from "zod";
-dotenv.config({ path: path.resolve(process.cwd(), ".env") });
-var envSchema = z.object({
-  DISCORD_TOKEN: z.string().min(1, "DISCORD_TOKEN is required"),
-  DISCORD_GUILD_ID: z.string().optional(),
-  MODMAIL_LOG_CHANNEL_ID: z.string().optional(),
-  MODMAIL_CATEGORY_ID: z.string().optional()
-});
-var _env = envSchema.safeParse(process.env);
-if (!_env.success) {
-  console.error(
-    "\u274C Invalid environment variables:",
-    JSON.stringify(_env.error.format(), null, 2)
-  );
-  process.exit(1);
-}
-var config = {
-  discordToken: _env.data.DISCORD_TOKEN,
-  guildId: _env.data.DISCORD_GUILD_ID,
-  logChannelId: _env.data.MODMAIL_LOG_CHANNEL_ID,
-  categoryId: _env.data.MODMAIL_CATEGORY_ID
-};
-
-// src/discord/client.ts
-import { Client, Events, GatewayIntentBits, Partials } from "discord.js";
-
 // src/commands/index.ts
+import {
+  Collection
+} from "discord.js";
 import fs from "fs";
-import path2 from "path";
+import path from "path";
 import { fileURLToPath } from "url";
-import { Collection } from "discord.js";
 
 // src/logging/logger.ts
 import winston from "winston";
@@ -46,7 +19,7 @@ var logger = winston.createLogger({
 });
 
 // src/commands/modmail/setup.ts
-import { SlashCommandBuilder, PermissionFlagsBits, ChannelType } from "discord.js";
+import { ChannelType, PermissionFlagsBits, SlashCommandBuilder } from "discord.js";
 var setup_default = {
   data: new SlashCommandBuilder().setName("modmail-setup").setDescription("Setup ModMail category").setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),
   async execute(interaction) {
@@ -88,7 +61,7 @@ LOG_CHANNEL_ID=${logChannel.id}
 };
 
 // src/commands/index.ts
-var __dirname = path2.dirname(fileURLToPath(import.meta.url));
+var __dirname = path.dirname(fileURLToPath(import.meta.url));
 var commandsCollection = new Collection();
 var commands = [];
 var loadCommands = async () => {
@@ -98,12 +71,12 @@ var loadCommands = async () => {
   }
   const folders = fs.readdirSync(__dirname).filter((f) => !f.endsWith(".js") && !f.endsWith(".ts"));
   for (const folder of folders) {
-    const folderPath = path2.join(__dirname, folder);
+    const folderPath = path.join(__dirname, folder);
     if (!fs.statSync(folderPath).isDirectory()) continue;
     const files = fs.readdirSync(folderPath).filter((file) => file.endsWith(".js") || file.endsWith(".ts"));
     for (const file of files) {
       try {
-        const filePath = `file://${path2.join(folderPath, file)}`;
+        const filePath = `file://${path.join(folderPath, file)}`;
         const commandModule = await import(filePath);
         const command = commandModule.default || commandModule;
         if (command?.data && command?.execute) {
@@ -132,12 +105,47 @@ async function handleSlashCommand(interaction) {
   } catch (error) {
     logger.error(`Error executing command ${interaction.commandName}:`, error);
     if (interaction.replied || interaction.deferred) {
-      await interaction.followUp({ content: "There was an error while executing this command!", ephemeral: true });
+      await interaction.followUp({
+        content: "There was an error while executing this command!",
+        ephemeral: true
+      });
     } else {
-      await interaction.reply({ content: "There was an error while executing this command!", ephemeral: true });
+      await interaction.reply({
+        content: "There was an error while executing this command!",
+        ephemeral: true
+      });
     }
   }
 }
+
+// src/config.ts
+import dotenv from "dotenv";
+import path2 from "path";
+import { z } from "zod";
+dotenv.config({ path: path2.resolve(process.cwd(), ".env") });
+var envSchema = z.object({
+  DISCORD_TOKEN: z.string().min(1, "DISCORD_TOKEN is required"),
+  DISCORD_GUILD_ID: z.string().optional(),
+  MODMAIL_LOG_CHANNEL_ID: z.string().optional(),
+  MODMAIL_CATEGORY_ID: z.string().optional()
+});
+var _env = envSchema.safeParse(process.env);
+if (!_env.success) {
+  console.error(
+    "\u274C Invalid environment variables:",
+    JSON.stringify(_env.error.format(), null, 2)
+  );
+  process.exit(1);
+}
+var config = {
+  discordToken: _env.data.DISCORD_TOKEN,
+  guildId: _env.data.DISCORD_GUILD_ID,
+  logChannelId: _env.data.MODMAIL_LOG_CHANNEL_ID,
+  categoryId: _env.data.MODMAIL_CATEGORY_ID
+};
+
+// src/discord/client.ts
+import { Client, Events, GatewayIntentBits, Partials } from "discord.js";
 
 // src/events/interactionCreate.ts
 import { ChannelType as ChannelType2, EmbedBuilder } from "discord.js";

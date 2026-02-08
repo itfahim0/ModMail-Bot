@@ -1,6 +1,6 @@
 
 
-> modmail-bot@0.0.1 build /Users/kuasha/Dev/ModMail-Bot/apps/modmail-bot
+> @purrfecthq/modmail-bot@0.0.1 build /Users/kuasha/Dev/ModMail-Bot/apps/modmail-bot
 > tsup src/index.ts --format esm --clean --target node20
 
 [34mCLI[39m Building entry: src/index.ts
@@ -9,5 +9,5 @@
 [34mCLI[39m Target: node20
 [34mCLI[39m Cleaning output folder
 [34mESM[39m Build start
-[32mESM[39m [1mdist/index.js [22m[32m12.89 KB[39m
-[32mESM[39m ⚡️ Build success in 44ms
+[32mESM[39m [1mdist/index.js [22m[32m12.93 KB[39m
+[32mESM[39m ⚡️ Build success in 18ms
