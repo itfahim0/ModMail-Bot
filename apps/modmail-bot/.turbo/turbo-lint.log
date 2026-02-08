@@ -1,0 +1,82 @@
+
+
+> @purrfecthq/modmail-bot@0.0.1 lint /Users/kuasha/Dev/ModMail-Bot/apps/modmail-bot
+> eslint .
+
+[0m[0m
+[0m[4m/Users/kuasha/Dev/ModMail-Bot/apps/modmail-bot/src/commands/admin/announce.ts[24m[0m
+[0m    [2m7:5[22m   [33mwarning[39m  'ComponentType' is defined but never used                  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m   [2m12:5[22m   [33mwarning[39m  'StringSelectMenuBuilder' is defined but never used        [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m   [2m13:5[22m   [33mwarning[39m  'StringSelectMenuOptionBuilder' is defined but never used  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m227:19[22m  [33mwarning[39m  'msg' is assigned a value but never used                   [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m257:30[22m  [33mwarning[39m  'e' is defined but never used                              [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m[0m
+[0m[4m/Users/kuasha/Dev/ModMail-Bot/apps/modmail-bot/src/commands/admin/dm.ts[24m[0m
+[0m  [2m195:30[22m  [33mwarning[39m  'e' is defined but never used  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m[0m
+[0m[4m/Users/kuasha/Dev/ModMail-Bot/apps/modmail-bot/src/commands/fun/meme.ts[24m[0m
+[0m  [2m22:18[22m  [33mwarning[39m  'error' is defined but never used  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m[0m
+[0m[4m/Users/kuasha/Dev/ModMail-Bot/apps/modmail-bot/src/commands/index.ts[24m[0m
+[0m  [2m16:58[22m  [33mwarning[39m  Unexpected any. Specify a different type  [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m[0m
+[0m[4m/Users/kuasha/Dev/ModMail-Bot/apps/modmail-bot/src/commands/modmail/transcript.ts[24m[0m
+[0m  [2m35:18[22m  [33mwarning[39m  'error' is defined but never used  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m[0m
+[0m[4m/Users/kuasha/Dev/ModMail-Bot/apps/modmail-bot/src/events/client/interactionCreate.ts[24m[0m
+[0m   [2m2:5[22m   [33mwarning[39m  'ActionRowBuilder' is defined but never used  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m   [2m3:5[22m   [33mwarning[39m  'ButtonBuilder' is defined but never used     [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m   [2m4:5[22m   [33mwarning[39m  'ButtonStyle' is defined but never used       [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m12:10[22m  [33mwarning[39m  'checkRateLimit' is defined but never used    [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m[0m
+[0m[4m/Users/kuasha/Dev/ModMail-Bot/apps/modmail-bot/src/events/guild/messageCreate.ts[24m[0m
+[0m  [2m3:10[22m  [33mwarning[39m  'db' is defined but never used      [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m3:14[22m  [33mwarning[39m  'saveDB' is defined but never used  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m[0m
+[0m[4m/Users/kuasha/Dev/ModMail-Bot/apps/modmail-bot/src/events/guild/messageDelete.ts[24m[0m
+[0m  [2m1:10[22m  [33mwarning[39m  'AuditLogEvent' is defined but never used  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m[0m
+[0m[4m/Users/kuasha/Dev/ModMail-Bot/apps/modmail-bot/src/services/analytics/serverHealth.ts[24m[0m
+[0m  [2m2:27[22m  [33mwarning[39m  'guild' is defined but never used. Allowed unused args must match /^_/u  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m[0m
+[0m[4m/Users/kuasha/Dev/ModMail-Bot/apps/modmail-bot/src/services/analytics/staffPerformance.ts[24m[0m
+[0m  [2m2:28[22m  [33mwarning[39m  'moderator' is defined but never used. Allowed unused args must match /^_/u  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m2:39[22m  [33mwarning[39m  'action' is defined but never used. Allowed unused args must match /^_/u     [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m[0m
+[0m[4m/Users/kuasha/Dev/ModMail-Bot/apps/modmail-bot/src/services/community/giveawayService.ts[24m[0m
+[0m  [2m2:24[22m  [33mwarning[39m  'channel' is defined but never used. Allowed unused args must match /^_/u   [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m2:33[22m  [33mwarning[39m  'prize' is defined but never used. Allowed unused args must match /^_/u     [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m2:40[22m  [33mwarning[39m  'duration' is defined but never used. Allowed unused args must match /^_/u  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m[0m
+[0m[4m/Users/kuasha/Dev/ModMail-Bot/apps/modmail-bot/src/services/community/welcomeService.ts[24m[0m
+[0m  [2m2:30[22m  [33mwarning[39m  'member' is defined but never used. Allowed unused args must match /^_/u  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m[0m
+[0m[4m/Users/kuasha/Dev/ModMail-Bot/apps/modmail-bot/src/services/moderation/autoModService.ts[24m[0m
+[0m  [2m2:25[22m  [33mwarning[39m  'message' is defined but never used. Allowed unused args must match /^_/u  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m[0m
+[0m[4m/Users/kuasha/Dev/ModMail-Bot/apps/modmail-bot/src/services/moderation/caseManager.ts[24m[0m
+[0m  [2m2:29[22m  [33mwarning[39m  'type' is defined but never used. Allowed unused args must match /^_/u       [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m2:35[22m  [33mwarning[39m  'user' is defined but never used. Allowed unused args must match /^_/u       [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m2:41[22m  [33mwarning[39m  'moderator' is defined but never used. Allowed unused args must match /^_/u  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m2:52[22m  [33mwarning[39m  'reason' is defined but never used. Allowed unused args must match /^_/u     [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m[0m
+[0m[4m/Users/kuasha/Dev/ModMail-Bot/apps/modmail-bot/src/services/moderation/punishmentManager.ts[24m[0m
+[0m  [2m2:23[22m  [33mwarning[39m  'user' is defined but never used. Allowed unused args must match /^_/u      [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m2:29[22m  [33mwarning[39m  'reason' is defined but never used. Allowed unused args must match /^_/u    [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m3:23[22m  [33mwarning[39m  'user' is defined but never used. Allowed unused args must match /^_/u      [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m3:29[22m  [33mwarning[39m  'duration' is defined but never used. Allowed unused args must match /^_/u  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m3:39[22m  [33mwarning[39m  'reason' is defined but never used. Allowed unused args must match /^_/u    [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m[0m
+[0m[4m/Users/kuasha/Dev/ModMail-Bot/apps/modmail-bot/src/services/modmail/ticketManager.ts[24m[0m
+[0m  [2m2:31[22m  [33mwarning[39m  'user' is defined but never used. Allowed unused args must match /^_/u     [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m2:37[22m  [33mwarning[39m  'guild' is defined but never used. Allowed unused args must match /^_/u    [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m3:30[22m  [33mwarning[39m  'channel' is defined but never used. Allowed unused args must match /^_/u  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m[0m
+[0m[4m/Users/kuasha/Dev/ModMail-Bot/apps/modmail-bot/src/services/modmail/transcriptService.ts[24m[0m
+[0m  [2m2:27[22m  [33mwarning[39m  'channel' is defined but never used. Allowed unused args must match /^_/u  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m[0m
+[0m[4m/Users/kuasha/Dev/ModMail-Bot/apps/modmail-bot/src/utils/time.ts[24m[0m
+[0m  [2m1:27[22m  [33mwarning[39m  'str' is defined but never used. Allowed unused args must match /^_/u  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m[0m
+[0m[33m[1m✖ 38 problems (0 errors, 38 warnings)[22m[39m[0m
+[0m[33m[1m[22m[39m[0m
