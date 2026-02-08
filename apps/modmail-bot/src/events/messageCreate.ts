@@ -123,7 +123,7 @@ async function handleDMMessage(message: Message): Promise<void> {
             files: otherAttachments,
         });
     } catch (error) {
-        console.error('Error forwarding message:', error);
+        logger.error('Error forwarding message:', { error });
     }
 }
 

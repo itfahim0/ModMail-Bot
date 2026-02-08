@@ -272,7 +272,7 @@ async function handleDMMessage(message) {
       files: otherAttachments
     });
   } catch (error) {
-    console.error("Error forwarding message:", error);
+    logger.error("Error forwarding message:", { error });
   }
 }
 async function handleStaffReply(message) {
@@ -358,9 +358,6 @@ async function main() {
   await loadCommands();
   try {
     const client = createDiscordClient();
-    if (!config.discordToken) {
-      throw new Error("Missing DISCORD_TOKEN");
-    }
     await client.login(config.discordToken);
   } catch (error) {
     logger.error("Fatal error during startup", {

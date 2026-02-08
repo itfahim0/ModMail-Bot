@@ -10,10 +10,6 @@ async function main() {
     try {
         const client = createDiscordClient();
 
-        if (!config.discordToken) {
-            throw new Error('Missing DISCORD_TOKEN');
-        }
-
         await client.login(config.discordToken);
     } catch (error) {
         logger.error('Fatal error during startup', {

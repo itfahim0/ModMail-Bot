@@ -1,6 +1,6 @@
 
 
-> modmail-bot@0.0.1 lint /Users/kuasha/Dev/ModMail-Bot/apps/modmail-bot
+> @purrfecthq/modmail-bot@0.0.1 lint /Users/kuasha/Dev/ModMail-Bot/apps/modmail-bot
 > eslint .
 
 [0m[0m
