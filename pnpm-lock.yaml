@@ -28,7 +28,7 @@ importers:
         specifier: ^19.6.0
         version: 19.8.1
       '@trivago/prettier-plugin-sort-imports':
-        specifier: ^5.2.0
+        specifier: ^5.2.2
         version: 5.2.2(prettier@3.8.1)
       '@types/node':
         specifier: ^22.10.2
