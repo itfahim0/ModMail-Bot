@@ -1,0 +1,1 @@
+export const Colors = { Success: 'Green', Error: 'Red' };

@@ -1,0 +1,259 @@
+name: Deploy Bot
+
+on:
+    push:
+        branches:
+            - deploy
+        paths:
+            # Bot application
+            - 'apps/purrmission-bot/**'
+            # Root configuration
+            - 'package.json'
+            - 'yarn.lock'
+            - '.yarnrc.yml'
+            - 'turbo.json'
+            # Node version
+            - '.nvmrc'
+            # Workflow itself
+            - '.github/workflows/deploy.yml'
+            # Database schema
+            - 'prisma/**'
+    workflow_dispatch:
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Setup pnpm
+              uses: pnpm/action-setup@v3
+              with:
+                  version: 9
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version-file: '.nvmrc'
+                  cache: 'pnpm'
+
+            - name: Install Dependencies
+              run: pnpm install --frozen-lockfile
+
+            - name: Generate Prisma Client
+              run: pnpm prisma generate
+
+            - name: Build
+              run: pnpm build
+
+            - name: Generate checksums
+              run: |
+                  find apps/purrmission-bot/dist -type f -exec sha256sum {} \; | sort > dist-checksums.txt
+                  find dist-scripts -type f -exec sha256sum {} \; | sort >> dist-checksums.txt
+                  sha256sum package.json pnpm-lock.yaml ecosystem.config.cjs >> dist-checksums.txt
+                  cat dist-checksums.txt
+
+            - name: Deploy Commands
+              if: github.ref == 'refs/heads/deploy'
+              env:
+                  DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+                  DISCORD_CLIENT_ID: ${{ secrets.DISCORD_CLIENT_ID }}
+                  DISCORD_GUILD_ID: ${{ secrets.DISCORD_GUILD_ID }}
+                  DISCORD_ANNOUNCE_CHANNEL_ID: ${{ secrets.DISCORD_ANNOUNCE_CHANNEL_ID }}
+                  DATABASE_URL: 'file:./dev.db' # Required for core validation
+              run: pnpm discord:deploy-commands
+
+            - name: Upload artifact
+              uses: actions/upload-artifact@v4
+              with:
+                  name: bot-build
+                  path: |
+                      apps/purrmission-bot/dist
+                      apps/purrmission-bot/package.json
+                      package.json
+                      pnpm-lock.yaml
+                      pnpm-workspace.yaml
+                      ecosystem.config.cjs
+                      prisma
+                      dist-scripts
+                      dist-checksums.txt
+                      scripts/validate-env.cjs
+
+    deploy:
+        needs: build
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Download artifact
+              uses: actions/download-artifact@v4
+              with:
+                  name: bot-build
+
+            - name: Verify checksums
+              run: |
+                  echo "Verifying artifact integrity..."
+                  sha256sum -c dist-checksums.txt
+
+            - name: Stop PM2 and clean target directory
+              uses: appleboy/ssh-action@v1
+              with:
+                  host: ${{ secrets.SSH_HOST }}
+                  username: ${{ secrets.SSH_USERNAME }}
+                  key: ${{ secrets.SSH_KEY }}
+                  port: ${{ secrets.SSH_PORT || 22 }}
+                  script: |
+                      set -e
+                      export NVM_DIR="$HOME/.nvm"
+                      [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+                      cd ${{ secrets.SSH_TARGET }}
+
+                      # 1. PRE-FLIGHT PERSISTENCE VALIDATION
+                      # This check runs BEFORE any data is deleted or PM2 is stopped.
+                      # It uses shell tools to ensure the .env is configured safely.
+
+                      echo "Running pre-flight persistence check..."
+                      if [ ! -f ".env" ]; then
+                          echo "❌ .env missing in root! Please create it manually with required credentials."
+                          exit 1
+                      fi
+
+                      # Robust shell-based DATABASE_URL parsing
+                      db_url_line="$(grep -E '^[[:space:]]*DATABASE_URL[[:space:]]*=' .env | tail -n 1 || true)"
+                      if [ -n "$db_url_line" ]; then
+                          db_url_value="${db_url_line#*=}"
+                          # Trim surrounding whitespace and optional quotes
+                          db_url_value="$(printf '%s\n' "$db_url_value" | sed -E 's/^[[:space:]]*["'\'']?//; s/["'\''][[:space:]]*$//')"
+                          
+                          case "$db_url_value" in
+                            *prisma/*|*apps/*|*dist/*|*./dev.db)
+                              echo "❌ CRITICAL: DATABASE_URL points to a volatile folder ($db_url_value)."
+                              echo "Deployment ABORTED to prevent data loss. Move your DB to data/ and update .env."
+                              exit 1
+                              ;;
+                          esac
+                      fi
+
+                      # Double check for unexpected data in folders we are about to delete
+                      if [ -d "prisma/data" ] || [ -d "prisma/db" ]; then
+                          echo "❌ CRITICAL: Found database data in the 'prisma' directory."
+                          echo "Deployment ABORTED because the 'prisma' directory is about to be DELETED."
+                          echo "ACTION: Move the database to the root 'data' folder and update .env before redeploying."
+                          exit 1
+                      fi
+
+                      # Stop the bot
+                      pm2 stop Purrmission || true
+
+                      # 2. TARGET DIRECTORY PREPARATION
+                      if [ ! -w "." ]; then
+                          echo "❌ CRITICAL: Target directory is not writable!"
+                          exit 1
+                      fi
+
+                      mkdir -p data
+                      mkdir -p backups
+
+                      # 3. DYNAMIC DATABASE BACKUP
+                      # Parse DATABASE_URL to find the actual file to backup
+                      DB_PATH=""
+                      if [ -n "$db_url_value" ]; then
+                          case "$db_url_value" in
+                              file:*|sqlite:*)
+                                  # Remove scheme and normalize
+                                  path_part="${db_url_value#file:}"
+                                  path_part="${path_part#sqlite:}"
+                                  # Handle sqlite:/// absolute paths or file: relative
+                                  while [ "${path_part#"/"}" != "$path_part" ]; do path_part="${path_part#"/"}"; done
+                                  
+                                  # If it doesn't start with /, treat as relative to root
+                                  case "$path_part" in
+                                      /*) DB_PATH="$path_part" ;;
+                                      *) DB_PATH="./$path_part" ;;
+                                  esac
+                                  ;;
+                          esac
+                      fi
+
+                      # Fallback to default if parsing failed
+                      if [ -z "$DB_PATH" ]; then DB_PATH="data/purrmission.db"; fi
+
+                      if [ -f "$DB_PATH" ]; then
+                          echo "Backing up database from '$DB_PATH'..."
+                          BACKUP_NAME="$(basename "$DB_PATH").$(date +%Y%m%d%H%M%S).bak"
+                          cp "$DB_PATH" "backups/$BACKUP_NAME"
+                      else
+                          echo "No database file found at '$DB_PATH'; skipping backup."
+                      fi
+
+                      # Flush target directory except .env files and persistent data
+                      # Preserved: .env*, *.db (legacy), data/, backups/
+                      find . -mindepth 1 -maxdepth 1 \
+                        ! -name '.env*' \
+                        ! -name '*.db' \
+                        ! -name '*.db-*' \
+                        ! -name '*.sqlite' \
+                        ! -name '*.sqlite3' \
+                        ! -name '*.sqlite-*' \
+                        ! -name '*.sqlite3-*' \
+                        ! -name 'data' \
+                        ! -name 'backups' \
+                        -exec rm -rf {} +
+
+            - name: Copy files to server
+              uses: appleboy/scp-action@v1
+              with:
+                  host: ${{ secrets.SSH_HOST }}
+                  username: ${{ secrets.SSH_USERNAME }}
+                  key: ${{ secrets.SSH_KEY }}
+                  port: ${{ secrets.SSH_PORT || 22 }}
+                  target: ${{ secrets.SSH_TARGET }}
+                  source: 'apps,package.json,pnpm-lock.yaml,pnpm-workspace.yaml,ecosystem.config.cjs,dist-checksums.txt,prisma,dist-scripts,scripts/validate-env.cjs'
+
+            - name: Verify deployment integrity
+              uses: appleboy/ssh-action@v1
+              with:
+                  host: ${{ secrets.SSH_HOST }}
+                  username: ${{ secrets.SSH_USERNAME }}
+                  key: ${{ secrets.SSH_KEY }}
+                  port: ${{ secrets.SSH_PORT || 22 }}
+                  script: |
+                      set -e
+                      cd ${{ secrets.SSH_TARGET }}
+                      echo "Verifying deployed files..."
+                      sha256sum -c dist-checksums.txt
+
+            - name: Install dependencies and restart
+              uses: appleboy/ssh-action@v1
+              with:
+                  host: ${{ secrets.SSH_HOST }}
+                  username: ${{ secrets.SSH_USERNAME }}
+                  key: ${{ secrets.SSH_KEY }}
+                  port: ${{ secrets.SSH_PORT || 22 }}
+                  script: |
+                      set -e
+                      export NVM_DIR="$HOME/.nvm"
+                      [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+                      cd ${{ secrets.SSH_TARGET }}
+
+                      corepack enable
+                      corepack prepare pnpm@9.15.1 --activate
+
+                      if ! command -v pm2 &> /dev/null; then
+                          pnpm add -g pm2
+                      fi
+
+                      pnpm install --frozen-lockfile
+                      pnpm prisma:generate
+                      pnpm prisma:deploy
+
+                      # 4. POST-DEPLOY VALIDATION
+                      # Ensures the environment is complete and encryption key is valid
+                      echo "Validating environment configuration..."
+                      node scripts/validate-env.cjs
+
+                      # Cleanup rogue nested .env files
+                      find apps -name ".env" -type f -delete
+
+                      pm2 startOrRestart ecosystem.config.cjs

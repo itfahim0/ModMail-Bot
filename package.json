@@ -1,42 +1,16 @@
 {
-    "name": "modmail-bot",
-    "version": "0.0.1",
-    "description": "ModMail Bot migrated from legacy codebase",
-    "main": "dist/index.js",
-    "type": "module",
+    "name": "modmail-monorepo",
+    "private": true,
     "scripts": {
-        "dev": "tsup src/index.ts --watch --onSuccess \"node dist/index.js\"",
-        "build": "tsup src/index.ts --format esm --clean --target node20",
-        "start": "node dist/index.js",
-        "lint": "eslint .",
-        "lint:fix": "eslint . --fix",
-        "format": "prettier --write .",
-        "prepare": "husky"
-    },
-    "dependencies": {
-        "discord.js": "^14.16.3",
-        "dotenv": "^16.4.5",
-        "winston": "^3.17.0",
-        "zod": "^3.23.8"
+        "build": "turbo run build",
+        "dev": "turbo run dev",
+        "lint": "turbo run lint",
+        "format": "prettier --write \"**/*.{ts,tsx,md}\""
     },
     "devDependencies": {
-        "@commitlint/cli": "^19.6.1",
-        "@commitlint/config-conventional": "^19.6.0",
-        "@trivago/prettier-plugin-sort-imports": "^5.2.2",
-        "@types/node": "^22.10.2",
-        "@typescript-eslint/eslint-plugin": "^8.18.1",
-        "@typescript-eslint/parser": "^8.18.1",
-        "eslint": "^9.17.0",
-        "eslint-config-prettier": "^9.1.0",
-        "husky": "^9.1.7",
-        "lint-staged": "^15.2.11",
+        "turbo": "^2.3.3",
         "prettier": "^3.4.2",
-        "tsup": "^8.3.5",
-        "typescript": "^5.7.2",
-        "typescript-eslint": "^8.18.1"
+        "husky": "^9.1.7"
     },
-    "packageManager": "pnpm@9.15.0",
-    "engines": {
-        "node": ">=20.0.0"
-    }
+    "packageManager": "pnpm@9.15.0"
 }
