@@ -22,6 +22,7 @@ COPY --from=pruner /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 # Copy necessary files for postinstall
 COPY --from=pruner /app/scripts ./scripts
 COPY --from=pruner /app/prisma ./prisma
+COPY --from=pruner /app/mcp.json ./mcp.json
 
 RUN pnpm install --frozen-lockfile
 
