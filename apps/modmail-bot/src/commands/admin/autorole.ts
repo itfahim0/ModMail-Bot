@@ -1,6 +1,6 @@
 import { PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
 
-import { db, saveDB } from '../../database/index.js';
+import { configRepository } from '../../services/container.js';
 
 export default {
     data: new SlashCommandBuilder()
@@ -21,8 +21,7 @@ export default {
             });
         }
 
-        db.config.autoRole = role.id;
-        saveDB();
+        await configRepository.upsert('default', { autoRoleId: role.id });
 
         await interaction.reply({
             content: `✅ Auto-role set to **${role.name}**`,

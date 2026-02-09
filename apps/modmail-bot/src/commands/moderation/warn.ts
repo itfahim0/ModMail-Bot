@@ -1,6 +1,6 @@
 import { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
 
-import { db, saveDB } from '../../database/index.js';
+import { warningRepository } from '../../services/container.js';
 
 export default {
     data: new SlashCommandBuilder()
@@ -32,20 +32,18 @@ export default {
 
         try {
             // Save warning to database
-            if (!db.users[user.id]) {
-                db.users[user.id] = { warnings: [], history: [], notes: [] };
-            }
-            db.users[user.id].warnings = db.users[user.id].warnings || [];
-            db.users[user.id].warnings.push({
+            const warning = await warningRepository.create({
+                userId: user.id,
+                moderatorId: interaction.user.id,
                 reason,
-                moderator: interaction.user.id,
-                date: Date.now(),
             });
-            saveDB();
+
+            // Get total warnings
+            const warnings = await warningRepository.findByUserId(user.id);
 
             await user
                 .send(
-                    `⚠️ You have been warned in **${interaction.guild.name}**\nReason: ${reason}\nTotal warnings: ${db.users[user.id].warnings.length}`,
+                    `⚠️ You have been warned in **${interaction.guild.name}**\nReason: ${reason}\nTotal warnings: ${warnings.length}`,
                 )
                 .catch(() => {});
 
@@ -57,7 +55,7 @@ export default {
                     { name: 'Moderator', value: interaction.user.tag, inline: true },
                     {
                         name: 'Total Warnings',
-                        value: `${db.users[user.id].warnings.length}`,
+                        value: `${warnings.length}`,
                         inline: true,
                     },
                     { name: 'Reason', value: reason },

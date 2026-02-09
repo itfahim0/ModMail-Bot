@@ -1,7 +1,11 @@
 import { PrismaClient } from '@prisma/client';
 
-import { GuildConfig, Ticket, TicketMessage } from '../../domain/models.js';
-import { ConfigRepository, TicketRepository } from '../../domain/repositories.js';
+import { GuildConfig, Ticket, TicketMessage, Warning } from '../../domain/models.js';
+import {
+    ConfigRepository,
+    TicketRepository,
+    WarningRepository,
+} from '../../domain/repositories.js';
 
 export class PrismaTicketRepository implements TicketRepository {
     constructor(private prisma: PrismaClient) {}
@@ -76,5 +80,30 @@ export class PrismaConfigRepository implements ConfigRepository {
             update: data,
             create: { id, ...data },
         }) as Promise<GuildConfig>;
+    }
+}
+
+export class PrismaWarningRepository implements WarningRepository {
+    constructor(private prisma: PrismaClient) {}
+
+    async create(data: { userId: string; moderatorId: string; reason: string }): Promise<Warning> {
+        return this.prisma.warning.create({
+            data: {
+                userId: data.userId,
+                moderatorId: data.moderatorId,
+                reason: data.reason,
+            },
+        }) as Promise<Warning>;
+    }
+
+    async findByUserId(userId: string): Promise<Warning[]> {
+        return this.prisma.warning.findMany({
+            where: { userId },
+            orderBy: { createdAt: 'desc' },
+        }) as Promise<Warning[]>;
+    }
+
+    async delete(id: string): Promise<void> {
+        await this.prisma.warning.delete({ where: { id } });
     }
 }

@@ -5798,8 +5798,16 @@ var require_client = __commonJS({
       logChannelId: "logChannelId",
       adminRoleId: "adminRoleId",
       modRoleId: "modRoleId",
+      autoRoleId: "autoRoleId",
       createdAt: "createdAt",
       updatedAt: "updatedAt"
+    };
+    exports.Prisma.WarningScalarFieldEnum = {
+      id: "id",
+      userId: "userId",
+      moderatorId: "moderatorId",
+      reason: "reason",
+      createdAt: "createdAt"
     };
     exports.Prisma.SortOrder = {
       asc: "asc",
@@ -5815,7 +5823,8 @@ var require_client = __commonJS({
       ApprovalRequest: "ApprovalRequest",
       Ticket: "Ticket",
       TicketMessage: "TicketMessage",
-      GuildConfig: "GuildConfig"
+      GuildConfig: "GuildConfig",
+      Warning: "Warning"
     };
     var config2 = {
       "generator": {
@@ -5842,7 +5851,8 @@ var require_client = __commonJS({
         "sourceFilePath": "/Users/kuasha/Dev/ModMail-Bot/prisma/schema.prisma"
       },
       "relativeEnvPaths": {
-        "rootEnvPath": null
+        "rootEnvPath": null,
+        "schemaEnvPath": "../../../../../../.env"
       },
       "relativePath": "../../../../../../prisma",
       "clientVersion": "6.19.1",
@@ -5851,7 +5861,6 @@ var require_client = __commonJS({
         "db"
       ],
       "activeProvider": "sqlite",
-      "postinstall": false,
       "inlineDatasources": {
         "db": {
           "url": {
@@ -5860,16 +5869,16 @@ var require_client = __commonJS({
           }
         }
       },
-      "inlineSchema": 'generator client {\n  provider = "prisma-client-js"\n}\n\ndatasource db {\n  provider = "sqlite"\n  url      = env("DATABASE_URL")\n}\n\n// --- Purrmission Core (Infrastructure) ---\n\nmodel Guardian {\n  id        String   @id // Discord User ID\n  name      String?\n  role      String   @default("GUARDIAN") // OWNER, GUARDIAN\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  requests ApprovalRequest[]\n}\n\nmodel Resource {\n  id          String  @id @default(uuid())\n  name        String  @unique\n  description String?\n  mode        String  @default("ONE_OF_N") // ONE_OF_N, REQUIRE_ALL\n\n  requests ApprovalRequest[]\n}\n\nmodel ApprovalRequest {\n  id          String   @id @default(uuid())\n  resourceId  String\n  requesterId String // Discord User ID\n  status      String   @default("PENDING") // PENDING, APPROVED, REJECTED\n  data        String // JSON payload of the request\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n\n  resource Resource   @relation(fields: [resourceId], references: [id])\n  votes    Guardian[]\n}\n\n// --- ModMail Domain (Application) ---\n\nmodel Ticket {\n  id        String   @id @default(uuid())\n  channelId String   @unique\n  userId    String\n  status    String   @default("OPEN") // OPEN, CLOSED\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  messages TicketMessage[]\n}\n\nmodel TicketMessage {\n  id        String   @id @default(uuid())\n  ticketId  String\n  senderId  String\n  content   String\n  createdAt DateTime @default(now())\n\n  ticket Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)\n}\n\nmodel GuildConfig {\n  id           String   @id @default("default") // Singleton or Guild ID\n  categoryId   String?\n  logChannelId String?\n  adminRoleId  String?\n  modRoleId    String?\n  createdAt    DateTime @default(now())\n  updatedAt    DateTime @updatedAt\n}\n',
-      "inlineSchemaHash": "c08baf65132330e3d963bcf590bec9b15d638f4fe96a469f39e044fa737819be",
+      "inlineSchema": 'generator client {\n  provider = "prisma-client-js"\n}\n\ndatasource db {\n  provider = "sqlite"\n  url      = env("DATABASE_URL")\n}\n\n// --- Purrmission Core (Infrastructure) ---\n\nmodel Guardian {\n  id        String   @id // Discord User ID\n  name      String?\n  role      String   @default("GUARDIAN") // OWNER, GUARDIAN\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  requests ApprovalRequest[]\n}\n\nmodel Resource {\n  id          String  @id @default(uuid())\n  name        String  @unique\n  description String?\n  mode        String  @default("ONE_OF_N") // ONE_OF_N, REQUIRE_ALL\n\n  requests ApprovalRequest[]\n}\n\nmodel ApprovalRequest {\n  id          String   @id @default(uuid())\n  resourceId  String\n  requesterId String // Discord User ID\n  status      String   @default("PENDING") // PENDING, APPROVED, REJECTED\n  data        String // JSON payload of the request\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n\n  resource Resource   @relation(fields: [resourceId], references: [id])\n  votes    Guardian[]\n}\n\n// --- ModMail Domain (Application) ---\n\nmodel Ticket {\n  id        String   @id @default(uuid())\n  channelId String   @unique\n  userId    String\n  status    String   @default("OPEN") // OPEN, CLOSED\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  messages TicketMessage[]\n}\n\nmodel TicketMessage {\n  id        String   @id @default(uuid())\n  ticketId  String\n  senderId  String\n  content   String\n  createdAt DateTime @default(now())\n\n  ticket Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)\n}\n\nmodel GuildConfig {\n  id           String   @id @default("default") // Singleton or Guild ID\n  categoryId   String?\n  logChannelId String?\n  adminRoleId  String?\n  modRoleId    String?\n  autoRoleId   String?\n  createdAt    DateTime @default(now())\n  updatedAt    DateTime @updatedAt\n}\n\nmodel Warning {\n  id          String   @id @default(uuid())\n  userId      String\n  moderatorId String\n  reason      String\n  createdAt   DateTime @default(now())\n\n  @@index([userId])\n}\n',
+      "inlineSchemaHash": "ca51d4ecb31c834986e8c9ea347aa90223579527441a813bebb4ebc9d12b28eb",
       "copyEngine": true
     };
     var fs2 = __require("fs");
     config2.dirname = __dirname;
     if (!fs2.existsSync(path3.join(__dirname, "schema.prisma"))) {
       const alternativePaths = [
-        "../../node_modules/.pnpm/@prisma+client@6.19.1_prisma@6.19.1_typescript@5.9.3__typescript@5.9.3/node_modules/.prisma/client",
-        "../node_modules/.pnpm/@prisma+client@6.19.1_prisma@6.19.1_typescript@5.9.3__typescript@5.9.3/node_modules/.prisma/client"
+        "node_modules/.pnpm/@prisma+client@6.19.1_prisma@6.19.1_typescript@5.9.3__typescript@5.9.3/node_modules/.prisma/client",
+        ".pnpm/@prisma+client@6.19.1_prisma@6.19.1_typescript@5.9.3__typescript@5.9.3/node_modules/.prisma/client"
       ];
       const alternativePath = alternativePaths.find((altPath) => {
         return fs2.existsSync(path3.join(process.cwd(), altPath, "schema.prisma"));
@@ -5877,7 +5886,7 @@ var require_client = __commonJS({
       config2.dirname = path3.join(process.cwd(), alternativePath);
       config2.isBundled = true;
     }
-    config2.runtimeDataModel = JSON.parse('{"models":{"Guardian":{"dbName":null,"schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"name","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"role","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"String","nativeType":null,"default":"GUARDIAN","isGenerated":false,"isUpdatedAt":false},{"name":"createdAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"updatedAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":true},{"name":"requests","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"ApprovalRequest","nativeType":null,"relationName":"ApprovalRequestToGuardian","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false},"Resource":{"dbName":null,"schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"String","nativeType":null,"default":{"name":"uuid","args":[4]},"isGenerated":false,"isUpdatedAt":false},{"name":"name","kind":"scalar","isList":false,"isRequired":true,"isUnique":true,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"description","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"mode","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"String","nativeType":null,"default":"ONE_OF_N","isGenerated":false,"isUpdatedAt":false},{"name":"requests","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"ApprovalRequest","nativeType":null,"relationName":"ApprovalRequestToResource","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false},"ApprovalRequest":{"dbName":null,"schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"String","nativeType":null,"default":{"name":"uuid","args":[4]},"isGenerated":false,"isUpdatedAt":false},{"name":"resourceId","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":true,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"requesterId","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"status","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"String","nativeType":null,"default":"PENDING","isGenerated":false,"isUpdatedAt":false},{"name":"data","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"createdAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"updatedAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":true},{"name":"resource","kind":"object","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Resource","nativeType":null,"relationName":"ApprovalRequestToResource","relationFromFields":["resourceId"],"relationToFields":["id"],"isGenerated":false,"isUpdatedAt":false},{"name":"votes","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Guardian","nativeType":null,"relationName":"ApprovalRequestToGuardian","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false},"Ticket":{"dbName":null,"schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"String","nativeType":null,"default":{"name":"uuid","args":[4]},"isGenerated":false,"isUpdatedAt":false},{"name":"channelId","kind":"scalar","isList":false,"isRequired":true,"isUnique":true,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"userId","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"status","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"String","nativeType":null,"default":"OPEN","isGenerated":false,"isUpdatedAt":false},{"name":"createdAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"updatedAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":true},{"name":"messages","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"TicketMessage","nativeType":null,"relationName":"TicketToTicketMessage","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false},"TicketMessage":{"dbName":null,"schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"String","nativeType":null,"default":{"name":"uuid","args":[4]},"isGenerated":false,"isUpdatedAt":false},{"name":"ticketId","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":true,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"senderId","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"content","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"createdAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"ticket","kind":"object","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Ticket","nativeType":null,"relationName":"TicketToTicketMessage","relationFromFields":["ticketId"],"relationToFields":["id"],"relationOnDelete":"Cascade","isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false},"GuildConfig":{"dbName":null,"schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"String","nativeType":null,"default":"default","isGenerated":false,"isUpdatedAt":false},{"name":"categoryId","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"logChannelId","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"adminRoleId","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"modRoleId","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"createdAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"updatedAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":true}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false}},"enums":{},"types":{}}');
+    config2.runtimeDataModel = JSON.parse('{"models":{"Guardian":{"dbName":null,"schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"name","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"role","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"String","nativeType":null,"default":"GUARDIAN","isGenerated":false,"isUpdatedAt":false},{"name":"createdAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"updatedAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":true},{"name":"requests","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"ApprovalRequest","nativeType":null,"relationName":"ApprovalRequestToGuardian","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false},"Resource":{"dbName":null,"schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"String","nativeType":null,"default":{"name":"uuid","args":[4]},"isGenerated":false,"isUpdatedAt":false},{"name":"name","kind":"scalar","isList":false,"isRequired":true,"isUnique":true,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"description","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"mode","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"String","nativeType":null,"default":"ONE_OF_N","isGenerated":false,"isUpdatedAt":false},{"name":"requests","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"ApprovalRequest","nativeType":null,"relationName":"ApprovalRequestToResource","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false},"ApprovalRequest":{"dbName":null,"schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"String","nativeType":null,"default":{"name":"uuid","args":[4]},"isGenerated":false,"isUpdatedAt":false},{"name":"resourceId","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":true,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"requesterId","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"status","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"String","nativeType":null,"default":"PENDING","isGenerated":false,"isUpdatedAt":false},{"name":"data","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"createdAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"updatedAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":true},{"name":"resource","kind":"object","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Resource","nativeType":null,"relationName":"ApprovalRequestToResource","relationFromFields":["resourceId"],"relationToFields":["id"],"isGenerated":false,"isUpdatedAt":false},{"name":"votes","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Guardian","nativeType":null,"relationName":"ApprovalRequestToGuardian","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false},"Ticket":{"dbName":null,"schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"String","nativeType":null,"default":{"name":"uuid","args":[4]},"isGenerated":false,"isUpdatedAt":false},{"name":"channelId","kind":"scalar","isList":false,"isRequired":true,"isUnique":true,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"userId","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"status","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"String","nativeType":null,"default":"OPEN","isGenerated":false,"isUpdatedAt":false},{"name":"createdAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"updatedAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":true},{"name":"messages","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"TicketMessage","nativeType":null,"relationName":"TicketToTicketMessage","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false},"TicketMessage":{"dbName":null,"schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"String","nativeType":null,"default":{"name":"uuid","args":[4]},"isGenerated":false,"isUpdatedAt":false},{"name":"ticketId","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":true,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"senderId","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"content","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"createdAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"ticket","kind":"object","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Ticket","nativeType":null,"relationName":"TicketToTicketMessage","relationFromFields":["ticketId"],"relationToFields":["id"],"relationOnDelete":"Cascade","isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false},"GuildConfig":{"dbName":null,"schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"String","nativeType":null,"default":"default","isGenerated":false,"isUpdatedAt":false},{"name":"categoryId","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"logChannelId","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"adminRoleId","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"modRoleId","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"autoRoleId","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"createdAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"updatedAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":true}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false},"Warning":{"dbName":null,"schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"String","nativeType":null,"default":{"name":"uuid","args":[4]},"isGenerated":false,"isUpdatedAt":false},{"name":"userId","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"moderatorId","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"reason","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"createdAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false}},"enums":{},"types":{}}');
     defineDmmfProperty2(exports.Prisma, config2.runtimeDataModel);
     config2.engineWasm = void 0;
     config2.compilerWasm = void 0;
@@ -5890,9 +5899,9 @@ var require_client = __commonJS({
     exports.PrismaClient = PrismaClient2;
     Object.assign(exports, Prisma);
     path3.join(__dirname, "libquery_engine-darwin-arm64.dylib.node");
-    path3.join(process.cwd(), "../../node_modules/.pnpm/@prisma+client@6.19.1_prisma@6.19.1_typescript@5.9.3__typescript@5.9.3/node_modules/.prisma/client/libquery_engine-darwin-arm64.dylib.node");
+    path3.join(process.cwd(), "node_modules/.pnpm/@prisma+client@6.19.1_prisma@6.19.1_typescript@5.9.3__typescript@5.9.3/node_modules/.prisma/client/libquery_engine-darwin-arm64.dylib.node");
     path3.join(__dirname, "schema.prisma");
-    path3.join(process.cwd(), "../../node_modules/.pnpm/@prisma+client@6.19.1_prisma@6.19.1_typescript@5.9.3__typescript@5.9.3/node_modules/.prisma/client/schema.prisma");
+    path3.join(process.cwd(), "node_modules/.pnpm/@prisma+client@6.19.1_prisma@6.19.1_typescript@5.9.3__typescript@5.9.3/node_modules/.prisma/client/schema.prisma");
   }
 });
 
@@ -5914,13 +5923,45 @@ var require_default2 = __commonJS({
   }
 });
 
-// src/commands/index.ts
-import {
-  Collection
-} from "discord.js";
-import fs from "fs";
+// src/api/server.ts
+import cors from "@fastify/cors";
+import fastify from "fastify";
+
+// src/config.ts
+import dotenv from "dotenv";
 import path from "path";
-import { fileURLToPath } from "url";
+import { z } from "zod";
+dotenv.config({ path: path.resolve(process.cwd(), ".env") });
+var envSchema = z.object({
+  DISCORD_TOKEN: z.string().min(1, "DISCORD_TOKEN is required"),
+  DISCORD_GUILD_ID: z.string().optional(),
+  MODMAIL_LOG_CHANNEL_ID: z.string().optional(),
+  MODMAIL_CATEGORY_ID: z.string().optional(),
+  APP_PORT: z.string().default("3001"),
+  EXTERNAL_API_URL: z.string().default("http://localhost:3001")
+});
+var _env = envSchema.safeParse(process.env);
+if (!_env.success) {
+  console.error(
+    "\u274C Invalid environment variables:",
+    JSON.stringify(_env.error.format(), null, 2)
+  );
+  process.exit(1);
+}
+var config = {
+  discordToken: _env.data.DISCORD_TOKEN,
+  guildId: _env.data.DISCORD_GUILD_ID,
+  logChannelId: _env.data.MODMAIL_LOG_CHANNEL_ID,
+  categoryId: _env.data.MODMAIL_CATEGORY_ID,
+  port: parseInt(_env.data.APP_PORT, 10),
+  externalApiUrl: _env.data.EXTERNAL_API_URL
+};
+
+// src/infra/prisma/client.ts
+var import_client = __toESM(require_default2(), 1);
+var globalForPrisma = global;
+var prisma = globalForPrisma.prisma || new import_client.PrismaClient();
+if (process.env.NODE_\u0131s\u0131n\u0131z !== "production") globalForPrisma.prisma = prisma;
 
 // src/logging/logger.ts
 import winston from "winston";
@@ -5933,6 +5974,46 @@ var logger = winston.createLogger({
   format: combine(timestamp({ format: "YYYY-MM-DD HH:mm:ss" }), colorize(), logFormat),
   transports: [new winston.transports.Console()]
 });
+
+// src/api/server.ts
+function createServer() {
+  const server = fastify({
+    logger: false
+    // We use our own logger
+  });
+  server.register(cors, {
+    origin: "*"
+    // Configure as needed
+  });
+  server.get("/health", async () => {
+    try {
+      await prisma.$queryRaw`SELECT 1`;
+      return { status: "ok", database: "connected" };
+    } catch (error) {
+      return { status: "error", database: "disconnected", error: String(error) };
+    }
+  });
+  return server;
+}
+async function startServer() {
+  const server = createServer();
+  const port = config.port || 3001;
+  try {
+    await server.listen({ port: Number(port), host: "0.0.0.0" });
+    logger.info(`HTTP Server listening on port ${port}`);
+  } catch (err) {
+    logger.error("Failed to start HTTP server", { error: String(err) });
+    process.exit(1);
+  }
+}
+
+// src/commands/index.ts
+import {
+  Collection
+} from "discord.js";
+import fs from "fs";
+import path2 from "path";
+import { fileURLToPath } from "url";
 
 // src/commands/modmail/setup.ts
 import { ChannelType, PermissionFlagsBits, SlashCommandBuilder } from "discord.js";
@@ -5977,7 +6058,7 @@ LOG_CHANNEL_ID=${logChannel.id}
 };
 
 // src/commands/index.ts
-var __dirname2 = path.dirname(fileURLToPath(import.meta.url));
+var __dirname2 = path2.dirname(fileURLToPath(import.meta.url));
 var commandsCollection = new Collection();
 var commands = [];
 var loadCommands = async () => {
@@ -5987,12 +6068,12 @@ var loadCommands = async () => {
   }
   const folders = fs.readdirSync(__dirname2).filter((f) => !f.endsWith(".js") && !f.endsWith(".ts"));
   for (const folder of folders) {
-    const folderPath = path.join(__dirname2, folder);
+    const folderPath = path2.join(__dirname2, folder);
     if (!fs.statSync(folderPath).isDirectory()) continue;
     const files = fs.readdirSync(folderPath).filter((file) => file.endsWith(".js") || file.endsWith(".ts"));
     for (const file of files) {
       try {
-        const filePath = `file://${path.join(folderPath, file)}`;
+        const filePath = `file://${path2.join(folderPath, file)}`;
         const commandModule = await import(filePath);
         const command = commandModule.default || commandModule;
         if (command?.data && command?.execute) {
@@ -6034,41 +6115,104 @@ async function handleSlashCommand(interaction) {
   }
 }
 
-// src/config.ts
-import dotenv from "dotenv";
-import path2 from "path";
-import { z } from "zod";
-dotenv.config({ path: path2.resolve(process.cwd(), ".env") });
-var envSchema = z.object({
-  DISCORD_TOKEN: z.string().min(1, "DISCORD_TOKEN is required"),
-  DISCORD_GUILD_ID: z.string().optional(),
-  MODMAIL_LOG_CHANNEL_ID: z.string().optional(),
-  MODMAIL_CATEGORY_ID: z.string().optional(),
-  APP_PORT: z.string().default("3001"),
-  EXTERNAL_API_URL: z.string().default("http://localhost:3001")
-});
-var _env = envSchema.safeParse(process.env);
-if (!_env.success) {
-  console.error(
-    "\u274C Invalid environment variables:",
-    JSON.stringify(_env.error.format(), null, 2)
-  );
-  process.exit(1);
-}
-var config = {
-  discordToken: _env.data.DISCORD_TOKEN,
-  guildId: _env.data.DISCORD_GUILD_ID,
-  logChannelId: _env.data.MODMAIL_LOG_CHANNEL_ID,
-  categoryId: _env.data.MODMAIL_CATEGORY_ID,
-  port: parseInt(_env.data.APP_PORT, 10),
-  externalApiUrl: _env.data.EXTERNAL_API_URL
-};
-
 // src/discord/client.ts
 import { Client, Events, GatewayIntentBits, Partials } from "discord.js";
 
 // src/events/interactionCreate.ts
 import { ChannelType as ChannelType2, EmbedBuilder } from "discord.js";
+
+// src/infra/prisma/repositories.ts
+var PrismaTicketRepository = class {
+  constructor(prisma2) {
+    this.prisma = prisma2;
+  }
+  async create(data) {
+    return this.prisma.ticket.create({
+      data: {
+        userId: data.userId,
+        channelId: data.channelId,
+        status: "OPEN"
+      }
+    });
+  }
+  async findById(id) {
+    return this.prisma.ticket.findUnique({ where: { id } });
+  }
+  async findByChannelId(channelId) {
+    return this.prisma.ticket.findUnique({ where: { channelId } });
+  }
+  async findByUserId(userId) {
+    return this.prisma.ticket.findFirst({
+      where: { userId, status: "OPEN" }
+    });
+  }
+  async updateStatus(id, status) {
+    return this.prisma.ticket.update({
+      where: { id },
+      data: { status }
+    });
+  }
+  async addMessage(ticketId, data) {
+    return this.prisma.ticketMessage.create({
+      data: {
+        ticketId,
+        senderId: data.senderId,
+        content: data.content
+      }
+    });
+  }
+  async getMessages(ticketId) {
+    return this.prisma.ticketMessage.findMany({
+      where: { ticketId },
+      orderBy: { createdAt: "asc" }
+    });
+  }
+};
+var PrismaConfigRepository = class {
+  constructor(prisma2) {
+    this.prisma = prisma2;
+  }
+  async get(id = "default") {
+    return this.prisma.guildConfig.findUnique({ where: { id } });
+  }
+  async upsert(id, data) {
+    return this.prisma.guildConfig.upsert({
+      where: { id },
+      update: data,
+      create: { id, ...data }
+    });
+  }
+};
+var PrismaWarningRepository = class {
+  constructor(prisma2) {
+    this.prisma = prisma2;
+  }
+  async create(data) {
+    return this.prisma.warning.create({
+      data: {
+        userId: data.userId,
+        moderatorId: data.moderatorId,
+        reason: data.reason
+      }
+    });
+  }
+  async findByUserId(userId) {
+    return this.prisma.warning.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" }
+    });
+  }
+  async delete(id) {
+    await this.prisma.warning.delete({ where: { id } });
+  }
+};
+
+// src/services/container.ts
+var ticketRepository = new PrismaTicketRepository(prisma);
+var configRepository = new PrismaConfigRepository(prisma);
+var warningRepository = new PrismaWarningRepository(prisma);
+
+// src/events/interactionCreate.ts
 async function handleInteractionCreate(interaction) {
   if (!interaction.isButton()) return;
   if (interaction.customId === "confirm_close") {
@@ -6103,6 +6247,10 @@ async function handleCloseConfirmation(interaction) {
       ).setTimestamp();
       await logChannel.send({ embeds: [logEmbed] });
     }
+  }
+  const ticket = await ticketRepository.findByChannelId(channel.id);
+  if (ticket) {
+    await ticketRepository.updateStatus(ticket.id, "CLOSED");
   }
   await interaction.update({ content: "\u2705 Ticket will be deleted shortly...", components: [] });
   setTimeout(() => channel.delete().catch(() => {
@@ -6270,48 +6418,6 @@ function createDiscordClient() {
     }
   });
   return client;
-}
-
-// src/api/server.ts
-import cors from "@fastify/cors";
-import fastify from "fastify";
-
-// src/infra/prisma/client.ts
-var import_client = __toESM(require_default2(), 1);
-var globalForPrisma = global;
-var prisma = globalForPrisma.prisma || new import_client.PrismaClient();
-if (process.env.NODE_\u0131s\u0131n\u0131z !== "production") globalForPrisma.prisma = prisma;
-
-// src/api/server.ts
-function createServer() {
-  const server = fastify({
-    logger: false
-    // We use our own logger
-  });
-  server.register(cors, {
-    origin: "*"
-    // Configure as needed
-  });
-  server.get("/health", async () => {
-    try {
-      await prisma.$queryRaw`SELECT 1`;
-      return { status: "ok", database: "connected" };
-    } catch (error) {
-      return { status: "error", database: "disconnected", error: String(error) };
-    }
-  });
-  return server;
-}
-async function startServer() {
-  const server = createServer();
-  const port = config.port || 3001;
-  try {
-    await server.listen({ port: Number(port), host: "0.0.0.0" });
-    logger.info(`HTTP Server listening on port ${port}`);
-  } catch (err) {
-    logger.error("Failed to start HTTP server", { error: String(err) });
-    process.exit(1);
-  }
 }
 
 // src/index.ts

@@ -70,6 +70,17 @@ model GuildConfig {
   logChannelId    String?
   adminRoleId     String?
   modRoleId       String?
+  autoRoleId      String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+}
+
+model Warning {
+  id          String   @id @default(uuid())
+  userId      String
+  moderatorId String
+  reason      String
+  createdAt   DateTime @default(now())
+  
+  @@index([userId])
 }

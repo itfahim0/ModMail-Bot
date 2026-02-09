@@ -1,6 +1,6 @@
 import { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
 
-import { db } from '../../database/index.js';
+import { warningRepository } from '../../services/container.js';
 
 export default {
     data: new SlashCommandBuilder()
@@ -13,7 +13,7 @@ export default {
 
     async execute(interaction) {
         const user = interaction.options.getUser('user');
-        const userData = db.users[user.id] || { warnings: [] };
+        const warnings = await warningRepository.findByUserId(user.id);
 
         const embed = new EmbedBuilder()
             .setColor('#3498DB')
@@ -22,13 +22,13 @@ export default {
             .setFooter({ text: `User ID: ${user.id}` })
             .setTimestamp();
 
-        if (userData.warnings.length === 0) {
+        if (warnings.length === 0) {
             embed.setDescription('✅ No warnings found.');
         } else {
-            const history = userData.warnings
+            const history = warnings
                 .map(
                     (w, i) =>
-                        `**${i + 1}.** ${w.reason} - <@${w.moderator}> (<t:${Math.floor(w.date / 1000)}:R>)`,
+                        `**${i + 1}.** ${w.reason} - <@${w.moderatorId}> (<t:${Math.floor(w.createdAt.getTime() / 1000)}:R>)`,
                 )
                 .join('\n');
             embed.setDescription(history.substring(0, 4096));

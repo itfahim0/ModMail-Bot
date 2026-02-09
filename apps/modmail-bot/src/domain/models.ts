@@ -21,6 +21,15 @@ export interface GuildConfig {
     logChannelId?: string | null;
     adminRoleId?: string | null;
     modRoleId?: string | null;
+    autoRoleId?: string | null;
     createdAt: Date;
     updatedAt: Date;
+}
+
+export interface Warning {
+    id: string;
+    userId: string;
+    moderatorId: string;
+    reason: string;
+    createdAt: Date;
 }

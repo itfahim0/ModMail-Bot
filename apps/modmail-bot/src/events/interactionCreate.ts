@@ -2,6 +2,7 @@ import { ButtonInteraction, ChannelType, EmbedBuilder, Interaction, TextChannel 
 
 import { config } from '../config.js';
 import { logger } from '../logging/logger.js';
+import { ticketRepository } from '../services/container.js';
 
 export async function handleInteractionCreate(interaction: Interaction): Promise<void> {
     if (!interaction.isButton()) return;
@@ -60,6 +61,12 @@ async function handleCloseConfirmation(interaction: ButtonInteraction): Promise<
                 .setTimestamp();
             await logChannel.send({ embeds: [logEmbed] });
         }
+    }
+
+    // Update ticket status in DB
+    const ticket = await ticketRepository.findByChannelId(channel.id);
+    if (ticket) {
+        await ticketRepository.updateStatus(ticket.id, 'CLOSED');
     }
 
     await interaction.update({ content: '✅ Ticket will be deleted shortly...', components: [] });

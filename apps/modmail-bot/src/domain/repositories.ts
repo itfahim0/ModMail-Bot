@@ -1,4 +1,4 @@
-import { GuildConfig, Ticket, TicketMessage } from './models.js';
+import { GuildConfig, Ticket, TicketMessage, Warning } from './models.js';
 
 export interface TicketRepository {
     create(data: { userId: string; channelId: string }): Promise<Ticket>;
@@ -19,4 +19,10 @@ export interface ConfigRepository {
         id: string,
         data: Partial<Omit<GuildConfig, 'id' | 'createdAt' | 'updatedAt'>>,
     ): Promise<GuildConfig>;
+}
+
+export interface WarningRepository {
+    create(data: { userId: string; moderatorId: string; reason: string }): Promise<Warning>;
+    findByUserId(userId: string): Promise<Warning[]>;
+    delete(id: string): Promise<void>;
 }
