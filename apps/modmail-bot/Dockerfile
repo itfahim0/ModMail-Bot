@@ -2,6 +2,7 @@ FROM node:24-alpine AS base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
+RUN apk add --no-cache libc6-compat openssl
 
 # 1. Prune the workspace for the app
 FROM base AS pruner
@@ -17,6 +18,10 @@ WORKDIR /app
 # Copy lockfile and package.json's of isolated subworkspace
 COPY --from=pruner /app/out/json/ .
 COPY --from=pruner /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
+
+# Copy necessary files for postinstall
+COPY --from=pruner /app/scripts ./scripts
+COPY --from=pruner /app/prisma ./prisma
 
 RUN pnpm install --frozen-lockfile
 
