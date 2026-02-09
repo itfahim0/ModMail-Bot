@@ -34,7 +34,7 @@ COPY --from=pruner /app/out/full/ .
 RUN pnpm turbo run build --filter=@purrfecthq/modmail-bot...
 
 # 3. Production image
-FROM base AS runner
+FROM builder AS runner
 WORKDIR /app
 
 # Deploy the app to a prod folder with all deps
@@ -42,6 +42,6 @@ RUN pnpm deploy --filter=@purrfecthq/modmail-bot --prod /prod/modmail-bot
 
 FROM base AS production
 WORKDIR /app
-COPY --from=builder /prod/modmail-bot .
+COPY --from=runner /prod/modmail-bot .
 
 CMD ["node", "dist/index.js"]
