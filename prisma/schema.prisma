@@ -1,0 +1,75 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// --- Purrmission Core (Infrastructure) ---
+
+model Guardian {
+  id        String   @id // Discord User ID
+  name      String?
+  role      String   @default("GUARDIAN") // OWNER, GUARDIAN
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  requests  ApprovalRequest[]
+}
+
+model Resource {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  mode        String   @default("ONE_OF_N") // ONE_OF_N, REQUIRE_ALL
+  
+  requests    ApprovalRequest[]
+}
+
+model ApprovalRequest {
+  id          String   @id @default(uuid())
+  resourceId  String
+  requesterId String   // Discord User ID
+  status      String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  data        String   // JSON payload of the request
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  resource    Resource @relation(fields: [resourceId], references: [id])
+  votes       Guardian[]
+}
+
+// --- ModMail Domain (Application) ---
+
+model Ticket {
+  id          String   @id @default(uuid())
+  channelId   String   @unique
+  userId      String
+  status      String   @default("OPEN") // OPEN, CLOSED
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  messages    TicketMessage[]
+}
+
+model TicketMessage {
+  id        String   @id @default(uuid())
+  ticketId  String
+  senderId  String
+  content   String
+  createdAt DateTime @default(now())
+
+  ticket    Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+}
+
+model GuildConfig {
+  id              String @id @default("default") // Singleton or Guild ID
+  categoryId      String?
+  logChannelId    String?
+  adminRoleId     String?
+  modRoleId       String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}

@@ -1,3 +1,4 @@
+import { startServer } from './api/server.js';
 import { loadCommands } from './commands/index.js';
 import { config } from './config.js';
 import { createDiscordClient } from './discord/client.js';
@@ -6,6 +7,11 @@ import { logger } from './logging/logger.js';
 async function main() {
     logger.info('Starting ModMail Bot...');
     await loadCommands();
+
+    // Start API Server
+    startServer().catch((err) => {
+        logger.error('Failed to start API server', { error: String(err) });
+    });
 
     try {
         const client = createDiscordClient();
