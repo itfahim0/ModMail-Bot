@@ -6,12 +6,17 @@
         "dev": "turbo run dev",
         "lint": "turbo run lint",
         "test": "turbo run test",
-        "format": "prettier --write \"**/*.{ts,tsx,md}\""
+        "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+        "mcp:sync": "node scripts/sync-mcp.cjs",
+        "validate-env": "node scripts/validate-env.cjs",
+        "antigravity": "node scripts/antigravity.cjs",
+        "prisma:generate": "turbo run prisma:generate",
+        "postinstall": "pnpm mcp:sync && pnpm prisma:generate"
     },
     "devDependencies": {
         "@commitlint/cli": "^19.6.1",
         "@commitlint/config-conventional": "^19.6.0",
-        "husky": "^9.1.7",
+        "dotenv": "^16.4.5",
         "lint-staged": "^15.5.2",
         "prettier": "^3.4.2",
         "turbo": "^2.3.3"

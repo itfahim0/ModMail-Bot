@@ -11,8 +11,7 @@
         "lint": "eslint .",
         "lint:fix": "eslint . --fix",
         "format": "prettier --write .",
-        "test": "echo \"No tests specified\" && exit 0",
-        "prepare": "husky"
+        "test": "echo \"No tests specified\" && exit 0"
     },
     "dependencies": {
         "chalk": "4",
