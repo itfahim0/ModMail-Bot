@@ -36,7 +36,12 @@ export const loadCommands = async () => {
 
         const files = fs
             .readdirSync(folderPath)
-            .filter((file) => file.endsWith('.js') || file.endsWith('.ts'));
+            .filter(
+                (file) =>
+                    (file.endsWith('.js') || file.endsWith('.ts')) &&
+                    !file.endsWith('.test.ts') &&
+                    !file.endsWith('.spec.ts'),
+            );
 
         for (const file of files) {
             try {

@@ -5,8 +5,8 @@
     "main": "dist/index.js",
     "type": "module",
     "scripts": {
-        "dev": "tsup src/index.ts --format esm --watch --onSuccess \"node dist/index.js\"",
-        "build": "tsup src/index.ts --format esm --clean --target node20",
+        "dev": "tsx src/index.ts",
+        "build": "tsup src/index.ts --format esm --shims --clean --target node20",
         "prisma:generate": "prisma generate --schema=../../prisma/schema.prisma",
         "start": "node dist/index.js",
         "lint": "eslint .",
