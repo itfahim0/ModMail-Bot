@@ -11,7 +11,8 @@ export default {
             option.setName('message').setDescription('Message to send').setRequired(true),
         ),
 
-    async execute(interaction) {
+    async execute(interaction, deps = { ticketRepository }) {
+        const { ticketRepository } = deps;
         if (!interaction.channel.name.startsWith('ticket-')) {
             return interaction.reply({
                 content: '❌ This command can only be used in ticket channels.',

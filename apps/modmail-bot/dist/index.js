@@ -5851,8 +5851,7 @@ var require_client = __commonJS({
         "sourceFilePath": "/Users/kuasha/Dev/ModMail-Bot/prisma/schema.prisma"
       },
       "relativeEnvPaths": {
-        "rootEnvPath": null,
-        "schemaEnvPath": "../../../../../../.env"
+        "rootEnvPath": null
       },
       "relativePath": "../../../../../../prisma",
       "clientVersion": "6.19.1",
@@ -5861,6 +5860,7 @@ var require_client = __commonJS({
         "db"
       ],
       "activeProvider": "sqlite",
+      "postinstall": false,
       "inlineDatasources": {
         "db": {
           "url": {
@@ -5877,8 +5877,8 @@ var require_client = __commonJS({
     config2.dirname = __dirname;
     if (!fs2.existsSync(path3.join(__dirname, "schema.prisma"))) {
       const alternativePaths = [
-        "node_modules/.pnpm/@prisma+client@6.19.1_prisma@6.19.1_typescript@5.9.3__typescript@5.9.3/node_modules/.prisma/client",
-        ".pnpm/@prisma+client@6.19.1_prisma@6.19.1_typescript@5.9.3__typescript@5.9.3/node_modules/.prisma/client"
+        "../../node_modules/.pnpm/@prisma+client@6.19.1_prisma@6.19.1_typescript@5.9.3__typescript@5.9.3/node_modules/.prisma/client",
+        "../node_modules/.pnpm/@prisma+client@6.19.1_prisma@6.19.1_typescript@5.9.3__typescript@5.9.3/node_modules/.prisma/client"
       ];
       const alternativePath = alternativePaths.find((altPath) => {
         return fs2.existsSync(path3.join(process.cwd(), altPath, "schema.prisma"));
@@ -5899,9 +5899,9 @@ var require_client = __commonJS({
     exports.PrismaClient = PrismaClient2;
     Object.assign(exports, Prisma);
     path3.join(__dirname, "libquery_engine-darwin-arm64.dylib.node");
-    path3.join(process.cwd(), "node_modules/.pnpm/@prisma+client@6.19.1_prisma@6.19.1_typescript@5.9.3__typescript@5.9.3/node_modules/.prisma/client/libquery_engine-darwin-arm64.dylib.node");
+    path3.join(process.cwd(), "../../node_modules/.pnpm/@prisma+client@6.19.1_prisma@6.19.1_typescript@5.9.3__typescript@5.9.3/node_modules/.prisma/client/libquery_engine-darwin-arm64.dylib.node");
     path3.join(__dirname, "schema.prisma");
-    path3.join(process.cwd(), "node_modules/.pnpm/@prisma+client@6.19.1_prisma@6.19.1_typescript@5.9.3__typescript@5.9.3/node_modules/.prisma/client/schema.prisma");
+    path3.join(process.cwd(), "../../node_modules/.pnpm/@prisma+client@6.19.1_prisma@6.19.1_typescript@5.9.3__typescript@5.9.3/node_modules/.prisma/client/schema.prisma");
   }
 });
 

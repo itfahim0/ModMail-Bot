@@ -14,7 +14,8 @@ export default {
             option.setName('reason').setDescription('Reason for warning').setRequired(true),
         ),
 
-    async execute(interaction) {
+    async execute(interaction, deps = { warningRepository }) {
+        const { warningRepository } = deps;
         const user = interaction.options.getUser('user');
         const reason = interaction.options.getString('reason');
         const member = await interaction.guild.members.fetch(user.id).catch(() => null);
