@@ -28,6 +28,11 @@ describe('Warn Command', () => {
                 members: {
                     fetch: mock.fn(async () => ({ id: 'user-1' })),
                 },
+                channels: {
+                    fetch: mock.fn(async () => ({
+                        send: mock.fn(async () => {}),
+                    })),
+                },
             },
             reply: mock.fn(async () => {}),
         };

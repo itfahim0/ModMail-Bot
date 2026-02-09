@@ -1,46 +1,59 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Ticket as PrismaTicket } from '@prisma/client';
 
-import { GuildConfig, Ticket, TicketMessage, Warning } from '../../domain/models.js';
+import { GuildConfig, Ticket, TicketMessage, TicketStatus, Warning } from '../../domain/models.js';
 import {
     ConfigRepository,
     TicketRepository,
     WarningRepository,
 } from '../../domain/repositories.js';
 
+// Helper to map Prisma Ticket to Domain Ticket
+function mapTicket(item: PrismaTicket): Ticket {
+    return {
+        ...item,
+        status: item.status as TicketStatus, // Safe cast as Enums match
+    };
+}
+
 export class PrismaTicketRepository implements TicketRepository {
     constructor(private prisma: PrismaClient) {}
 
     async create(data: { userId: string; channelId: string }): Promise<Ticket> {
-        return this.prisma.ticket.create({
+        const ticket = await this.prisma.ticket.create({
             data: {
                 userId: data.userId,
                 channelId: data.channelId,
-                status: 'OPEN',
+                status: TicketStatus.OPEN,
             },
-        }) as Promise<Ticket>;
+        });
+        return mapTicket(ticket);
     }
 
     async findById(id: string): Promise<Ticket | null> {
-        return this.prisma.ticket.findUnique({ where: { id } }) as Promise<Ticket | null>;
+        const ticket = await this.prisma.ticket.findUnique({ where: { id } });
+        return ticket ? mapTicket(ticket) : null;
     }
 
     async findByChannelId(channelId: string): Promise<Ticket | null> {
-        return this.prisma.ticket.findUnique({ where: { channelId } }) as Promise<Ticket | null>;
+        const ticket = await this.prisma.ticket.findUnique({ where: { channelId } });
+        return ticket ? mapTicket(ticket) : null;
     }
 
     async findByUserId(userId: string): Promise<Ticket | null> {
         // Logic: find most recent open ticket or just most recent?
         // Usually we check for OPEN ticket for a user.
-        return this.prisma.ticket.findFirst({
-            where: { userId, status: 'OPEN' },
-        }) as Promise<Ticket | null>;
+        const ticket = await this.prisma.ticket.findFirst({
+            where: { userId, status: TicketStatus.OPEN },
+        });
+        return ticket ? mapTicket(ticket) : null;
     }
 
-    async updateStatus(id: string, status: 'OPEN' | 'CLOSED'): Promise<Ticket> {
-        return this.prisma.ticket.update({
+    async updateStatus(id: string, status: TicketStatus): Promise<Ticket> {
+        const ticket = await this.prisma.ticket.update({
             where: { id },
             data: { status },
-        }) as Promise<Ticket>;
+        });
+        return mapTicket(ticket);
     }
 
     async addMessage(
@@ -53,14 +66,14 @@ export class PrismaTicketRepository implements TicketRepository {
                 senderId: data.senderId,
                 content: data.content,
             },
-        }) as Promise<TicketMessage>;
+        });
     }
 
     async getMessages(ticketId: string): Promise<TicketMessage[]> {
         return this.prisma.ticketMessage.findMany({
             where: { ticketId },
             orderBy: { createdAt: 'asc' },
-        }) as Promise<TicketMessage[]>;
+        });
     }
 }
 
@@ -68,7 +81,7 @@ export class PrismaConfigRepository implements ConfigRepository {
     constructor(private prisma: PrismaClient) {}
 
     async get(id: string = 'default'): Promise<GuildConfig | null> {
-        return this.prisma.guildConfig.findUnique({ where: { id } }) as Promise<GuildConfig | null>;
+        return this.prisma.guildConfig.findUnique({ where: { id } });
     }
 
     async upsert(
@@ -79,7 +92,7 @@ export class PrismaConfigRepository implements ConfigRepository {
             where: { id },
             update: data,
             create: { id, ...data },
-        }) as Promise<GuildConfig>;
+        });
     }
 }
 
@@ -93,14 +106,14 @@ export class PrismaWarningRepository implements WarningRepository {
                 moderatorId: data.moderatorId,
                 reason: data.reason,
             },
-        }) as Promise<Warning>;
+        });
     }
 
     async findByUserId(userId: string): Promise<Warning[]> {
         return this.prisma.warning.findMany({
             where: { userId },
             orderBy: { createdAt: 'desc' },
-        }) as Promise<Warning[]>;
+        });
     }
 
     async delete(id: string): Promise<void> {

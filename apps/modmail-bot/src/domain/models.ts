@@ -1,8 +1,33 @@
+// --- Enums ---
+
+export enum TicketStatus {
+    OPEN = 'OPEN',
+    CLOSED = 'CLOSED',
+}
+
+export enum GuardianRole {
+    OWNER = 'OWNER',
+    GUARDIAN = 'GUARDIAN',
+}
+
+export enum ApprovalMode {
+    ONE_OF_N = 'ONE_OF_N',
+    REQUIRE_ALL = 'REQUIRE_ALL',
+}
+
+export enum ApprovalStatus {
+    PENDING = 'PENDING',
+    APPROVED = 'APPROVED',
+    REJECTED = 'REJECTED',
+}
+
+// --- Interfaces ---
+
 export interface Ticket {
     id: string;
     channelId: string;
     userId: string;
-    status: 'OPEN' | 'CLOSED';
+    status: TicketStatus;
     createdAt: Date;
     updatedAt: Date;
 }

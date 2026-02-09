@@ -1,0 +1,666 @@
+build	Set up job	﻿2026-02-09T08:10:46.1047786Z Current runner version: '2.331.0'
+build	Set up job	2026-02-09T08:10:46.1082825Z ##[group]Runner Image Provisioner
+build	Set up job	2026-02-09T08:10:46.1083979Z Hosted Compute Agent
+build	Set up job	2026-02-09T08:10:46.1085195Z Version: 20260123.484
+build	Set up job	2026-02-09T08:10:46.1086166Z Commit: 6bd6555ca37d84114959e1c76d2c01448ff61c5d
+build	Set up job	2026-02-09T08:10:46.1087217Z Build Date: 2026-01-23T19:41:17Z
+build	Set up job	2026-02-09T08:10:46.1088339Z Worker ID: {b84af7ce-3ef4-432a-9b60-64d120cc366d}
+build	Set up job	2026-02-09T08:10:46.1089452Z Azure Region: eastus2
+build	Set up job	2026-02-09T08:10:46.1090418Z ##[endgroup]
+build	Set up job	2026-02-09T08:10:46.1092679Z ##[group]Operating System
+build	Set up job	2026-02-09T08:10:46.1093650Z Ubuntu
+build	Set up job	2026-02-09T08:10:46.1094642Z 24.04.3
+build	Set up job	2026-02-09T08:10:46.1095501Z LTS
+build	Set up job	2026-02-09T08:10:46.1096334Z ##[endgroup]
+build	Set up job	2026-02-09T08:10:46.1097163Z ##[group]Runner Image
+build	Set up job	2026-02-09T08:10:46.1098234Z Image: ubuntu-24.04
+build	Set up job	2026-02-09T08:10:46.1099061Z Version: 20260201.15.1
+build	Set up job	2026-02-09T08:10:46.1100828Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260201.15/images/ubuntu/Ubuntu2404-Readme.md
+build	Set up job	2026-02-09T08:10:46.1103607Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260201.15
+build	Set up job	2026-02-09T08:10:46.1105523Z ##[endgroup]
+build	Set up job	2026-02-09T08:10:46.1107362Z ##[group]GITHUB_TOKEN Permissions
+build	Set up job	2026-02-09T08:10:46.1109991Z Contents: read
+build	Set up job	2026-02-09T08:10:46.1110907Z Metadata: read
+build	Set up job	2026-02-09T08:10:46.1111653Z Packages: write
+build	Set up job	2026-02-09T08:10:46.1112623Z ##[endgroup]
+build	Set up job	2026-02-09T08:10:46.1115527Z Secret source: Actions
+build	Set up job	2026-02-09T08:10:46.1116687Z Prepare workflow directory
+build	Set up job	2026-02-09T08:10:46.1862808Z Prepare all required actions
+build	Set up job	2026-02-09T08:10:46.1919915Z Getting action download info
+build	Set up job	2026-02-09T08:10:46.4977232Z Download action repository 'actions/checkout@v4' (SHA:34e114876b0b11c390a56381ad16ebd13914f8d5)
+build	Set up job	2026-02-09T08:10:46.6193210Z Download action repository 'docker/login-action@v3' (SHA:c94ce9fb468520275223c153574b00df6fe4bcc9)
+build	Set up job	2026-02-09T08:10:47.0592724Z Download action repository 'docker/metadata-action@v5' (SHA:c299e40c65443455700f0fdfc63efafe5b349051)
+build	Set up job	2026-02-09T08:10:47.4448061Z Download action repository 'docker/build-push-action@v5' (SHA:ca052bb54ab0790a636c9b5f226502c73d547a25)
+build	Set up job	2026-02-09T08:10:47.8893074Z Complete job name: build
+build	Checkout repository	﻿2026-02-09T08:10:47.9629690Z ##[group]Run actions/checkout@v4
+build	Checkout repository	2026-02-09T08:10:47.9630986Z with:
+build	Checkout repository	2026-02-09T08:10:47.9631767Z   repository: itfahim0/ModMail-Bot
+build	Checkout repository	2026-02-09T08:10:47.9633010Z   token: ***
+build	Checkout repository	2026-02-09T08:10:47.9633755Z   ssh-strict: true
+build	Checkout repository	2026-02-09T08:10:47.9634752Z   ssh-user: git
+build	Checkout repository	2026-02-09T08:10:47.9635575Z   persist-credentials: true
+build	Checkout repository	2026-02-09T08:10:47.9636483Z   clean: true
+build	Checkout repository	2026-02-09T08:10:47.9637281Z   sparse-checkout-cone-mode: true
+build	Checkout repository	2026-02-09T08:10:47.9638253Z   fetch-depth: 1
+build	Checkout repository	2026-02-09T08:10:47.9639033Z   fetch-tags: false
+build	Checkout repository	2026-02-09T08:10:47.9639824Z   show-progress: true
+build	Checkout repository	2026-02-09T08:10:47.9640622Z   lfs: false
+build	Checkout repository	2026-02-09T08:10:47.9641364Z   submodules: false
+build	Checkout repository	2026-02-09T08:10:47.9642167Z   set-safe-directory: true
+build	Checkout repository	2026-02-09T08:10:47.9643270Z env:
+build	Checkout repository	2026-02-09T08:10:47.9643975Z   REGISTRY: ghcr.io
+build	Checkout repository	2026-02-09T08:10:47.9644961Z   IMAGE_NAME: itfahim0/ModMail-Bot
+build	Checkout repository	2026-02-09T08:10:47.9645921Z ##[endgroup]
+build	Checkout repository	2026-02-09T08:10:48.0791534Z Syncing repository: itfahim0/ModMail-Bot
+build	Checkout repository	2026-02-09T08:10:48.0796278Z ##[group]Getting Git version info
+build	Checkout repository	2026-02-09T08:10:48.0798519Z Working directory is '/home/runner/work/ModMail-Bot/ModMail-Bot'
+build	Checkout repository	2026-02-09T08:10:48.0801739Z [command]/usr/bin/git version
+build	Checkout repository	2026-02-09T08:10:48.0873366Z git version 2.52.0
+build	Checkout repository	2026-02-09T08:10:48.0926045Z ##[endgroup]
+build	Checkout repository	2026-02-09T08:10:48.0935693Z Temporarily overriding HOME='/home/runner/work/_temp/dfe07f79-5dad-4596-8c10-5e07e99e4f1d' before making global git config changes
+build	Checkout repository	2026-02-09T08:10:48.0940363Z Adding repository directory to the temporary git global config as a safe directory
+build	Checkout repository	2026-02-09T08:10:48.0944242Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/ModMail-Bot/ModMail-Bot
+build	Checkout repository	2026-02-09T08:10:48.0985126Z Deleting the contents of '/home/runner/work/ModMail-Bot/ModMail-Bot'
+build	Checkout repository	2026-02-09T08:10:48.0988762Z ##[group]Initializing the repository
+build	Checkout repository	2026-02-09T08:10:48.0994598Z [command]/usr/bin/git init /home/runner/work/ModMail-Bot/ModMail-Bot
+build	Checkout repository	2026-02-09T08:10:48.1118414Z hint: Using 'master' as the name for the initial branch. This default branch name
+build	Checkout repository	2026-02-09T08:10:48.1121729Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+build	Checkout repository	2026-02-09T08:10:48.1124989Z hint: to use in all of your new repositories, which will suppress this warning,
+build	Checkout repository	2026-02-09T08:10:48.1127521Z hint: call:
+build	Checkout repository	2026-02-09T08:10:48.1128747Z hint:
+build	Checkout repository	2026-02-09T08:10:48.1130299Z hint: 	git config --global init.defaultBranch <name>
+build	Checkout repository	2026-02-09T08:10:48.1132274Z hint:
+build	Checkout repository	2026-02-09T08:10:48.1134054Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+build	Checkout repository	2026-02-09T08:10:48.1137417Z hint: 'development'. The just-created branch can be renamed via this command:
+build	Checkout repository	2026-02-09T08:10:48.1139901Z hint:
+build	Checkout repository	2026-02-09T08:10:48.1141118Z hint: 	git branch -m <name>
+build	Checkout repository	2026-02-09T08:10:48.1142529Z hint:
+build	Checkout repository	2026-02-09T08:10:48.1144603Z hint: Disable this message with "git config set advice.defaultBranchName false"
+build	Checkout repository	2026-02-09T08:10:48.1146927Z Initialized empty Git repository in /home/runner/work/ModMail-Bot/ModMail-Bot/.git/
+build	Checkout repository	2026-02-09T08:10:48.1150023Z [command]/usr/bin/git remote add origin https://github.com/itfahim0/ModMail-Bot
+build	Checkout repository	2026-02-09T08:10:48.1201727Z ##[endgroup]
+build	Checkout repository	2026-02-09T08:10:48.1204124Z ##[group]Disabling automatic garbage collection
+build	Checkout repository	2026-02-09T08:10:48.1206665Z [command]/usr/bin/git config --local gc.auto 0
+build	Checkout repository	2026-02-09T08:10:48.1239336Z ##[endgroup]
+build	Checkout repository	2026-02-09T08:10:48.1241573Z ##[group]Setting up auth
+build	Checkout repository	2026-02-09T08:10:48.1247266Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+build	Checkout repository	2026-02-09T08:10:48.1282794Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+build	Checkout repository	2026-02-09T08:10:48.1698858Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+build	Checkout repository	2026-02-09T08:10:48.1735360Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+build	Checkout repository	2026-02-09T08:10:48.1975368Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+build	Checkout repository	2026-02-09T08:10:48.2016244Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+build	Checkout repository	2026-02-09T08:10:48.2239233Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+build	Checkout repository	2026-02-09T08:10:48.2273233Z ##[endgroup]
+build	Checkout repository	2026-02-09T08:10:48.2275789Z ##[group]Fetching the repository
+build	Checkout repository	2026-02-09T08:10:48.2285316Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +8f47760624d42054b12543f9c0eecbfbcbb5debe:refs/remotes/pull/24/merge
+build	Checkout repository	2026-02-09T08:10:48.4243038Z From https://github.com/itfahim0/ModMail-Bot
+build	Checkout repository	2026-02-09T08:10:48.4246323Z  * [new ref]         8f47760624d42054b12543f9c0eecbfbcbb5debe -> pull/24/merge
+build	Checkout repository	2026-02-09T08:10:48.4277410Z ##[endgroup]
+build	Checkout repository	2026-02-09T08:10:48.4279489Z ##[group]Determining the checkout info
+build	Checkout repository	2026-02-09T08:10:48.4281493Z ##[endgroup]
+build	Checkout repository	2026-02-09T08:10:48.4283355Z [command]/usr/bin/git sparse-checkout disable
+build	Checkout repository	2026-02-09T08:10:48.4324027Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+build	Checkout repository	2026-02-09T08:10:48.4350709Z ##[group]Checking out the ref
+build	Checkout repository	2026-02-09T08:10:48.4353142Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/24/merge
+build	Checkout repository	2026-02-09T08:10:48.4486083Z Note: switching to 'refs/remotes/pull/24/merge'.
+build	Checkout repository	2026-02-09T08:10:48.4487485Z 
+build	Checkout repository	2026-02-09T08:10:48.4488665Z You are in 'detached HEAD' state. You can look around, make experimental
+build	Checkout repository	2026-02-09T08:10:48.4491293Z changes and commit them, and you can discard any commits you make in this
+build	Checkout repository	2026-02-09T08:10:48.4493021Z state without impacting any branches by switching back to a branch.
+build	Checkout repository	2026-02-09T08:10:48.4494849Z 
+build	Checkout repository	2026-02-09T08:10:48.4495881Z If you want to create a new branch to retain commits you create, you may
+build	Checkout repository	2026-02-09T08:10:48.4497470Z do so (now or later) by using -c with the switch command. Example:
+build	Checkout repository	2026-02-09T08:10:48.4498397Z 
+build	Checkout repository	2026-02-09T08:10:48.4498968Z   git switch -c <new-branch-name>
+build	Checkout repository	2026-02-09T08:10:48.4499613Z 
+build	Checkout repository	2026-02-09T08:10:48.4499977Z Or undo this operation with:
+build	Checkout repository	2026-02-09T08:10:48.4500553Z 
+build	Checkout repository	2026-02-09T08:10:48.4500871Z   git switch -
+build	Checkout repository	2026-02-09T08:10:48.4501313Z 
+build	Checkout repository	2026-02-09T08:10:48.4502041Z Turn off this advice by setting config variable advice.detachedHead to false
+build	Checkout repository	2026-02-09T08:10:48.4503128Z 
+build	Checkout repository	2026-02-09T08:10:48.4504530Z HEAD is now at 8f47760 Merge 0812a4b450bebc4aa6b957910f2cb6693eb49bed into ed29e3b6e6b75cdfe86174a5d1b2a58f13043503
+build	Checkout repository	2026-02-09T08:10:48.4508042Z ##[endgroup]
+build	Checkout repository	2026-02-09T08:10:48.4531429Z [command]/usr/bin/git log -1 --format=%H
+build	Checkout repository	2026-02-09T08:10:48.4552875Z 8f47760624d42054b12543f9c0eecbfbcbb5debe
+build	Log in to the Container registry	﻿2026-02-09T08:10:48.4799428Z ##[group]Run docker/login-action@v3
+build	Log in to the Container registry	2026-02-09T08:10:48.4800586Z with:
+build	Log in to the Container registry	2026-02-09T08:10:48.4801333Z   registry: ghcr.io
+build	Log in to the Container registry	2026-02-09T08:10:48.4802289Z   username: kuasha420
+build	Log in to the Container registry	2026-02-09T08:10:48.4803543Z   password: ***
+build	Log in to the Container registry	2026-02-09T08:10:48.4804553Z   logout: true
+build	Log in to the Container registry	2026-02-09T08:10:48.4870630Z env:
+build	Log in to the Container registry	2026-02-09T08:10:48.4871417Z   REGISTRY: ghcr.io
+build	Log in to the Container registry	2026-02-09T08:10:48.4872290Z   IMAGE_NAME: itfahim0/ModMail-Bot
+build	Log in to the Container registry	2026-02-09T08:10:48.4873228Z ##[endgroup]
+build	Log in to the Container registry	2026-02-09T08:10:48.7867054Z Logging into ghcr.io...
+build	Log in to the Container registry	2026-02-09T08:10:49.0537231Z Login Succeeded!
+build	Extract metadata (tags, labels) for Docker	﻿2026-02-09T08:10:49.0765799Z ##[group]Run docker/metadata-action@v5
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:49.0766830Z with:
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:49.0767561Z   images: ghcr.io/itfahim0/ModMail-Bot
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:49.0768515Z   context: workflow
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:49.0769564Z   github-token: ***
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:49.0770295Z env:
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:49.0770962Z   REGISTRY: ghcr.io
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:49.0771745Z   IMAGE_NAME: itfahim0/ModMail-Bot
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:49.0772631Z ##[endgroup]
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0438975Z ##[group]Context info
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0439682Z eventName: pull_request
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0440208Z sha: 8f47760624d42054b12543f9c0eecbfbcbb5debe
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0445194Z ref: refs/pull/24/merge
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0445678Z workflow: Docker Build & Push
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0446148Z action: meta
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0446484Z actor: kuasha420
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0446875Z runNumber: 17
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0447199Z runId: 21817201247
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0447731Z commitDate: Mon Feb 09 2026 08:10:40 GMT+0000 (Coordinated Universal Time)
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0448851Z ##[endgroup]
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0453200Z ##[group]Processing images input
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0453774Z name=ghcr.io/itfahim0/ModMail-Bot,enable=true
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0454715Z ##[endgroup]
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0473311Z ##[group]Processing tags input
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0473924Z type=schedule,pattern=nightly,enable=true,priority=1000
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0485377Z type=ref,event=branch,enable=true,priority=600
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0485972Z type=ref,event=tag,enable=true,priority=600
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0486567Z type=ref,event=pr,prefix=pr-,enable=true,priority=600
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0487352Z ##[endgroup]
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0487904Z ##[group]Processing flavor input
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0488290Z latest=auto
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0488596Z prefix=
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0488895Z prefixLatest=false
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0489214Z suffix=
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0489442Z suffixLatest=false
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0489817Z ##[endgroup]
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0545495Z ##[group]Docker image version
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0546017Z pr-24
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0565636Z ##[endgroup]
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0566322Z ##[group]Docker tags
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0566679Z ghcr.io/itfahim0/modmail-bot:pr-24
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0567148Z ##[endgroup]
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0685595Z ##[group]Docker labels
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0686474Z org.opencontainers.image.created=2026-02-09T08:10:50.047Z
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0689213Z org.opencontainers.image.description=A professional, feature-rich ModMail system for Discord. This bot facilitates private communication between server members and staff through a dedicated ticket system, ensuring privacy and organization.
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0691522Z org.opencontainers.image.licenses=MIT
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0692255Z org.opencontainers.image.revision=8f47760624d42054b12543f9c0eecbfbcbb5debe
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0693317Z org.opencontainers.image.source=https://github.com/itfahim0/ModMail-Bot
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0694054Z org.opencontainers.image.title=ModMail-Bot
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0694931Z org.opencontainers.image.url=https://github.com/itfahim0/ModMail-Bot
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0695655Z org.opencontainers.image.version=pr-24
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0696402Z ##[endgroup]
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0696972Z ##[group]Annotations
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0697492Z manifest:org.opencontainers.image.created=2026-02-09T08:10:50.047Z
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0699474Z manifest:org.opencontainers.image.description=A professional, feature-rich ModMail system for Discord. This bot facilitates private communication between server members and staff through a dedicated ticket system, ensuring privacy and organization.
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0701357Z manifest:org.opencontainers.image.licenses=MIT
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0702135Z manifest:org.opencontainers.image.revision=8f47760624d42054b12543f9c0eecbfbcbb5debe
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0703146Z manifest:org.opencontainers.image.source=https://github.com/itfahim0/ModMail-Bot
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0703968Z manifest:org.opencontainers.image.title=ModMail-Bot
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0704981Z manifest:org.opencontainers.image.url=https://github.com/itfahim0/ModMail-Bot
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0706066Z manifest:org.opencontainers.image.version=pr-24
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0706849Z ##[endgroup]
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0707416Z ##[group]JSON output
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0707744Z {
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0708004Z   "tags": [
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0708344Z     "ghcr.io/itfahim0/modmail-bot:pr-24"
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0708757Z   ],
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0709030Z   "tag-names": [
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0709335Z     "pr-24"
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0709601Z   ],
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0709873Z   "labels": {
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0710332Z     "org.opencontainers.image.created": "2026-02-09T08:10:50.047Z",
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0712237Z     "org.opencontainers.image.description": "A professional, feature-rich ModMail system for Discord. This bot facilitates private communication between server members and staff through a dedicated ticket system, ensuring privacy and organization.",
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0714022Z     "org.opencontainers.image.licenses": "MIT",
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0714963Z     "org.opencontainers.image.revision": "8f47760624d42054b12543f9c0eecbfbcbb5debe",
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0715922Z     "org.opencontainers.image.source": "https://github.com/itfahim0/ModMail-Bot",
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0716617Z     "org.opencontainers.image.title": "ModMail-Bot",
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0717320Z     "org.opencontainers.image.url": "https://github.com/itfahim0/ModMail-Bot",
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0718056Z     "org.opencontainers.image.version": "pr-24"
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0718478Z   },
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0718743Z   "annotations": [
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0719214Z     "manifest:org.opencontainers.image.created=2026-02-09T08:10:50.047Z",
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0721403Z     "manifest:org.opencontainers.image.description=A professional, feature-rich ModMail system for Discord. This bot facilitates private communication between server members and staff through a dedicated ticket system, ensuring privacy and organization.",
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0723120Z     "manifest:org.opencontainers.image.licenses=MIT",
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0723641Z     "manifest:org.opencontainers.image.revision=8f47760624d42054b12543f9c0eecbfbcbb5debe",
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0724260Z     "manifest:org.opencontainers.image.source=https://github.com/itfahim0/ModMail-Bot",
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0725041Z     "manifest:org.opencontainers.image.title=ModMail-Bot",
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0725551Z     "manifest:org.opencontainers.image.url=https://github.com/itfahim0/ModMail-Bot",
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0726025Z     "manifest:org.opencontainers.image.version=pr-24"
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0726510Z   ]
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0726678Z }
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0727040Z ##[endgroup]
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0727400Z ##[group]Bake file definition (tags)
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0727692Z {
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0727852Z   "target": {
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0728057Z     "docker-metadata-action": {
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0728286Z       "tags": [
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0728506Z         "ghcr.io/itfahim0/modmail-bot:pr-24"
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0728768Z       ],
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0728933Z       "args": {
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0729196Z         "DOCKER_META_IMAGES": "ghcr.io/itfahim0/modmail-bot",
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0729713Z         "DOCKER_META_VERSION": "pr-24"
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0729968Z       }
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0730128Z     }
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0730291Z   }
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0730445Z }
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0730755Z ##[endgroup]
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0731087Z ##[group]Bake file definition (labels)
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0731324Z {
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0731484Z   "target": {
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0731696Z     "docker-metadata-action": {
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0731930Z       "labels": {
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0732224Z         "org.opencontainers.image.created": "2026-02-09T08:10:50.047Z",
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0733385Z         "org.opencontainers.image.description": "A professional, feature-rich ModMail system for Discord. This bot facilitates private communication between server members and staff through a dedicated ticket system, ensuring privacy and organization.",
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0734653Z         "org.opencontainers.image.licenses": "MIT",
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0735378Z         "org.opencontainers.image.revision": "8f47760624d42054b12543f9c0eecbfbcbb5debe",
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0735983Z         "org.opencontainers.image.source": "https://github.com/itfahim0/ModMail-Bot",
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0736480Z         "org.opencontainers.image.title": "ModMail-Bot",
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0736939Z         "org.opencontainers.image.url": "https://github.com/itfahim0/ModMail-Bot",
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0737402Z         "org.opencontainers.image.version": "pr-24"
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0737686Z       }
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0737854Z     }
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0738012Z   }
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0738171Z }
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0738496Z ##[endgroup]
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0738849Z ##[group]Bake file definition (annotations)
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0739106Z {
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0739273Z   "target": {
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0739481Z     "docker-metadata-action": {
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0739732Z       "annotations": [
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0740081Z         "manifest:org.opencontainers.image.created=2026-02-09T08:10:50.047Z",
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0741326Z         "manifest:org.opencontainers.image.description=A professional, feature-rich ModMail system for Discord. This bot facilitates private communication between server members and staff through a dedicated ticket system, ensuring privacy and organization.",
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0742420Z         "manifest:org.opencontainers.image.licenses=MIT",
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0742934Z         "manifest:org.opencontainers.image.revision=8f47760624d42054b12543f9c0eecbfbcbb5debe",
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0743576Z         "manifest:org.opencontainers.image.source=https://github.com/itfahim0/ModMail-Bot",
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0744103Z         "manifest:org.opencontainers.image.title=ModMail-Bot",
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0744823Z         "manifest:org.opencontainers.image.url=https://github.com/itfahim0/ModMail-Bot",
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0745323Z         "manifest:org.opencontainers.image.version=pr-24"
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0745619Z       ]
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0745783Z     }
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0745947Z   }
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0746105Z }
+build	Extract metadata (tags, labels) for Docker	2026-02-09T08:10:50.0746417Z ##[endgroup]
+build	Build and push Docker image	﻿2026-02-09T08:10:50.0965805Z ##[group]Run docker/build-push-action@v5
+build	Build and push Docker image	2026-02-09T08:10:50.0966127Z with:
+build	Build and push Docker image	2026-02-09T08:10:50.0966307Z   context: .
+build	Build and push Docker image	2026-02-09T08:10:50.0966520Z   file: apps/modmail-bot/Dockerfile
+build	Build and push Docker image	2026-02-09T08:10:50.0966766Z   push: false
+build	Build and push Docker image	2026-02-09T08:10:50.0966989Z   tags: ghcr.io/itfahim0/modmail-bot:pr-24
+build	Build and push Docker image	2026-02-09T08:10:50.0969461Z   labels: org.opencontainers.image.created=2026-02-09T08:10:50.047Z
+build	Build and push Docker image	org.opencontainers.image.description=A professional, feature-rich ModMail system for Discord. This bot facilitates private communication between server members and staff through a dedicated ticket system, ensuring privacy and organization.
+build	Build and push Docker image	org.opencontainers.image.licenses=MIT
+build	Build and push Docker image	org.opencontainers.image.revision=8f47760624d42054b12543f9c0eecbfbcbb5debe
+build	Build and push Docker image	org.opencontainers.image.source=https://github.com/itfahim0/ModMail-Bot
+build	Build and push Docker image	org.opencontainers.image.title=ModMail-Bot
+build	Build and push Docker image	org.opencontainers.image.url=https://github.com/itfahim0/ModMail-Bot
+build	Build and push Docker image	org.opencontainers.image.version=pr-24
+build	Build and push Docker image	2026-02-09T08:10:50.0972156Z   load: false
+build	Build and push Docker image	2026-02-09T08:10:50.0972375Z   no-cache: false
+build	Build and push Docker image	2026-02-09T08:10:50.0972568Z   pull: false
+build	Build and push Docker image	2026-02-09T08:10:50.0972897Z   github-token: ***
+build	Build and push Docker image	2026-02-09T08:10:50.0973098Z env:
+build	Build and push Docker image	2026-02-09T08:10:50.0973268Z   REGISTRY: ghcr.io
+build	Build and push Docker image	2026-02-09T08:10:50.0973478Z   IMAGE_NAME: itfahim0/ModMail-Bot
+build	Build and push Docker image	2026-02-09T08:10:50.0973741Z   DOCKER_METADATA_OUTPUT_VERSION: pr-24
+build	Build and push Docker image	2026-02-09T08:10:50.0974095Z   DOCKER_METADATA_OUTPUT_TAGS: ghcr.io/itfahim0/modmail-bot:pr-24
+build	Build and push Docker image	2026-02-09T08:10:50.0974608Z   DOCKER_METADATA_OUTPUT_TAG_NAMES: pr-24
+build	Build and push Docker image	2026-02-09T08:10:50.0977118Z   DOCKER_METADATA_OUTPUT_LABELS: org.opencontainers.image.created=2026-02-09T08:10:50.047Z
+build	Build and push Docker image	org.opencontainers.image.description=A professional, feature-rich ModMail system for Discord. This bot facilitates private communication between server members and staff through a dedicated ticket system, ensuring privacy and organization.
+build	Build and push Docker image	org.opencontainers.image.licenses=MIT
+build	Build and push Docker image	org.opencontainers.image.revision=8f47760624d42054b12543f9c0eecbfbcbb5debe
+build	Build and push Docker image	org.opencontainers.image.source=https://github.com/itfahim0/ModMail-Bot
+build	Build and push Docker image	org.opencontainers.image.title=ModMail-Bot
+build	Build and push Docker image	org.opencontainers.image.url=https://github.com/itfahim0/ModMail-Bot
+build	Build and push Docker image	org.opencontainers.image.version=pr-24
+build	Build and push Docker image	2026-02-09T08:10:50.0982150Z   DOCKER_METADATA_OUTPUT_ANNOTATIONS: manifest:org.opencontainers.image.created=2026-02-09T08:10:50.047Z
+build	Build and push Docker image	manifest:org.opencontainers.image.description=A professional, feature-rich ModMail system for Discord. This bot facilitates private communication between server members and staff through a dedicated ticket system, ensuring privacy and organization.
+build	Build and push Docker image	manifest:org.opencontainers.image.licenses=MIT
+build	Build and push Docker image	manifest:org.opencontainers.image.revision=8f47760624d42054b12543f9c0eecbfbcbb5debe
+build	Build and push Docker image	manifest:org.opencontainers.image.source=https://github.com/itfahim0/ModMail-Bot
+build	Build and push Docker image	manifest:org.opencontainers.image.title=ModMail-Bot
+build	Build and push Docker image	manifest:org.opencontainers.image.url=https://github.com/itfahim0/ModMail-Bot
+build	Build and push Docker image	manifest:org.opencontainers.image.version=pr-24
+build	Build and push Docker image	2026-02-09T08:10:50.0990312Z   DOCKER_METADATA_OUTPUT_JSON: {"tags":["ghcr.io/itfahim0/modmail-bot:pr-24"],"tag-names":["pr-24"],"labels":{"org.opencontainers.image.created":"2026-02-09T08:10:50.047Z","org.opencontainers.image.description":"A professional, feature-rich ModMail system for Discord. This bot facilitates private communication between server members and staff through a dedicated ticket system, ensuring privacy and organization.","org.opencontainers.image.licenses":"MIT","org.opencontainers.image.revision":"8f47760624d42054b12543f9c0eecbfbcbb5debe","org.opencontainers.image.source":"https://github.com/itfahim0/ModMail-Bot","org.opencontainers.image.title":"ModMail-Bot","org.opencontainers.image.url":"https://github.com/itfahim0/ModMail-Bot","org.opencontainers.image.version":"pr-24"},"annotations":["manifest:org.opencontainers.image.created=2026-02-09T08:10:50.047Z","manifest:org.opencontainers.image.description=A professional, feature-rich ModMail system for Discord. This bot facilitates private communication between server members and staff through a dedicated ticket system, ensuring privacy and organization.","manifest:org.opencontainers.image.licenses=MIT","manifest:org.opencontainers.image.revision=8f47760624d42054b12543f9c0eecbfbcbb5debe","manifest:org.opencontainers.image.source=https://github.com/itfahim0/ModMail-Bot","manifest:org.opencontainers.image.title=ModMail-Bot","manifest:org.opencontainers.image.url=https://github.com/itfahim0/ModMail-Bot","manifest:org.opencontainers.image.version=pr-24"]}
+build	Build and push Docker image	2026-02-09T08:10:50.0996858Z   DOCKER_METADATA_OUTPUT_BAKE_FILE_TAGS: /home/runner/work/_temp/docker-actions-toolkit-FB5zJD/docker-metadata-action-bake-tags.json
+build	Build and push Docker image	2026-02-09T08:10:50.0997783Z   DOCKER_METADATA_OUTPUT_BAKE_FILE_LABELS: /home/runner/work/_temp/docker-actions-toolkit-FB5zJD/docker-metadata-action-bake-labels.json
+build	Build and push Docker image	2026-02-09T08:10:50.0998751Z   DOCKER_METADATA_OUTPUT_BAKE_FILE_ANNOTATIONS: /home/runner/work/_temp/docker-actions-toolkit-FB5zJD/docker-metadata-action-bake-annotations.json
+build	Build and push Docker image	2026-02-09T08:10:50.0999666Z   DOCKER_METADATA_OUTPUT_BAKE_FILE: /home/runner/work/_temp/docker-actions-toolkit-FB5zJD/docker-metadata-action-bake.json
+build	Build and push Docker image	2026-02-09T08:10:50.1000203Z ##[endgroup]
+build	Build and push Docker image	2026-02-09T08:10:50.3242450Z ##[group]GitHub Actions runtime token ACs
+build	Build and push Docker image	2026-02-09T08:10:50.3253849Z refs/pull/24/merge: read/write
+build	Build and push Docker image	2026-02-09T08:10:50.3254559Z refs/heads/main: read
+build	Build and push Docker image	2026-02-09T08:10:50.3255390Z ##[endgroup]
+build	Build and push Docker image	2026-02-09T08:10:50.3256046Z ##[group]Docker info
+build	Build and push Docker image	2026-02-09T08:10:50.3296607Z [command]/usr/bin/docker version
+build	Build and push Docker image	2026-02-09T08:10:50.3487088Z Client: Docker Engine - Community
+build	Build and push Docker image	2026-02-09T08:10:50.3490157Z  Version:           28.0.4
+build	Build and push Docker image	2026-02-09T08:10:50.3490673Z  API version:       1.48
+build	Build and push Docker image	2026-02-09T08:10:50.3490945Z  Go version:        go1.23.7
+build	Build and push Docker image	2026-02-09T08:10:50.3491214Z  Git commit:        b8034c0
+build	Build and push Docker image	2026-02-09T08:10:50.3491477Z  Built:             Tue Mar 25 15:07:16 2025
+build	Build and push Docker image	2026-02-09T08:10:50.3491771Z  OS/Arch:           linux/amd64
+build	Build and push Docker image	2026-02-09T08:10:50.3492018Z  Context:           default
+build	Build and push Docker image	2026-02-09T08:10:50.3492172Z 
+build	Build and push Docker image	2026-02-09T08:10:50.3492289Z Server: Docker Engine - Community
+build	Build and push Docker image	2026-02-09T08:10:50.3492564Z  Engine:
+build	Build and push Docker image	2026-02-09T08:10:50.3492760Z   Version:          28.0.4
+build	Build and push Docker image	2026-02-09T08:10:50.3493030Z   API version:      1.48 (minimum version 1.24)
+build	Build and push Docker image	2026-02-09T08:10:50.3493340Z   Go version:       go1.23.7
+build	Build and push Docker image	2026-02-09T08:10:50.3493586Z   Git commit:       6430e49
+build	Build and push Docker image	2026-02-09T08:10:50.3493844Z   Built:            Tue Mar 25 15:07:16 2025
+build	Build and push Docker image	2026-02-09T08:10:50.3494146Z   OS/Arch:          linux/amd64
+build	Build and push Docker image	2026-02-09T08:10:50.3494649Z   Experimental:     false
+build	Build and push Docker image	2026-02-09T08:10:50.3494895Z  containerd:
+build	Build and push Docker image	2026-02-09T08:10:50.3495092Z   Version:          v2.2.1
+build	Build and push Docker image	2026-02-09T08:10:50.3495405Z   GitCommit:        dea7da592f5d1d2b7755e3a161be07f43fad8f75
+build	Build and push Docker image	2026-02-09T08:10:50.3495716Z  runc:
+build	Build and push Docker image	2026-02-09T08:10:50.3495905Z   Version:          1.3.4
+build	Build and push Docker image	2026-02-09T08:10:50.3496142Z   GitCommit:        v1.3.4-0-gd6d73eb8
+build	Build and push Docker image	2026-02-09T08:10:50.3496408Z  docker-init:
+build	Build and push Docker image	2026-02-09T08:10:50.3496606Z   Version:          0.19.0
+build	Build and push Docker image	2026-02-09T08:10:50.3496841Z   GitCommit:        de40ad0
+build	Build and push Docker image	2026-02-09T08:10:50.3533635Z [command]/usr/bin/docker info
+build	Build and push Docker image	2026-02-09T08:10:50.6386230Z Client: Docker Engine - Community
+build	Build and push Docker image	2026-02-09T08:10:50.6388946Z  Version:    28.0.4
+build	Build and push Docker image	2026-02-09T08:10:50.6389293Z  Context:    default
+build	Build and push Docker image	2026-02-09T08:10:50.6389618Z  Debug Mode: false
+build	Build and push Docker image	2026-02-09T08:10:50.6389870Z  Plugins:
+build	Build and push Docker image	2026-02-09T08:10:50.6390081Z   buildx: Docker Buildx (Docker Inc.)
+build	Build and push Docker image	2026-02-09T08:10:50.6390363Z     Version:  v0.31.1
+build	Build and push Docker image	2026-02-09T08:10:50.6390654Z     Path:     /usr/libexec/docker/cli-plugins/docker-buildx
+build	Build and push Docker image	2026-02-09T08:10:50.6390976Z   compose: Docker Compose (Docker Inc.)
+build	Build and push Docker image	2026-02-09T08:10:50.6391221Z     Version:  v2.38.2
+build	Build and push Docker image	2026-02-09T08:10:50.6391472Z     Path:     /usr/libexec/docker/cli-plugins/docker-compose
+build	Build and push Docker image	2026-02-09T08:10:50.6391704Z 
+build	Build and push Docker image	2026-02-09T08:10:50.6391772Z Server:
+build	Build and push Docker image	2026-02-09T08:10:50.6391936Z  Containers: 0
+build	Build and push Docker image	2026-02-09T08:10:50.6392108Z   Running: 0
+build	Build and push Docker image	2026-02-09T08:10:50.6392278Z   Paused: 0
+build	Build and push Docker image	2026-02-09T08:10:50.6392438Z   Stopped: 0
+build	Build and push Docker image	2026-02-09T08:10:50.6392608Z  Images: 1
+build	Build and push Docker image	2026-02-09T08:10:50.6392774Z  Server Version: 28.0.4
+build	Build and push Docker image	2026-02-09T08:10:50.6393352Z  Storage Driver: overlay2
+build	Build and push Docker image	2026-02-09T08:10:50.6393563Z   Backing Filesystem: extfs
+build	Build and push Docker image	2026-02-09T08:10:50.6393778Z   Supports d_type: true
+build	Build and push Docker image	2026-02-09T08:10:50.6393984Z   Using metacopy: false
+build	Build and push Docker image	2026-02-09T08:10:50.6394191Z   Native Overlay Diff: false
+build	Build and push Docker image	2026-02-09T08:10:50.6394744Z   userxattr: false
+build	Build and push Docker image	2026-02-09T08:10:50.6395102Z  Logging Driver: json-file
+build	Build and push Docker image	2026-02-09T08:10:50.6395318Z  Cgroup Driver: systemd
+build	Build and push Docker image	2026-02-09T08:10:50.6395515Z  Cgroup Version: 2
+build	Build and push Docker image	2026-02-09T08:10:50.6395699Z  Plugins:
+build	Build and push Docker image	2026-02-09T08:10:50.6395885Z   Volume: local
+build	Build and push Docker image	2026-02-09T08:10:50.6396111Z   Network: bridge host ipvlan macvlan null overlay
+build	Build and push Docker image	2026-02-09T08:10:50.6396500Z   Log: awslogs fluentd gcplogs gelf journald json-file local splunk syslog
+build	Build and push Docker image	2026-02-09T08:10:50.6396856Z  Swarm: inactive
+build	Build and push Docker image	2026-02-09T08:10:50.6397054Z  Runtimes: io.containerd.runc.v2 runc
+build	Build and push Docker image	2026-02-09T08:10:50.6397307Z  Default Runtime: runc
+build	Build and push Docker image	2026-02-09T08:10:50.6397511Z  Init Binary: docker-init
+build	Build and push Docker image	2026-02-09T08:10:50.6397790Z  containerd version: dea7da592f5d1d2b7755e3a161be07f43fad8f75
+build	Build and push Docker image	2026-02-09T08:10:50.6398121Z  runc version: v1.3.4-0-gd6d73eb8
+build	Build and push Docker image	2026-02-09T08:10:50.6398351Z  init version: de40ad0
+build	Build and push Docker image	2026-02-09T08:10:50.6398545Z  Security Options:
+build	Build and push Docker image	2026-02-09T08:10:50.6398724Z   apparmor
+build	Build and push Docker image	2026-02-09T08:10:50.6398887Z   seccomp
+build	Build and push Docker image	2026-02-09T08:10:50.6399045Z    Profile: builtin
+build	Build and push Docker image	2026-02-09T08:10:50.6399232Z   cgroupns
+build	Build and push Docker image	2026-02-09T08:10:50.6399401Z  Kernel Version: 6.11.0-1018-azure
+build	Build and push Docker image	2026-02-09T08:10:50.6399644Z  Operating System: Ubuntu 24.04.3 LTS
+build	Build and push Docker image	2026-02-09T08:10:50.6399875Z  OSType: linux
+build	Build and push Docker image	2026-02-09T08:10:50.6400056Z  Architecture: x86_64
+build	Build and push Docker image	2026-02-09T08:10:50.6400246Z  CPUs: 4
+build	Build and push Docker image	2026-02-09T08:10:50.6400407Z  Total Memory: 15.62GiB
+build	Build and push Docker image	2026-02-09T08:10:50.6400608Z  Name: runnervmwffz4
+build	Build and push Docker image	2026-02-09T08:10:50.6400809Z  ID: 073c65d4-c458-42c9-935a-939d0489da0a
+build	Build and push Docker image	2026-02-09T08:10:50.6401069Z  Docker Root Dir: /var/lib/docker
+build	Build and push Docker image	2026-02-09T08:10:50.6401288Z  Debug Mode: false
+build	Build and push Docker image	2026-02-09T08:10:50.6401477Z  Username: githubactions
+build	Build and push Docker image	2026-02-09T08:10:50.6401682Z  Experimental: false
+build	Build and push Docker image	2026-02-09T08:10:50.6401883Z  Insecure Registries:
+build	Build and push Docker image	2026-02-09T08:10:50.6405689Z   ::1/128
+build	Build and push Docker image	2026-02-09T08:10:50.6405911Z   127.0.0.0/8
+build	Build and push Docker image	2026-02-09T08:10:50.6406113Z  Live Restore Enabled: false
+build	Build and push Docker image	2026-02-09T08:10:50.6406280Z 
+build	Build and push Docker image	2026-02-09T08:10:50.6410112Z ##[endgroup]
+build	Build and push Docker image	2026-02-09T08:10:50.6410730Z ##[group]Proxy configuration
+build	Build and push Docker image	2026-02-09T08:10:50.6414800Z No proxy configuration found
+build	Build and push Docker image	2026-02-09T08:10:50.6416095Z ##[endgroup]
+build	Build and push Docker image	2026-02-09T08:10:50.7208371Z ##[group]Buildx version
+build	Build and push Docker image	2026-02-09T08:10:50.7230049Z [command]/usr/bin/docker buildx version
+build	Build and push Docker image	2026-02-09T08:10:50.8051274Z github.com/docker/buildx v0.31.1 a2675950d46b2cb171b23c2015ca44fb88607531
+build	Build and push Docker image	2026-02-09T08:10:50.8102976Z ##[endgroup]
+build	Build and push Docker image	2026-02-09T08:10:50.8103569Z ##[group]Builder info
+build	Build and push Docker image	2026-02-09T08:10:50.9323268Z {
+build	Build and push Docker image	2026-02-09T08:10:50.9323626Z   "nodes": [
+build	Build and push Docker image	2026-02-09T08:10:50.9323926Z     {
+build	Build and push Docker image	2026-02-09T08:10:50.9324199Z       "name": "default",
+build	Build and push Docker image	2026-02-09T08:10:50.9325029Z       "endpoint": "default",
+build	Build and push Docker image	2026-02-09T08:10:50.9325399Z       "status": "running",
+build	Build and push Docker image	2026-02-09T08:10:50.9325785Z       "buildkit": "v0.20.2",
+build	Build and push Docker image	2026-02-09T08:10:50.9326273Z       "platforms": "linux/amd64,linux/amd64/v2,linux/amd64/v3,linux/386",
+build	Build and push Docker image	2026-02-09T08:10:50.9326633Z       "features": {
+build	Build and push Docker image	2026-02-09T08:10:50.9326923Z         "Automatically load images to the Docker Engine image store": true,
+build	Build and push Docker image	2026-02-09T08:10:50.9327283Z         "Cache export": true,
+build	Build and push Docker image	2026-02-09T08:10:50.9327520Z         "Direct push": true,
+build	Build and push Docker image	2026-02-09T08:10:50.9327729Z         "Docker exporter": true,
+build	Build and push Docker image	2026-02-09T08:10:50.9327967Z         "Multi-platform build": true,
+build	Build and push Docker image	2026-02-09T08:10:50.9328218Z         "OCI exporter": true
+build	Build and push Docker image	2026-02-09T08:10:50.9328422Z       },
+build	Build and push Docker image	2026-02-09T08:10:50.9328579Z       "labels": {
+build	Build and push Docker image	2026-02-09T08:10:50.9328884Z         "org.mobyproject.buildkit.worker.moby.host-gateway-ip": "172.17.0.1"
+build	Build and push Docker image	2026-02-09T08:10:50.9329242Z       }
+build	Build and push Docker image	2026-02-09T08:10:50.9329399Z     }
+build	Build and push Docker image	2026-02-09T08:10:50.9329545Z   ],
+build	Build and push Docker image	2026-02-09T08:10:50.9329703Z   "name": "default",
+build	Build and push Docker image	2026-02-09T08:10:50.9329885Z   "driver": "docker"
+build	Build and push Docker image	2026-02-09T08:10:50.9330325Z }
+build	Build and push Docker image	2026-02-09T08:10:50.9330779Z ##[endgroup]
+build	Build and push Docker image	2026-02-09T08:10:51.1181642Z [command]/usr/bin/docker buildx build --file apps/modmail-bot/Dockerfile --iidfile /home/runner/work/_temp/docker-actions-toolkit-syqlzS/build-iidfile-971c985cfa.txt --label org.opencontainers.image.created=2026-02-09T08:10:50.047Z --label org.opencontainers.image.description=A professional, feature-rich ModMail system for Discord. This bot facilitates private communication between server members and staff through a dedicated ticket system, ensuring privacy and organization. --label org.opencontainers.image.licenses=MIT --label org.opencontainers.image.revision=8f47760624d42054b12543f9c0eecbfbcbb5debe --label org.opencontainers.image.source=https://github.com/itfahim0/ModMail-Bot --label org.opencontainers.image.title=ModMail-Bot --label org.opencontainers.image.url=https://github.com/itfahim0/ModMail-Bot --label org.opencontainers.image.version=pr-24 --tag ghcr.io/itfahim0/modmail-bot:pr-24 --metadata-file /home/runner/work/_temp/docker-actions-toolkit-syqlzS/build-metadata-caadcdab81.json .
+build	Build and push Docker image	2026-02-09T08:10:51.4062168Z #0 building with "default" instance using docker driver
+build	Build and push Docker image	2026-02-09T08:10:51.4062630Z 
+build	Build and push Docker image	2026-02-09T08:10:51.4062780Z #1 [internal] load build definition from Dockerfile
+build	Build and push Docker image	2026-02-09T08:10:51.4063355Z #1 transferring dockerfile: 1.16kB done
+build	Build and push Docker image	2026-02-09T08:10:51.4063853Z #1 DONE 0.0s
+build	Build and push Docker image	2026-02-09T08:10:51.4064032Z 
+build	Build and push Docker image	2026-02-09T08:10:51.4064296Z #2 [auth] library/node:pull token for registry-1.docker.io
+build	Build and push Docker image	2026-02-09T08:10:51.4064787Z #2 DONE 0.0s
+build	Build and push Docker image	2026-02-09T08:10:51.4064921Z 
+build	Build and push Docker image	2026-02-09T08:10:51.4065106Z #3 [internal] load metadata for docker.io/library/node:24-alpine
+build	Build and push Docker image	2026-02-09T08:10:51.5714089Z #3 DONE 0.3s
+build	Build and push Docker image	2026-02-09T08:10:51.6874755Z 
+build	Build and push Docker image	2026-02-09T08:10:51.6875297Z #4 [internal] load .dockerignore
+build	Build and push Docker image	2026-02-09T08:10:51.6875796Z #4 transferring context: 2B done
+build	Build and push Docker image	2026-02-09T08:10:51.6876183Z #4 DONE 0.0s
+build	Build and push Docker image	2026-02-09T08:10:51.6876363Z 
+build	Build and push Docker image	2026-02-09T08:10:51.6876508Z #5 [internal] load build context
+build	Build and push Docker image	2026-02-09T08:10:51.6876965Z #5 transferring context: 826.64kB 0.0s done
+build	Build and push Docker image	2026-02-09T08:10:51.6878839Z #5 DONE 0.0s
+build	Build and push Docker image	2026-02-09T08:10:51.6879178Z 
+build	Build and push Docker image	2026-02-09T08:10:51.6880101Z #6 [base 1/3] FROM docker.io/library/node:24-alpine@sha256:cd6fb7efa6490f039f3471a189214d5f548c11df1ff9e5b181aa49e22c14383e
+build	Build and push Docker image	2026-02-09T08:10:51.6881569Z #6 resolve docker.io/library/node:24-alpine@sha256:cd6fb7efa6490f039f3471a189214d5f548c11df1ff9e5b181aa49e22c14383e done
+build	Build and push Docker image	2026-02-09T08:10:51.6882840Z #6 sha256:cd6fb7efa6490f039f3471a189214d5f548c11df1ff9e5b181aa49e22c14383e 3.87kB / 3.87kB done
+build	Build and push Docker image	2026-02-09T08:10:51.6883954Z #6 sha256:26eb49fbfdf03bf69f728b73178fa6f9e7c2cef88b06561b65497f5ae8e50a3d 1.72kB / 1.72kB done
+build	Build and push Docker image	2026-02-09T08:10:51.6885300Z #6 sha256:830a00b153fccc810930d0fff2681b173fa3acc2ab8c45d8af972f50d4bcd09d 6.52kB / 6.52kB done
+build	Build and push Docker image	2026-02-09T08:10:51.6886529Z #6 sha256:589002ba0eaed121a1dbf42f6648f29e5be55d5c8a6ee0f8eaa0285cc21ac153 0B / 3.86MB 0.1s
+build	Build and push Docker image	2026-02-09T08:10:51.6887660Z #6 sha256:4ef00bbbc75186b55c2be094a1c5ac03cbfac8897f1f2ed86107bf908a95fda9 10.49MB / 50.98MB 0.1s
+build	Build and push Docker image	2026-02-09T08:10:51.6888769Z #6 sha256:14b92b0c10a5cc759604614d048be3aad4c013e9b574a6bff7f6fa78ac4e5860 0B / 1.26MB 0.1s
+build	Build and push Docker image	2026-02-09T08:10:51.8346099Z #6 sha256:589002ba0eaed121a1dbf42f6648f29e5be55d5c8a6ee0f8eaa0285cc21ac153 3.86MB / 3.86MB 0.1s done
+build	Build and push Docker image	2026-02-09T08:10:51.8347686Z #6 sha256:4ef00bbbc75186b55c2be094a1c5ac03cbfac8897f1f2ed86107bf908a95fda9 25.74MB / 50.98MB 0.2s
+build	Build and push Docker image	2026-02-09T08:10:51.8349184Z #6 sha256:14b92b0c10a5cc759604614d048be3aad4c013e9b574a6bff7f6fa78ac4e5860 1.26MB / 1.26MB 0.1s done
+build	Build and push Docker image	2026-02-09T08:10:51.8351201Z #6 extracting sha256:589002ba0eaed121a1dbf42f6648f29e5be55d5c8a6ee0f8eaa0285cc21ac153 0.1s
+build	Build and push Docker image	2026-02-09T08:10:51.8352360Z #6 sha256:8d660e9b10b3e184cb399d48eb01ecf741674c77553a9a4c3490696169041c5d 446B / 446B 0.2s done
+build	Build and push Docker image	2026-02-09T08:10:52.0009958Z #6 sha256:4ef00bbbc75186b55c2be094a1c5ac03cbfac8897f1f2ed86107bf908a95fda9 50.98MB / 50.98MB 0.3s done
+build	Build and push Docker image	2026-02-09T08:10:52.0011622Z #6 extracting sha256:589002ba0eaed121a1dbf42f6648f29e5be55d5c8a6ee0f8eaa0285cc21ac153 0.1s done
+build	Build and push Docker image	2026-02-09T08:10:52.0013156Z #6 extracting sha256:4ef00bbbc75186b55c2be094a1c5ac03cbfac8897f1f2ed86107bf908a95fda9 0.1s
+build	Build and push Docker image	2026-02-09T08:10:53.1321093Z #6 extracting sha256:4ef00bbbc75186b55c2be094a1c5ac03cbfac8897f1f2ed86107bf908a95fda9 1.2s done
+build	Build and push Docker image	2026-02-09T08:10:53.3246164Z #6 extracting sha256:14b92b0c10a5cc759604614d048be3aad4c013e9b574a6bff7f6fa78ac4e5860
+build	Build and push Docker image	2026-02-09T08:10:53.5400079Z #6 extracting sha256:14b92b0c10a5cc759604614d048be3aad4c013e9b574a6bff7f6fa78ac4e5860 0.0s done
+build	Build and push Docker image	2026-02-09T08:10:53.5401370Z #6 extracting sha256:8d660e9b10b3e184cb399d48eb01ecf741674c77553a9a4c3490696169041c5d done
+build	Build and push Docker image	2026-02-09T08:10:53.5402124Z #6 DONE 1.8s
+build	Build and push Docker image	2026-02-09T08:10:53.5402320Z 
+build	Build and push Docker image	2026-02-09T08:10:53.5402478Z #7 [base 2/3] RUN corepack enable
+build	Build and push Docker image	2026-02-09T08:10:53.6016525Z #7 DONE 0.2s
+build	Build and push Docker image	2026-02-09T08:10:53.7526320Z 
+build	Build and push Docker image	2026-02-09T08:10:53.7526916Z #8 [base 3/3] RUN apk add --no-cache libc6-compat openssl
+build	Build and push Docker image	2026-02-09T08:10:54.0666018Z #8 0.464 (1/4) Installing musl-obstack (1.2.3-r2)
+build	Build and push Docker image	2026-02-09T08:10:54.1741215Z #8 0.471 (2/4) Installing libucontext (1.3.3-r0)
+build	Build and push Docker image	2026-02-09T08:10:54.1741892Z #8 0.477 (3/4) Installing gcompat (1.1.0-r4)
+build	Build and push Docker image	2026-02-09T08:10:54.1742388Z #8 0.484 (4/4) Installing openssl (3.5.5-r0)
+build	Build and push Docker image	2026-02-09T08:10:54.1745115Z #8 0.495 Executing busybox-1.37.0-r30.trigger
+build	Build and push Docker image	2026-02-09T08:10:54.1745623Z #8 0.502 OK: 11.8 MiB in 22 packages
+build	Build and push Docker image	2026-02-09T08:10:54.1746004Z #8 DONE 0.5s
+build	Build and push Docker image	2026-02-09T08:10:54.1746159Z 
+build	Build and push Docker image	2026-02-09T08:10:54.1746282Z #9 [pruner 1/4] WORKDIR /app
+build	Build and push Docker image	2026-02-09T08:10:54.1746647Z #9 DONE 0.0s
+build	Build and push Docker image	2026-02-09T08:10:54.3254056Z 
+build	Build and push Docker image	2026-02-09T08:10:54.3255884Z #10 [pruner 2/4] RUN pnpm add -g turbo
+build	Build and push Docker image	2026-02-09T08:10:54.4737725Z #10 0.299 ! Corepack is about to download https://registry.npmjs.org/pnpm/-/pnpm-10.29.2.tgz
+build	Build and push Docker image	2026-02-09T08:10:55.8848518Z #10 1.710 Progress: resolved 1, reused 0, downloaded 0, added 0
+build	Build and push Docker image	2026-02-09T08:10:56.1984760Z #10 2.024 Packages: +2
+build	Build and push Docker image	2026-02-09T08:10:56.1985214Z #10 2.024 ++
+build	Build and push Docker image	2026-02-09T08:10:56.2990661Z #10 2.124 Progress: resolved 7, reused 0, downloaded 2, added 2, done
+build	Build and push Docker image	2026-02-09T08:10:56.4783163Z #10 2.146 
+build	Build and push Docker image	2026-02-09T08:10:56.4783632Z #10 2.146 /pnpm/global/5:
+build	Build and push Docker image	2026-02-09T08:10:56.4784000Z #10 2.146 + turbo 2.8.3
+build	Build and push Docker image	2026-02-09T08:10:56.4784241Z #10 2.146 
+build	Build and push Docker image	2026-02-09T08:10:56.4784665Z #10 2.153 Done in 1s using pnpm v10.29.2
+build	Build and push Docker image	2026-02-09T08:10:56.5382463Z #10 DONE 2.4s
+build	Build and push Docker image	2026-02-09T08:10:56.7429579Z 
+build	Build and push Docker image	2026-02-09T08:10:56.7430127Z #11 [pruner 3/4] COPY . .
+build	Build and push Docker image	2026-02-09T08:10:56.7430600Z #11 DONE 0.1s
+build	Build and push Docker image	2026-02-09T08:10:56.7430914Z 
+build	Build and push Docker image	2026-02-09T08:10:56.7431402Z #12 [pruner 4/4] RUN turbo prune --scope=@purrfecthq/modmail-bot --docker
+build	Build and push Docker image	2026-02-09T08:10:56.7432699Z #12 0.143  WARNING  No locally installed `turbo` found in your repository. Using globally installed version (2.8.3), which can cause unexpected behavior.
+build	Build and push Docker image	2026-02-09T08:10:56.7433777Z #12 0.143 
+build	Build and push Docker image	2026-02-09T08:10:56.7434945Z #12 0.143 Installing the version in your repository (^2.3.3) before calling `turbo` will result in more predictable behavior across environments.
+build	Build and push Docker image	2026-02-09T08:10:56.8640745Z #12 0.149 
+build	Build and push Docker image	2026-02-09T08:10:56.8642344Z #12 0.149 Attention:
+build	Build and push Docker image	2026-02-09T08:10:56.8643004Z #12 0.149 Turborepo now collects completely anonymous telemetry regarding usage.
+build	Build and push Docker image	2026-02-09T08:10:56.8643949Z #12 0.149 This information is used to shape the Turborepo roadmap and prioritize features.
+build	Build and push Docker image	2026-02-09T08:10:56.8645530Z #12 0.149 You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+build	Build and push Docker image	2026-02-09T08:10:56.8646716Z #12 0.149 https://turborepo.dev/docs/telemetry
+build	Build and push Docker image	2026-02-09T08:10:56.8647203Z #12 0.149 
+build	Build and push Docker image	2026-02-09T08:10:56.8647752Z #12 0.149 • turbo 2.8.3
+build	Build and push Docker image	2026-02-09T08:10:56.8668326Z #12 0.167 Generating pruned monorepo for @purrfecthq/modmail-bot in /app/out
+build	Build and push Docker image	2026-02-09T08:10:56.8669043Z #12 0.178  - Added @purrfecthq/modmail-bot
+build	Build and push Docker image	2026-02-09T08:10:56.8669488Z #12 DONE 0.3s
+build	Build and push Docker image	2026-02-09T08:10:57.0969944Z 
+build	Build and push Docker image	2026-02-09T08:10:57.0970904Z #13 [builder 2/8] COPY --from=pruner /app/out/json/ .
+build	Build and push Docker image	2026-02-09T08:10:57.0971739Z #13 DONE 0.0s
+build	Build and push Docker image	2026-02-09T08:10:57.0971963Z 
+build	Build and push Docker image	2026-02-09T08:10:57.0972332Z #14 [builder 3/8] COPY --from=pruner /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
+build	Build and push Docker image	2026-02-09T08:10:57.0973441Z #14 DONE 0.0s
+build	Build and push Docker image	2026-02-09T08:10:57.0973631Z 
+build	Build and push Docker image	2026-02-09T08:10:57.0973898Z #15 [builder 4/8] COPY --from=pruner /app/scripts ./scripts
+build	Build and push Docker image	2026-02-09T08:10:57.0974808Z #15 DONE 0.0s
+build	Build and push Docker image	2026-02-09T08:10:57.0974995Z 
+build	Build and push Docker image	2026-02-09T08:10:57.0975250Z #16 [builder 5/8] COPY --from=pruner /app/prisma ./prisma
+build	Build and push Docker image	2026-02-09T08:10:57.0975972Z #16 DONE 0.0s
+build	Build and push Docker image	2026-02-09T08:10:57.0976122Z 
+build	Build and push Docker image	2026-02-09T08:10:57.0976278Z #17 [builder 6/8] RUN pnpm install --frozen-lockfile
+build	Build and push Docker image	2026-02-09T08:10:57.1189270Z #17 0.172 ! Corepack is about to download https://registry.npmjs.org/pnpm/-/pnpm-9.15.0.tgz
+build	Build and push Docker image	2026-02-09T08:10:58.5368948Z #17 1.590 Scope: all 2 workspace projects
+build	Build and push Docker image	2026-02-09T08:10:58.7152706Z #17 1.608 (node:1) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+build	Build and push Docker image	2026-02-09T08:10:58.7154053Z #17 1.608 (Use `node --trace-deprecation ...` to show where the warning was created)
+build	Build and push Docker image	2026-02-09T08:10:58.7155187Z #17 1.651 Lockfile is up to date, resolution step is skipped
+build	Build and push Docker image	2026-02-09T08:10:58.7156019Z #17 1.690 Progress: resolved 1, reused 0, downloaded 0, added 0
+build	Build and push Docker image	2026-02-09T08:10:58.7156561Z #17 1.768 Packages: +411
+build	Build and push Docker image	2026-02-09T08:10:58.7157323Z #17 1.768 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+build	Build and push Docker image	2026-02-09T08:10:58.9366160Z #17 1.990 
+build	Build and push Docker image	2026-02-09T08:10:58.9367420Z #17 1.990    ╭───────────────────────────────────────────────────────────────────╮
+build	Build and push Docker image	2026-02-09T08:10:58.9368351Z #17 1.990    │                                                                   │
+build	Build and push Docker image	2026-02-09T08:10:58.9369213Z #17 1.990    │                Update available! 9.15.0 → 10.29.2.                │
+build	Build and push Docker image	2026-02-09T08:10:58.9370202Z #17 1.990    │   Changelog: https://github.com/pnpm/pnpm/releases/tag/v10.29.2   │
+build	Build and push Docker image	2026-02-09T08:10:58.9378815Z #17 1.990    │         Run "corepack install -g pnpm@10.29.2" to update.         │
+build	Build and push Docker image	2026-02-09T08:10:58.9379727Z #17 1.990    │                                                                   │
+build	Build and push Docker image	2026-02-09T08:10:58.9380615Z #17 1.990    ╰───────────────────────────────────────────────────────────────────╯
+build	Build and push Docker image	2026-02-09T08:10:58.9381196Z #17 1.990 
+build	Build and push Docker image	2026-02-09T08:10:59.6399748Z #17 2.693 Progress: resolved 411, reused 0, downloaded 38, added 28
+build	Build and push Docker image	2026-02-09T08:11:00.6407866Z #17 3.694 Progress: resolved 411, reused 0, downloaded 200, added 191
+build	Build and push Docker image	2026-02-09T08:11:01.6415682Z #17 4.695 Progress: resolved 411, reused 0, downloaded 403, added 399
+build	Build and push Docker image	2026-02-09T08:11:01.8496919Z #17 4.903 Progress: resolved 411, reused 0, downloaded 411, added 411, done
+build	Build and push Docker image	2026-02-09T08:11:02.0338224Z #17 5.087 .../node_modules/@prisma/engines postinstall$ node scripts/postinstall.js
+build	Build and push Docker image	2026-02-09T08:11:02.2624259Z #17 5.097 .../esbuild@0.27.3/node_modules/esbuild postinstall$ node install.js
+build	Build and push Docker image	2026-02-09T08:11:02.2625626Z #17 5.165 .../esbuild@0.27.3/node_modules/esbuild postinstall: Done
+build	Build and push Docker image	2026-02-09T08:11:02.7329356Z #17 5.786 .../node_modules/@prisma/engines postinstall: Done
+build	Build and push Docker image	2026-02-09T08:11:02.8361246Z #17 5.890 .../node_modules/prisma preinstall$ node scripts/preinstall-entry.js
+build	Build and push Docker image	2026-02-09T08:11:03.0412653Z #17 5.944 .../node_modules/prisma preinstall: Done
+build	Build and push Docker image	2026-02-09T08:11:03.1473852Z #17 6.201 .../node_modules/@prisma/client postinstall$ node scripts/postinstall.js
+build	Build and push Docker image	2026-02-09T08:11:05.7790237Z #17 8.832 .../node_modules/@prisma/client postinstall: Prisma schema loaded from prisma/schema.prisma
+build	Build and push Docker image	2026-02-09T08:11:05.9859427Z #17 9.039 .../node_modules/@prisma/client postinstall: ✔ Generated Prisma Client (v6.19.1) to ./node_modules/.pnpm/@prisma+client@6.19.1_prisma@6.19.1_typescript@5.9.3__typescript@5.9.3/node_modules/@prisma/client in 91ms
+build	Build and push Docker image	2026-02-09T08:11:06.1623870Z #17 9.039 .../node_modules/@prisma/client postinstall: Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+build	Build and push Docker image	2026-02-09T08:11:06.1625912Z #17 9.039 .../node_modules/@prisma/client postinstall: Tip: Need your database queries to be 1000x faster? Accelerate offers you that and more: https://pris.ly/tip-2-accelerate
+build	Build and push Docker image	2026-02-09T08:11:06.1627553Z #17 9.065 .../node_modules/@prisma/client postinstall: Done
+build	Build and push Docker image	2026-02-09T08:11:06.3706122Z #17 9.424 
+build	Build and push Docker image	2026-02-09T08:11:06.3706577Z #17 9.424 dependencies:
+build	Build and push Docker image	2026-02-09T08:11:06.3707016Z #17 9.424 + @prisma/client 6.19.1
+build	Build and push Docker image	2026-02-09T08:11:06.3707611Z #17 9.424 
+build	Build and push Docker image	2026-02-09T08:11:06.3707800Z #17 9.424 devDependencies:
+build	Build and push Docker image	2026-02-09T08:11:06.3708223Z #17 9.424 + @commitlint/cli 19.8.1
+build	Build and push Docker image	2026-02-09T08:11:06.3708689Z #17 9.424 + @commitlint/config-conventional 19.8.1
+build	Build and push Docker image	2026-02-09T08:11:06.3709119Z #17 9.424 + dotenv 16.6.1
+build	Build and push Docker image	2026-02-09T08:11:06.3709474Z #17 9.424 + lint-staged 15.5.2
+build	Build and push Docker image	2026-02-09T08:11:06.3709701Z #17 9.424 + prettier 3.8.1
+build	Build and push Docker image	2026-02-09T08:11:06.3710010Z #17 9.424 + prisma 6.19.1
+build	Build and push Docker image	2026-02-09T08:11:06.3710357Z #17 9.424 + tsx 4.21.0
+build	Build and push Docker image	2026-02-09T08:11:06.3710605Z #17 9.424 + turbo 2.8.3
+build	Build and push Docker image	2026-02-09T08:11:06.3710798Z #17 9.424 
+build	Build and push Docker image	2026-02-09T08:11:06.5412665Z #17 9.444 . postinstall$ pnpm mcp:sync && pnpm prisma:generate
+build	Build and push Docker image	2026-02-09T08:11:06.9246402Z #17 9.978 . postinstall: > modmail-monorepo@ mcp:sync /app
+build	Build and push Docker image	2026-02-09T08:11:07.1311711Z #17 9.978 . postinstall: > node scripts/sync-mcp.cjs
+build	Build and push Docker image	2026-02-09T08:11:07.1313086Z #17 10.01 . postinstall: 🔄 Syncing MCP Configuration...
+build	Build and push Docker image	2026-02-09T08:11:07.1314558Z #17 10.01 . postinstall: ❌ Error: mcp.json not found in project root.
+build	Build and push Docker image	2026-02-09T08:11:07.1315997Z #17 10.02 . postinstall:  ELIFECYCLE  Command failed with exit code 1.
+build	Build and push Docker image	2026-02-09T08:11:07.1316829Z #17 10.03 . postinstall: Failed
+build	Build and push Docker image	2026-02-09T08:11:07.1317456Z #17 10.03  ELIFECYCLE  Command failed with exit code 1.
+build	Build and push Docker image	2026-02-09T08:11:07.8677874Z #17 ERROR: process "/bin/sh -c pnpm install --frozen-lockfile" did not complete successfully: exit code: 1
+build	Build and push Docker image	2026-02-09T08:11:07.8870583Z ------
+build	Build and push Docker image	2026-02-09T08:11:07.8872016Z  > [builder 6/8] RUN pnpm install --frozen-lockfile:
+build	Build and push Docker image	2026-02-09T08:11:07.8872718Z 9.424 + turbo 2.8.3
+build	Build and push Docker image	2026-02-09T08:11:07.8873209Z 9.424 
+build	Build and push Docker image	2026-02-09T08:11:07.8873824Z 9.444 . postinstall$ pnpm mcp:sync && pnpm prisma:generate
+build	Build and push Docker image	2026-02-09T08:11:07.8874945Z 9.978 . postinstall: > modmail-monorepo@ mcp:sync /app
+build	Build and push Docker image	2026-02-09T08:11:07.8875842Z 9.978 . postinstall: > node scripts/sync-mcp.cjs
+build	Build and push Docker image	2026-02-09T08:11:07.8876977Z 10.01 . postinstall: 🔄 Syncing MCP Configuration...
+build	Build and push Docker image	2026-02-09T08:11:07.8878214Z 10.01 . postinstall: ❌ Error: mcp.json not found in project root.
+build	Build and push Docker image	2026-02-09T08:11:07.8879173Z 10.02 . postinstall:  ELIFECYCLE  Command failed with exit code 1.
+build	Build and push Docker image	2026-02-09T08:11:07.8879769Z 10.03 . postinstall: Failed
+build	Build and push Docker image	2026-02-09T08:11:07.8880506Z 10.03  ELIFECYCLE  Command failed with exit code 1.
+build	Build and push Docker image	2026-02-09T08:11:07.8881051Z ------
+build	Build and push Docker image	2026-02-09T08:11:07.8881370Z Dockerfile:26
+build	Build and push Docker image	2026-02-09T08:11:07.8882809Z --------------------
+build	Build and push Docker image	2026-02-09T08:11:07.8883220Z   24 |     COPY --from=pruner /app/prisma ./prisma
+build	Build and push Docker image	2026-02-09T08:11:07.8883676Z   25 |     
+build	Build and push Docker image	2026-02-09T08:11:07.8883992Z   26 | >>> RUN pnpm install --frozen-lockfile
+build	Build and push Docker image	2026-02-09T08:11:07.8884604Z   27 |     
+build	Build and push Docker image	2026-02-09T08:11:07.8884953Z   28 |     # Copy source code of isolated subworkspace
+build	Build and push Docker image	2026-02-09T08:11:07.8885426Z --------------------
+build	Build and push Docker image	2026-02-09T08:11:07.8886267Z ERROR: failed to build: failed to solve: process "/bin/sh -c pnpm install --frozen-lockfile" did not complete successfully: exit code: 1
+build	Build and push Docker image	2026-02-09T08:11:07.9000007Z ##[error]buildx failed with: ERROR: failed to build: failed to solve: process "/bin/sh -c pnpm install --frozen-lockfile" did not complete successfully: exit code: 1
+build	Post Build and push Docker image	﻿2026-02-09T08:11:07.9133528Z Post job cleanup.
+build	Post Build and push Docker image	2026-02-09T08:11:08.1708244Z ##[group]Removing temp folder /home/runner/work/_temp/docker-actions-toolkit-syqlzS
+build	Post Build and push Docker image	2026-02-09T08:11:08.1719601Z ##[endgroup]
+build	Post Build and push Docker image	2026-02-09T08:11:08.1720337Z ##[group]Post cache
+build	Post Build and push Docker image	2026-02-09T08:11:08.1721223Z State not set
+build	Post Build and push Docker image	2026-02-09T08:11:08.1721846Z ##[endgroup]
+build	Post Log in to the Container registry	﻿2026-02-09T08:11:08.1865321Z Post job cleanup.
+build	Post Log in to the Container registry	2026-02-09T08:11:08.5262565Z ##[group]Logout from ghcr.io
+build	Post Log in to the Container registry	2026-02-09T08:11:08.5313569Z [command]/usr/bin/docker logout ghcr.io
+build	Post Log in to the Container registry	2026-02-09T08:11:08.5456427Z Removing login credentials for ghcr.io
+build	Post Log in to the Container registry	2026-02-09T08:11:08.5492916Z ##[endgroup]
+build	Post Log in to the Container registry	2026-02-09T08:11:08.5494901Z ##[group]Post cache
+build	Post Log in to the Container registry	2026-02-09T08:11:08.5495283Z State not set
+build	Post Log in to the Container registry	2026-02-09T08:11:08.5497272Z ##[endgroup]
+build	Post Checkout repository	﻿2026-02-09T08:11:08.5656051Z Post job cleanup.
+build	Post Checkout repository	2026-02-09T08:11:08.6666307Z [command]/usr/bin/git version
+build	Post Checkout repository	2026-02-09T08:11:08.6708313Z git version 2.52.0
+build	Post Checkout repository	2026-02-09T08:11:08.6759516Z Temporarily overriding HOME='/home/runner/work/_temp/531f81b2-0a07-4f31-b52f-8d1fd344c21a' before making global git config changes
+build	Post Checkout repository	2026-02-09T08:11:08.6761387Z Adding repository directory to the temporary git global config as a safe directory
+build	Post Checkout repository	2026-02-09T08:11:08.6778436Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/ModMail-Bot/ModMail-Bot
+build	Post Checkout repository	2026-02-09T08:11:08.6821286Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+build	Post Checkout repository	2026-02-09T08:11:08.6858154Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+build	Post Checkout repository	2026-02-09T08:11:08.7109225Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+build	Post Checkout repository	2026-02-09T08:11:08.7130478Z http.https://github.com/.extraheader
+build	Post Checkout repository	2026-02-09T08:11:08.7143185Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+build	Post Checkout repository	2026-02-09T08:11:08.7173301Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+build	Post Checkout repository	2026-02-09T08:11:08.7394880Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+build	Post Checkout repository	2026-02-09T08:11:08.7425551Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+build	Complete job	﻿2026-02-09T08:11:08.7755449Z Cleaning up orphan processes

@@ -7,47 +7,70 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// --- Enums ---
+
+enum GuardianRole {
+  OWNER
+  GUARDIAN
+}
+
+enum ApprovalMode {
+  ONE_OF_N
+  REQUIRE_ALL
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum TicketStatus {
+  OPEN
+  CLOSED
+}
+
 // --- Purrmission Core (Infrastructure) ---
 
 model Guardian {
-  id        String   @id // Discord User ID
+  id        String       @id // Discord User ID
   name      String?
-  role      String   @default("GUARDIAN") // OWNER, GUARDIAN
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  role      GuardianRole @default(GUARDIAN)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
   
   requests  ApprovalRequest[]
 }
 
 model Resource {
-  id          String   @id @default(uuid())
-  name        String   @unique
+  id          String       @id @default(uuid())
+  name        String       @unique
   description String?
-  mode        String   @default("ONE_OF_N") // ONE_OF_N, REQUIRE_ALL
+  mode        ApprovalMode @default(ONE_OF_N)
   
   requests    ApprovalRequest[]
 }
 
 model ApprovalRequest {
-  id          String   @id @default(uuid())
+  id          String         @id @default(uuid())
   resourceId  String
-  requesterId String   // Discord User ID
-  status      String   @default("PENDING") // PENDING, APPROVED, REJECTED
-  data        String   // JSON payload of the request
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  requesterId String         // Discord User ID
+  status      ApprovalStatus @default(PENDING)
+  data        String         // JSON payload of the request
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
 
-  resource    Resource @relation(fields: [resourceId], references: [id])
+  resource    Resource       @relation(fields: [resourceId], references: [id])
   votes       Guardian[]
 }
 
 // --- ModMail Domain (Application) ---
 
 model Ticket {
-  id          String   @id @default(uuid())
-  channelId   String   @unique
-  userId      String
-  status      String   @default("OPEN") // OPEN, CLOSED
+  id        String       @id @default(uuid())
+  channelId String       @unique
+  userId    String
+  status    TicketStatus @default(OPEN)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   
