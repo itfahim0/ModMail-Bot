@@ -1,5 +1,7 @@
 import { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
 
+import { ticketRepository } from '../../services/container.js';
+
 export default {
     data: new SlashCommandBuilder()
         .setName('reply')
@@ -9,7 +11,8 @@ export default {
             option.setName('message').setDescription('Message to send').setRequired(true),
         ),
 
-    async execute(interaction) {
+    async execute(interaction, deps = { ticketRepository }) {
+        const { ticketRepository } = deps;
         if (!interaction.channel.name.startsWith('ticket-')) {
             return interaction.reply({
                 content: '❌ This command can only be used in ticket channels.',
@@ -36,6 +39,15 @@ export default {
                 .setTimestamp();
 
             await user.send({ embeds: [embed] });
+
+            // Log staff reply to DB
+            const ticket = await ticketRepository.findByChannelId(interaction.channelId);
+            if (ticket) {
+                await ticketRepository.addMessage(ticket.id, {
+                    senderId: interaction.user.id,
+                    content: message,
+                });
+            }
 
             const confirmEmbed = new EmbedBuilder()
                 .setColor('#00FF00')

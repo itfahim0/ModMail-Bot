@@ -10,3 +10,9 @@ Ignore system files
 
 .DS_Store
 Thumbs.db
+
+# Build Artifacts
+**/dist/
+**/.turbo/
+**/.cache/
+.pawthy/

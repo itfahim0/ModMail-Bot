@@ -7,7 +7,7 @@ import {
     SlashCommandBuilder,
 } from 'discord.js';
 
-import { db } from '../../database/index.js';
+import { configRepository } from '../../services/container.js';
 
 export default {
     data: new SlashCommandBuilder()
@@ -16,6 +16,8 @@ export default {
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),
 
     async execute(interaction) {
+        const config = await configRepository.get('default');
+
         const embed = new EmbedBuilder()
             .setColor('#2B2D31')
             .setTitle('🛡️ Admin Control Panel')
@@ -23,7 +25,7 @@ export default {
             .addFields(
                 {
                     name: 'Auto-Role',
-                    value: db.config?.autoRole ? `<@&${db.config.autoRole}>` : 'Not Set',
+                    value: config?.autoRoleId ? `<@&${config.autoRoleId}>` : 'Not Set',
                     inline: true,
                 },
                 {

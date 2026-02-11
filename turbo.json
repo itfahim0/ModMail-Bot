@@ -7,6 +7,9 @@
         },
         "lint": {},
         "test": {},
+        "prisma:generate": {
+            "cache": false
+        },
         "dev": {
             "cache": false,
             "persistent": true

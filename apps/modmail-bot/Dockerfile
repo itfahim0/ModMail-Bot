@@ -2,6 +2,7 @@ FROM node:24-alpine AS base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
+RUN apk add --no-cache libc6-compat openssl
 
 # 1. Prune the workspace for the app
 FROM base AS pruner
@@ -18,6 +19,13 @@ WORKDIR /app
 COPY --from=pruner /app/out/json/ .
 COPY --from=pruner /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 
+# Copy necessary files for postinstall
+COPY --from=pruner /app/scripts ./scripts
+COPY --from=pruner /app/prisma ./prisma
+COPY --from=pruner /app/mcp.json ./mcp.json
+COPY --from=pruner /app/turbo.json ./turbo.json
+
+
 RUN pnpm install --frozen-lockfile
 
 # Copy source code of isolated subworkspace
@@ -26,7 +34,7 @@ COPY --from=pruner /app/out/full/ .
 RUN pnpm turbo run build --filter=@purrfecthq/modmail-bot...
 
 # 3. Production image
-FROM base AS runner
+FROM builder AS runner
 WORKDIR /app
 
 # Deploy the app to a prod folder with all deps
@@ -34,6 +42,6 @@ RUN pnpm deploy --filter=@purrfecthq/modmail-bot --prod /prod/modmail-bot
 
 FROM base AS production
 WORKDIR /app
-COPY --from=builder /prod/modmail-bot .
+COPY --from=runner /prod/modmail-bot .
 
 CMD ["node", "dist/index.js"]

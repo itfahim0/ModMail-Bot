@@ -1,6 +1,6 @@
 import { ChannelType, EmbedBuilder, Events, PermissionFlagsBits } from 'discord.js';
 
-import { db, saveDB } from '../../database/index.js';
+import { ticketRepository } from '../../services/container.js';
 
 export default {
     name: Events.MessageCreate,
@@ -72,6 +72,11 @@ export default {
                         });
                     }
 
+                    await ticketRepository.create({
+                        userId: message.author.id,
+                        channelId: ticketChannel.id,
+                    });
+
                     await ticketChannel.send({ embeds: [welcomeEmbed] });
                     await message.react('✅');
                 } catch (error) {
@@ -105,11 +110,20 @@ export default {
 
             try {
                 // Send main message
-                await ticketChannel.send({
+                const sentMsg = await ticketChannel.send({
                     content: message.content, // Sending content outside embed triggers link previews
                     embeds: [embed],
                     files: otherAttachments,
                 });
+
+                // Log to DB
+                const ticket = await ticketRepository.findByChannelId(ticketChannel.id);
+                if (ticket) {
+                    await ticketRepository.addMessage(ticket.id, {
+                        senderId: message.author.id,
+                        content: message.content || '[Attachment]',
+                    });
+                }
             } catch (error) {
                 console.error('Error forwarding message:', error);
             }
@@ -134,6 +148,11 @@ export default {
                         });
                     } catch (error) {
                         console.error('Could not DM user:', error);
+                    }
+
+                    const ticket = await ticketRepository.findByChannelId(message.channel.id);
+                    if (ticket) {
+                        await ticketRepository.updateStatus(ticket.id, 'CLOSED');
                     }
 
                     await message.channel.send(
@@ -173,6 +192,16 @@ export default {
                     embeds: [embed],
                     files: otherAttachments,
                 });
+
+                // Log staff reply
+                const ticket = await ticketRepository.findByChannelId(message.channel.id);
+                if (ticket) {
+                    await ticketRepository.addMessage(ticket.id, {
+                        senderId: message.author.id,
+                        content: message.content || '[Attachment]',
+                    });
+                }
+
                 await message.react('✅');
             } catch (error) {
                 await message.react('❌');
